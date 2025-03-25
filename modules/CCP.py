@@ -1,19 +1,12 @@
 import typing
 import numpy as np
-from enum import Enum
-from simulation.BaseModel import BaseModel
-from simulation.Manager import Manager
-
-
-class TargetTypeCCP(Enum):
-    AIR_PLANE = "самолет"
-    HELICOPTER = "вертолет"
-    ANOTHER = "другое"
+from modules.BaseModel import BaseModel, Manager
+from modules.AirEnv import TargetType
 
 
 # Возможно наследование от какого-то базового класса типа BaseUnit/Unit/Movable
 class TargetCCP:
-    def __init__(self, type: TargetTypeCCP, coord: np.array, speed: np.array, upd_time: float) -> None:
+    def __init__(self, type: TargetType, coord: np.array, speed: np.array, upd_time: float) -> None:
         """
         :param type: тип цели
         :param coord: координаты цели
