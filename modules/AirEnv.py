@@ -1,0 +1,64 @@
+import numpy as np
+from enum import Enum
+
+from modules.BaseModel import BaseModel
+from modules.AirObject import AirObject
+
+
+class TargetType(Enum):
+    AIR_PLANE = "самолет"
+    HELICOPTER = "вертолет"
+    ANOTHER = "другое"
+
+
+class Target(AirObject):
+    """
+    Класс воздушной цели
+    """
+
+    def __init__(self, type: TargetType):
+        """
+        Класс воздушной обстановки
+
+        :param type: тип цели
+        """
+        super().__init__()
+        self.__type = type
+
+    @property
+    def type(self) -> TargetType:
+        return self.__type
+
+
+class AirEnv(BaseModel):
+    """
+    Класс воздушной обстановки
+    """
+
+    def __init__(self, manager, id: int, pos: np.array) -> None:
+        """
+        Класс воздушной обстановки
+
+        :param manager: менеджер моделей
+        :param id: ID объекта моделирования
+        :param pos: позиция объекта
+        """
+        super().__init__(manager, id, pos)
+        self.__targets = []
+
+    def add_target(self, target) -> None:
+        """
+        Добавление цели
+
+        :param target: цель для добавления
+        """
+        self.__targets.append(target)
+
+    def step(self) -> None:
+        """
+        Шаг симуляции AirEnv
+        """
+        for target in self.__targets:
+            target.step()
+
+        # self.send_message(targets_message)
