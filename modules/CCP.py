@@ -1,8 +1,7 @@
 import typing
 import numpy as np
 from enum import Enum
-from simulation.BaseModel import BaseModel
-from simulation.Manager import Manager
+from modules.Simulation import BaseModel, Manager
 
 
 class TargetTypeCCP(Enum):
