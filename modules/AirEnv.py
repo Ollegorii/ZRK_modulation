@@ -48,7 +48,7 @@ class AirEnv(BaseModel):
 
     def add_target(self, target) -> None:
         """
-        Добавление цели
+        Добавление новой цели в ВО
 
         :param target: цель для добавления
         """
@@ -56,7 +56,7 @@ class AirEnv(BaseModel):
 
     def step(self) -> None:
         """
-        Шаг симуляции AirEnv
+        Шаг симуляции ВО
         """
         for target in self.__targets:
             target.step()
