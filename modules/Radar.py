@@ -146,27 +146,27 @@ class SectorRadar:
             radar.move_to_next_sector()
 
 
-### Пример использования
+# ### Пример использования
 
-# Создаем радар с горизонтальным сканированием
-radar = SectorRadar(
-    position=np.array([0, 0, 0]),
-    id = 0,
-    azimuth_start=0,
-    elevation_start=0,
-    max_distance=1000,
-    azimuth_range=90,
-    elevation_range=45,
-    azimuth_speed=10,
-    elevation_speed=5,
-    scan_mode="horizontal"
-)
+# # Создаем радар с горизонтальным сканированием
+# radar = SectorRadar(
+#     position=np.array([0, 0, 0]),
+#     id = 0,
+#     azimuth_start=0,
+#     elevation_start=0,
+#     max_distance=1000,
+#     azimuth_range=90,
+#     elevation_range=45,
+#     azimuth_speed=10,
+#     elevation_speed=5,
+#     scan_mode="horizontal"
+# )
 
-# Список объектов в пространстве
-objects = [
-    np.array([100, 200, 50]),
-    np.array([300, 400, 100]),
-    np.array([500, 600, 150])
-]
+# # Список объектов в пространстве
+# objects = [
+#     np.array([100, 200, 50]),
+#     np.array([300, 400, 100]),
+#     np.array([500, 600, 150])
+# ]
 
-radar.start(objects)
+# radar.start(objects)
