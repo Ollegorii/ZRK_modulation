@@ -2,7 +2,7 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from typing import List
 
-from Manager import BaseMessage, Manager
+from .Manager import BaseMessage, Manager
 
 
 class BaseModel(metaclass=ABCMeta):

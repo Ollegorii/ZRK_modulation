@@ -1,6 +1,8 @@
-from Manager import Manager
+from .Manager import Manager
 import numpy as np
-from Messages import *
+from .Messages import *
+from .Missile import Missile
+from typing import List
 
 class MissileLauncher(BaseModel):
     """
@@ -22,7 +24,7 @@ class MissileLauncher(BaseModel):
         self.missiles = []  # Список доступных ракет
         self.launched_missiles = []  # Список запущенных ракет
         
-        self._manager.add_module(self)
+        # self._manager.add_module(self)
         
         print(f"Пусковая установка (ID: {self.id}) инициализирована на позиции {self.pos}")
     
@@ -106,7 +108,7 @@ class MissileLauncher(BaseModel):
         """
         self._manager.add_message(msg)
     
-    def get_messages(self) -> List:
+    def get_messages(self) -> List[BaseMessage]:
         """
         Получение всех сообщений, адресованных этой пусковой установке
         

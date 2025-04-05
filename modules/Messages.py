@@ -1,10 +1,10 @@
-from Messages import BaseMessage
+from .BaseMessage import BaseMessage
 import numpy as np
-from constants import MessageType
+from .constants import MessageType
 from enum import Enum
 
-from BaseModel import BaseModel
-from AirObject import AirObject
+from .BaseModel import BaseModel
+from .AirObject import AirObject
 
 
 class LaunchStatus(Enum):

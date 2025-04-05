@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict
-from Timer import Timer
-from BaseMessage import BaseMessage
+from .Timer import Timer
+from .BaseMessage import BaseMessage
 
 class Manager:
     """Класс для управления обменом сообщениями между модулями и запуском симуляции"""
@@ -8,7 +8,7 @@ class Manager:
         self.time = Timer()
         self.messages = []   # Список всех сообщений
         self.modules = []    # Список модулей системы
-    
+
     def add_module(self, module) -> None:
         """Добавление модуля в систему"""
         if module not in self.modules:
@@ -16,7 +16,7 @@ class Manager:
             print(f"Модуль с ID {module.id if hasattr(module, 'id') else 'unknown'} добавлен в систему")
         else:
             print(f"Модуль с ID {module.id if hasattr(module, 'id') else 'unknown'} уже существует в системе")
-    
+
     def remove_module(self, module_id: int) -> bool:
         """Удаление модуля из системы по ID"""
         for i, module in enumerate(self.modules):
@@ -26,7 +26,7 @@ class Manager:
                 return True
         print(f"Модуль с ID {module_id} не найден в системе")
         return False
-    
+
     def get_module_by_id(self, module_id: int):
         """Получение модуля по ID"""
         for module in self.modules:
@@ -41,11 +41,11 @@ class Manager:
         self.messages.append(msg)
         # Сортировка сообщений по важности
         self.messages.sort(key=lambda x: -x.priority)
-    
+
     def give_messages(self) -> List[BaseMessage]:
         """Возвращает все сообщения"""
         return self.messages
-    
+
     def give_messages_by_id(self, receiver_id: int) -> List[BaseMessage]:
         """Возвращает все сообщения для указанного получателя
         

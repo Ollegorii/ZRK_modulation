@@ -1,8 +1,8 @@
 import numpy as np
 from enum import Enum
 
-from BaseModel import BaseModel
-from AirObject import AirObject
+from .BaseModel import BaseModel
+from .AirObject import AirObject
 
 
 class TargetType(Enum):
@@ -18,16 +18,17 @@ class Target(AirObject):
 
     def __init__(self, type: TargetType):
         """
-        Класс воздушной обстановки
+        Инициализация воздушной цели
 
         :param type: тип цели
         """
-        super().__init__()
+        super().__init__()  # Вызываем инициализатор родительского класса
         self.__type = type
 
     @property
     def type(self) -> TargetType:
         return self.__type
+
 
 
 class AirEnv(BaseModel):
