@@ -1,8 +1,8 @@
 import numpy as np
 from enum import Enum
 
-from modules.BaseModel import BaseModel
-from modules.AirObject import AirObject
+from BaseModel import BaseModel
+from AirObject import AirObject
 
 
 class TargetType(Enum):
