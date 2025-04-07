@@ -125,7 +125,7 @@ class CombatControlPoint(BaseModel):
         """
         pass
 
-    def simulate(self, time: float) -> None:
+    def step(self) -> None:
         """
         Запуск моделирования
         :param time: текущее время
