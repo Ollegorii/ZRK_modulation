@@ -84,7 +84,7 @@ class MissileLauncher(BaseModel):
             launch_msg = LaunchedMissileMessage(
                 time=current_time,
                 sender_ID=self.id,
-                receiver_ID=0,  # Широковещательное сообщение
+                receiver_ID=0,
                 missile_id=missile.id,
                 target_id=target_id,
                 launch_position=self.pos,
