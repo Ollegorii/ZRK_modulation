@@ -1,11 +1,16 @@
 import numpy as np
+import Manager
+from constants import MessageType, CCP_ID
+from BaseModel import BaseModel
+from Messages import FoundObjectsMessage
 from typing import List, Tuple
 
-class SectorRadar:
+class SectorRadar(BaseModel):
     def __init__(
         self,
-        position: np.ndarray,
-        id: int,
+        manager: Manager, 
+        id: int, 
+        pos: np.array,
         azimuth_start: float,
         elevation_start: float,
         max_distance: float,
@@ -18,7 +23,7 @@ class SectorRadar:
         """
         Класс радара с секторным обзором.
 
-        :param position: Позиция радара в глобальной системе координат (x, y, z).
+        :param pos: Позиция радара в глобальной системе координат (x, y, z).
         :param azimuth_start: Начальный угол азимута (в градусах).
         :param elevation_start: Начальный угол наклона (в градусах).
         :param max_distance: Максимальная дальность обнаружения.
@@ -28,7 +33,8 @@ class SectorRadar:
         :param elevation_speed: Скорость сканирования по углу наклона (градусов в секунду).
         :param scan_mode: Режим сканирования ("horizontal" или "vertical").
         """
-        self.position = position
+        super().__init__(manager, id, pos)
+        self.pos = pos
         self.id = id
         self.azimuth_start = azimuth_start
         self.elevation_start = elevation_start
@@ -54,12 +60,12 @@ class SectorRadar:
 
         for obj in objects:
             # Вычисляем расстояние до объекта
-            distance = np.linalg.norm(obj - self.position)
+            distance = np.linalg.norm(obj - self.pos)
             if distance > self.max_distance:
                 continue
 
             # Вычисляем углы азимута и наклона до объекта
-            delta = obj - self.position
+            delta = obj - self.pos
             azimuth = np.degrees(np.arctan2(delta[1], delta[0])) % 360
             elevation = np.degrees(np.arcsin(delta[2] / distance)) % 180
 
@@ -134,23 +140,40 @@ class SectorRadar:
         if new_elevation_speed is not None:
             self.elevation_speed = new_elevation_speed
 
+    def step(self):
+        """
+        Выполнение одного шага симуляции для МФР
+        """
+        objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)
+        if len(objects) == 0:
+            raise "Air Env does not send objects to Radar"
+        ### tbd ! СДЕЛАТЬ ID ДЛЯ OBJECT
+        visible_objects = self.find_visible_objects(objects)
+        print(f"Видимые объекты: {visible_objects}")
+        self._manager.add_message(FoundObjectsMessage(self._manager.time.get_time(), self.id, CCP_ID, visible_objects))
+        self.move_to_next_sector()
+
+
+
     def start(self, objects):
-        # Симуляция работы радара
+        """
+        Симуляция работы радара для тестирования
+        """
         num_steps = int(self.azimuth_range / self.azimuth_speed * self.elevation_range / self.elevation_speed)
         for step in range(num_steps):
             print(f"Шаг {step + 1}:")
             ### tbd ! ПОЛУЧЕНИЕ ИНФОРМАЦИИ ОБ ОБЪЕКТАХ !
-            visible_objects = radar.find_visible_objects(objects)
+            visible_objects = self.find_visible_objects(objects)
             print(f"Видимые объекты: {visible_objects}")
             ### tbd ! ПЕРЕДАЧА ИНФОРМАЦИИ О НАЙДЕННЫХ ОБЪЕКТАХ !
-            radar.move_to_next_sector()
+            self.move_to_next_sector()
 
 
 # ### Пример использования
 
 # # Создаем радар с горизонтальным сканированием
 # radar = SectorRadar(
-#     position=np.array([0, 0, 0]),
+#     pos=np.array([0, 0, 0]),
 #     id = 0,
 #     azimuth_start=0,
 #     elevation_start=0,
