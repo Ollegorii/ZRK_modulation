@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict
 from .Timer import Timer
 from .BaseMessage import BaseMessage
+from .constants import MessageType
 
 class Manager:
     """Класс для управления обменом сообщениями между модулями и запуском симуляции"""
@@ -73,7 +74,34 @@ class Manager:
         
         messages_at_step = self.messages.get(step_time, [])
         return [msg for msg in messages_at_step if msg.receiver_id == receiver_id]
-    
+
+    def give_messages_by_type(
+        self,
+        msg_type: MessageType,
+        receiver_id: Optional[int] = None,
+        step_time: Optional[int] = None
+    ) -> List[BaseMessage]:
+        """
+        Возвращает сообщения указанного типа, опционально фильтруя по получателю
+        
+        :param msg_type: Класс сообщения (например, LaunchMissileMessage)
+        :param receiver_id: Опциональный ID получателя (если None - не фильтровать по получателю)
+        :param step_time: Время шага (если None - текущий шаг)
+        :return: Список сообщений указанного типа
+        """
+        if step_time is None:
+            step_time = self.time.get_time()
+        
+        messages_at_step = self.messages.get(step_time, [])
+        
+        result = []
+        for msg in messages_at_step:
+            if isinstance(msg, msg_type):
+                if receiver_id is None or msg.receiver_id == receiver_id:
+                    result.append(msg)
+        
+        return result
+
     def run_simulation(self, end_time: int) -> None:
         """Запуск симуляции на указанное количество времени
         
