@@ -16,13 +16,13 @@ class Target(AirObject):
     Класс воздушной цели
     """
 
-    def __init__(self, type: TargetType):
+    def __init__(self, id: int, type: TargetType, pos: np.array=None, velocity: np.array=None):
         """
         Инициализация воздушной цели
 
         :param type: тип цели
         """
-        super().__init__()  # Вызываем инициализатор родительского класса
+        super().__init__(id, pos, velocity)  # Вызываем инициализатор родительского класса
         self.__type = type
 
     @property

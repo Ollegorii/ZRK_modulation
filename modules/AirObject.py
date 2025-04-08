@@ -1,12 +1,14 @@
 from abc import ABCMeta, abstractmethod
+import numpy as np
 
 class AirObject(metaclass=ABCMeta):
     """
     Базовый абстрактный класс для воздушных объектов
     """
-    def __init__(self):
-        self.__pos = None
-        self.__velocity = None
+    def __init__(self, id: int, pos: np.array=None, velocity: np.array=None):
+        self.id = id
+        self.__pos = pos
+        self.__velocity = velocity
     
     @property
     def pos(self):
