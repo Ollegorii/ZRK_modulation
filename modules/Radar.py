@@ -49,23 +49,24 @@ class SectorRadar(BaseModel):
         self.current_azimuth = azimuth_start
         self.current_elevation = elevation_start
 
-    def find_visible_objects(self, objects: List[np.ndarray]) -> List[Tuple[np.ndarray, float]]:
+    def find_visible_objects(self, objects: List[Target]) -> List[Tuple[Target, float]]:
         """
         Поиск объектов, видимых радаром в текущем секторе.
 
-        :param objects: Список объектов, каждый из которых представлен координатами (x, y, z).
+        :param objects: Список объектов, каждый из которых представлен классом Target.
         :return: Список видимых объектов и их расстояний до радара.
         """
         visible_objects = []
 
         for obj in objects:
             # Вычисляем расстояние до объекта
-            distance = np.linalg.norm(obj - self.pos)
+            coords = obj.pos
+            distance = np.linalg.norm(coords - self.pos)
             if distance > self.max_distance:
                 continue
 
             # Вычисляем углы азимута и наклона до объекта
-            delta = obj - self.pos
+            delta = coords - self.pos
             azimuth = np.degrees(np.arctan2(delta[1], delta[0])) % 360
             elevation = np.degrees(np.arcsin(delta[2] / distance)) % 180
 
@@ -147,10 +148,12 @@ class SectorRadar(BaseModel):
         objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)
         if len(objects) == 0:
             raise "Air Env does not send objects to Radar"
-        ### tbd ! СДЕЛАТЬ ID ДЛЯ OBJECT
         visible_objects = self.find_visible_objects(objects)
         print(f"Видимые объекты: {visible_objects}")
         self._manager.add_message(FoundObjectsMessage(self._manager.time.get_time(), self.id, CCP_ID, visible_objects))
+        ### tbd ! ПРИЕМ СООБЩЕНИЯ ОТ ПБУ
+        ### tbd ! ОТПРАВКА СООБЩЕНИЯ РАКЕТЕ
+        ### tbd ! ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ (нужно ли оно?)   
         self.move_to_next_sector()
 
 
