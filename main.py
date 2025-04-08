@@ -71,7 +71,7 @@ def create_objects_from_config(config: Dict[str, Any]) -> Tuple[Manager, Dict[in
     # Создание радаров
     for radar_config in config.get('radars', []):
         radar = SectorRadar(
-            position=np.array(radar_config['position']),
+            pos=np.array(radar_config['position']),
             id=radar_config['id'],
             azimuth_start=radar_config['azimuth_start'],
             elevation_start=radar_config['elevation_start'],

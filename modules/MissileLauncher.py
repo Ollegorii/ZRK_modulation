@@ -114,6 +114,16 @@ class MissileLauncher(BaseModel):
                     target_pos=msg.target_position,
                     target_id=msg.target_id
                 )
+            elif isinstance(msg, MissileCountRequestMessage):
+                # Отправляем ответ с количеством ракет
+                count_msg = MissileCountResponseMessage(
+                    time=current_time,
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    count=self.count_missiles()
+                )
+                self._manager.add_message(count_msg)
+                print(f"Отправлен ответ с количеством ракет: {self.count_missiles()}")
     
     def update_launched_missiles(self, dt: float) -> None:
         """
