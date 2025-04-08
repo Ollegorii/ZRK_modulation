@@ -1,9 +1,8 @@
 import numpy as np
-import Manager
-from AirEnv import Target
-from constants import MessageType, CCP_ID
-from BaseModel import BaseModel
-from Messages import FoundObjectsMessage
+from .Manager import Manager
+from .constants import MessageType, CCP_ID
+from .BaseModel import BaseModel
+from .Messages import FoundObjectsMessage
 from typing import List, Tuple
 
 class SectorRadar(BaseModel):
