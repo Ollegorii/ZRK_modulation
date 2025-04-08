@@ -24,3 +24,15 @@ class LaunchedMissileMessage(BaseMessage):
     def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int):
         super().__init__(type=MessageType.LAUNCHED_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile_id = missile_id
+
+class MissileCountRequestMessage(BaseMessage):
+    """Сообщение-запрос количества доступных ракет"""
+    def __init__(self, time: int, sender_id: int, receiver_id: int):
+        super().__init__(type=MessageType.MISSILE_COUNT_REQUEST, time=time, sender_id=sender_id, receiver_id=receiver_id)
+
+
+class MissileCountResponseMessage(BaseMessage):
+    """Сообщение с количеством доступных ракет"""
+    def __init__(self, time: int, sender_id: int, receiver_id: int, count: int):
+        super().__init__(type=MessageType.MISSILE_COUNT_RESPONSE, time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.count = count
