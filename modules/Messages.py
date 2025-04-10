@@ -11,7 +11,7 @@ from .AirObject import AirObject
 class LaunchStatus(Enum):
     LAUNCHED = "запущена"
     FAILED = "провал"
-    
+
 
 class LaunchMissileMessage(BaseMessage):
     """Сообщение с командой на запуск ракеты по указанной цели"""
@@ -26,6 +26,7 @@ class LaunchedMissileMessage(BaseMessage):
         super().__init__(type=MessageType.LAUNCHED_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile_id = missile_id
 
+
 class MissileCountRequestMessage(BaseMessage):
     """Сообщение-запрос количества доступных ракет"""
     def __init__(self, time: int, sender_id: int, receiver_id: int):
@@ -38,8 +39,16 @@ class MissileCountResponseMessage(BaseMessage):
         super().__init__(type=MessageType.MISSILE_COUNT_RESPONSE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.count = count
 
+
 class FoundObjectsMessage(BaseMessage):
-    '''Сообщение о найденных объектах радиолокатором'''
-    def __init__(self, time: int, sender_id: int, receiver_id: int, visible_objects: List[np.array]):
+    """Сообщение о найденных объектах радиолокатором"""
+    def __init__(self, time: int, sender_id: int, receiver_id: int, visible_objects: List[np.ndarray]):
         super().__init__(type=MessageType.FOUND_OBJECTS, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.visible_objects = visible_objects
+
+
+class ActiveObjectsMessage(BaseMessage):
+    """Сообщение об активных объектах"""
+    def __init__(self, time: int, sender_id: int, receiver_id: int, active_objects: List[Target]):
+        super().__init__(type=MessageType.ACTIVE_OBJECTS, time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.active_objects = active_objects
