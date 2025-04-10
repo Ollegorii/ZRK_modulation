@@ -3,7 +3,7 @@ from .AirEnv import Target
 from .Manager import Manager
 from .constants import MessageType, CCP_ID
 from .BaseModel import BaseModel
-from .Messages import FoundObjectsMessage
+from .Messages import FoundObjectsMessage, ActiveObjectsMessage
 from typing import List, Tuple
 
 class SectorRadar(BaseModel):
@@ -146,9 +146,11 @@ class SectorRadar(BaseModel):
         """
         Выполнение одного шага симуляции для МФР
         """
-        objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)
+        objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS).active_objects
+        if not isinstance(objects, ActiveObjectsMessage):
+            raise "RADAR ERROR: Message from AirEnv does not belong to expected class"
         if len(objects) == 0:
-            raise "Air Env does not send objects to Radar"
+            raise "RADAR ERROR: Air Env send empty message to Radar"
         visible_objects = self.find_visible_objects(objects)
         print(f"Видимые объекты: {visible_objects}")
         self._manager.add_message(FoundObjectsMessage(self._manager.time.get_time(), self.id, CCP_ID, visible_objects))
