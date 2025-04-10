@@ -1,9 +1,9 @@
 import numpy as np
 from .AirEnv import Target
 from .Manager import Manager
-from .constants import MessageType, CCP_ID
+from .constants import *
 from .BaseModel import BaseModel
-from .Messages import FoundObjectsMessage, ActiveObjectsMessage
+from .Messages import * 
 from typing import List, Tuple
 
 class SectorRadar(BaseModel):
@@ -155,7 +155,10 @@ class SectorRadar(BaseModel):
         print(f"Видимые объекты: {visible_objects}")
         self._manager.add_message(FoundObjectsMessage(self._manager.time.get_time(), self.id, CCP_ID, visible_objects))
         ### tbd ! ПРИЕМ СООБЩЕНИЯ ОТ ПБУ
-        ### tbd ! ОТПРАВКА СООБЩЕНИЯ РАКЕТЕ
+        messages_to_missile = {'id_missile' : Target}
+        # ОТПРАВКА СООБЩЕНИЙ РАКЕТАМ
+        for id_missile in messages_to_missile.keys:
+            self._manager.add_message(UpdateTargetPosition(self._manager.time.get_time(), self.id, id_missile, messages_to_missile[id_missile]))
         ### tbd ! ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ (нужно ли оно?)
         self.move_to_next_sector()
 
