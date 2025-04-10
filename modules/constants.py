@@ -7,6 +7,7 @@ class MessageType(Enum):
     MISSILE_COUNT_RESPONSE = "missile_count_response"
     FOUND_OBJECTS = "found_objects"
     ACTIVE_OBJECTS = "active_objects"
+    UPDATE_TARGET = 'upd_target'
 
 GUIDED_MISSILE_SPEED = 1000  # м/с
 GUIDED_MISSILE_LIFETIME = 60  # секунд
