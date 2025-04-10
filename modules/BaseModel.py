@@ -1,8 +1,7 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
-from typing import List
 
-from .Manager import BaseMessage, Manager
+from .Manager import Manager
 
 
 class BaseModel(metaclass=ABCMeta):
@@ -12,7 +11,7 @@ class BaseModel(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def __init__(self, manager: Manager, id: int, pos: np.array) -> None:
+    def __init__(self, manager: Manager, id: int, pos: np.ndarray) -> None:
         """
         Базовый класс моделей
 
@@ -29,11 +28,11 @@ class BaseModel(metaclass=ABCMeta):
         return self.__id
 
     @property
-    def pos(self) -> np.array:
+    def pos(self) -> np.ndarray:
         return self.__pos
 
     @pos.setter
-    def pos(self, new_pos: np.array) -> None:
+    def pos(self, new_pos: np.ndarray) -> None:
         self.__pos = new_pos
 
     @abstractmethod
@@ -41,21 +40,5 @@ class BaseModel(metaclass=ABCMeta):
         """
         Абстрактный метод, реализующий один шаг симуляции объекта.
         Должен быть переопределен в дочерних классах.
-        """
-        pass
-
-    def send_message(self, msg) -> None:
-        """
-        Отправляет сообщение через менеджер другим объектам.
-
-        :param msg: объект сообщения для отправки
-        """
-        pass
-
-    def get_messages(self) -> List[BaseMessage]:
-        """
-        Получает список сообщений, адресованных данному объекту.
-
-        :return: список полученных сообщений
         """
         pass

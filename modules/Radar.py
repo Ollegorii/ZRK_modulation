@@ -1,4 +1,5 @@
 import numpy as np
+from .AirEnv import Target
 from .Manager import Manager
 from .constants import MessageType, CCP_ID
 from .BaseModel import BaseModel
@@ -8,9 +9,9 @@ from typing import List, Tuple
 class SectorRadar(BaseModel):
     def __init__(
         self,
-        manager: Manager, 
-        id: int, 
-        pos: np.array,
+        manager: Manager,
+        id: int,
+        pos: np.ndarray,
         azimuth_start: float,
         elevation_start: float,
         max_distance: float,
@@ -153,7 +154,7 @@ class SectorRadar(BaseModel):
         self._manager.add_message(FoundObjectsMessage(self._manager.time.get_time(), self.id, CCP_ID, visible_objects))
         ### tbd ! ПРИЕМ СООБЩЕНИЯ ОТ ПБУ
         ### tbd ! ОТПРАВКА СООБЩЕНИЯ РАКЕТЕ
-        ### tbd ! ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ (нужно ли оно?)   
+        ### tbd ! ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ (нужно ли оно?)
         self.move_to_next_sector()
 
 
