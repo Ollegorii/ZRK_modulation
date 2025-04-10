@@ -71,3 +71,13 @@ class ActiveObjectsMessage(BaseMessage):
     def __init__(self, time: int, sender_id: int, receiver_id: int, active_objects: List[Target]):
         super().__init__(type=MessageType.ACTIVE_OBJECTS, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.active_objects = active_objects
+
+
+class UpdateTargetPosition(BaseMessage):
+    """
+    Radar -> Missile
+    Сообщение о новом положении цели
+    """
+    def __init__(self, time: int, sender_id: int, receiver_id: int, upd_object: Target):
+        super().__init__(type=MessageType.UPDATE_TARGET, time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.upd_object = upd_object
