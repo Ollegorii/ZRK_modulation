@@ -7,7 +7,7 @@ from modules.AirEnv import TargetType
 # Возможно наследование от какого-то базового класса типа BaseUnit/Unit/Movable
 class TargetCCP:
     """ Класс для хранения основных параметров сопровождаемых целей	"""
-    def __init__(self, type: TargetType, coord: np.array, speed: np.array, upd_time: float) -> None:
+    def __init__(self, type: TargetType, coord: np.ndarray, speed: np.ndarray, upd_time: float) -> None:
         """
         :param type: тип цели
         :param coord: координаты цели
@@ -33,7 +33,7 @@ class TargetCCP:
 # Возможно наследование от какого-то базового класса типа BaseUnit/Unit/Movable
 class RocketCCP:
     """ Класс для хранения основных параметров запущенных ЗУР	"""
-    def __init__(self, coord: np.array, speed:np.array, id: int, target: TargetCCP, time):
+    def __init__(self, coord: np.ndarray, speed: np.ndarray, id: int, target: TargetCCP, time):
         """
         :param coord: текущие координаты ЗУР
         :param id: id ЗУР

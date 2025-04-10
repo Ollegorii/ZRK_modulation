@@ -1,8 +1,10 @@
+from typing import List
 import numpy as np
 from enum import Enum
 
 from .BaseModel import BaseModel
 from .AirObject import AirObject
+from .Messages import ActiveObjectsMessage
 
 
 class TargetType(Enum):
@@ -16,7 +18,7 @@ class Target(AirObject):
     Класс воздушной цели
     """
 
-    def __init__(self, id: int, type: TargetType, pos: np.array=None, velocity: np.array=None):
+    def __init__(self, id: int, type: TargetType, pos: np.ndarray = None, velocity: np.ndarray = None):
         """
         Инициализация воздушной цели
 
@@ -30,13 +32,12 @@ class Target(AirObject):
         return self.__type
 
 
-
 class AirEnv(BaseModel):
     """
     Класс воздушной обстановки
     """
 
-    def __init__(self, manager, id: int, pos: np.array) -> None:
+    def __init__(self, manager, id: int, pos: np.ndarray) -> None:
         """
         Класс воздушной обстановки
 
@@ -47,13 +48,14 @@ class AirEnv(BaseModel):
         super().__init__(manager, id, pos)
         self.__targets = []
 
-    def add_target(self, target) -> None:
+    def add_targets(self, targets: List[Target]) -> None:
         """
         Добавление новой цели в ВО
 
-        :param target: цель для добавления
+        :param targets: цель для добавления
         """
-        self.__targets.append(target)
+        for target in targets:
+            self.__targets.append(target)
 
     def step(self) -> None:
         """
@@ -62,4 +64,9 @@ class AirEnv(BaseModel):
         for target in self.__targets:
             target.step()
 
-        # self.send_message(targets_message)
+        self._manager.add_message(ActiveObjectsMessage(
+            time=self._manager.time.get_time(),
+            sender_id=self.id,
+            receiver_id=None,
+            active_objects=self.__targets,
+        ))
