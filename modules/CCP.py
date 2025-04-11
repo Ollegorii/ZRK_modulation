@@ -2,6 +2,7 @@ import typing
 import numpy as np
 from modules.BaseModel import BaseModel, Manager
 from modules.AirEnv import TargetType
+from modules.Messages import *
 
 OLD_TARGET = "старая цель"
 NEW_TARGET = "новая цель"
@@ -67,13 +68,13 @@ class RocketCCP:
 class CombatControlPoint(BaseModel):
     """ Класс ПБУ	"""
 
-    def __init__(self, manager: Manager, id: int, missile_launcher_coords: dict, radars_coords: dict):
+    def __init__(self, manager: Manager, id: int, missile_launcher_coords: dict, radars_coords: dict, position: np.ndarray):
         """
         :param manager: менеджер моделей
         :param id: id объекта моделирования
         :param radars_coords: словарь с координатами всех МФР
         """
-        super().__init__(manager, id, None)
+        super().__init__(manager, id, position)
         self._target_dict = {}  # Отслеживаемые цели
         self._next_target_id = 0
         self._missile_dict = {}  # Отслеживаемые ЗУР
@@ -141,20 +142,26 @@ class CombatControlPoint(BaseModel):
             self.missile_launcher_capacity[key] = 0
             self.missile_launcher_launched[key] = 0
 
-            # self._sendMessage(MLCapacityMsg(time, self._ID, key))  # ПБУ запрашивает у ПУ количество ЗУР
+            req_count_msg = MissileCountRequestMessage(
+                time=time,
+                sender_id=self.id,
+                receiver_id=key
+            )
+
+            self._manager.add_message(req_count_msg)  # ПБУ запрашивает у ПУ количество ЗУР
             print(f"ПБУ запрашивает у ПУ с id {key} количество ЗУР")
 
     def get_current_missile_launcher_capacity(self):
-        msg_missile_capacity = self.zaglushka
+        msg_missile_capacity = self._manager.give_messages_by_type(MessageType.MISSILE_COUNT_RESPONSE)
         if len(msg_missile_capacity) > 0:
             print(f"ПБУ получил от ПУ {len(msg_missile_capacity)} сообщений о кол-ве ЗУР")
 
             for msg in msg_missile_capacity:
-                self.missile_launcher_capacity[msg.sender_ID] = msg.missile_number
-                print(f"ПБУ получил от ПУ {msg.sender_ID} сообщений о {msg.missile_number} ЗУР")
+                self.missile_launcher_capacity[msg.sender_id] = msg.count
+                print(f"ПБУ получил от ПУ {msg.sender_id} сообщений о {msg.count} ЗУР")
 
     def check_if_missile_get_hit(self):
-        msg_hit_missiles = self.zaglushka
+        msg_hit_missiles = self._manager.give_messages_by_type(MessageType.MISSILE_GET_HIT) # remember Oleg
 
         if len(msg_hit_missiles) != 0:
             print(f"ПБУ получил сообщения от МФР об уничтожении ЗУР")
@@ -163,11 +170,11 @@ class CombatControlPoint(BaseModel):
                 self.delete_rocket(msg.missile_id)
 
     def check_if_missiles_launched(self, time):
-        msg_launched_missiles = self.zaglushka
+        msg_launched_missiles = self._manager.give_messages_by_type(MessageType.LAUNCHED_MISSILE)
         print(f"ПБУ получил от ПУ {len(msg_launched_missiles)} сообщений о запуске ЗУР")
         if len(msg_launched_missiles) > 0:
-            # if not isinstance(msg_launched_missiles, list):
-            #     msg_launched_missiles = [msg_launched_missiles]
+            if not isinstance(msg_launched_missiles, list):
+                msg_launched_missiles = [msg_launched_missiles]
 
             # Соотносим id ЗУР, координаты ЗУР и координаты их целей
             for msg in msg_launched_missiles:
@@ -179,7 +186,7 @@ class CombatControlPoint(BaseModel):
                 target_vel = self._target_dict[target_key].speed_dir
 
                 missile_id = msg.missile_id
-                ML_id = msg.sender_ID
+                ML_id = msg.sender_id
                 missile_coord = self.missile_launcher_coords[ML_id]
 
                 self._next_missile_id = self._next_missile_id + 1
