@@ -8,9 +8,16 @@ class MessageType(Enum):
     FOUND_OBJECTS = "found_objects"
     ACTIVE_OBJECTS = "active_objects"
     UPDATE_TARGET = 'upd_target'
+    MISSILE_GET_HIT = 'missile_get_hit'
 
 GUIDED_MISSILE_SPEED = 1000  # м/с
 GUIDED_MISSILE_LIFETIME = 60  # секунд
 GUIDED_MISSILE_EXPL_RADIUS = 50  # метров
+
+MIN_DIST_DETECTION = 30  # метров
+MAX_DIST_DETECTION = 50000 # метров
+
+MISSILE_TYPE_DRAWER = 0
+TARGET_TYPE_DRAWER = 1
 
 CCP_ID = 0

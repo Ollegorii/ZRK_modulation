@@ -23,15 +23,29 @@ class LaunchMissileMessage(BaseMessage):
         super().__init__(type=MessageType.LAUNCH_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.status = status
 
+class CPPLaunchMissileRequestMessage(BaseMessage):
+    """
+    CCP -> MissileLauncher
+    Сообщение на запуск ракеты по указанной цели
+    """
+    def __init__(self, time: int, sender_id: int, receiver_id: int, target_id: int, target_position: int, radar_id: int):
+        super().__init__(type=MessageType.LAUNCHED_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.target_id = target_id
+        self.target_position = target_position
+        self.radar_id = radar_id
+
 
 class LaunchedMissileMessage(BaseMessage):
     """
     MissileLauncher -> CCP
     Сообщение об успешном запуске ракеты
     """
-    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int):
+    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int, target_id: int):
         super().__init__(type=MessageType.LAUNCHED_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile_id = missile_id
+        self.target_id = target_id
+
+
 
 
 class MissileCountRequestMessage(BaseMessage):
@@ -61,6 +75,16 @@ class FoundObjectsMessage(BaseMessage):
     def __init__(self, time: int, sender_id: int, receiver_id: int, visible_objects: List[np.ndarray]):
         super().__init__(type=MessageType.FOUND_OBJECTS, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.visible_objects = visible_objects
+
+class CPPUpdateTargetRadarMessage(BaseMessage):
+    """
+    CCP -> Radar
+    Сообщение на обновление координат цели
+    """
+    def __init__(self, time: int, sender_id: int, receiver_id: int, target: int, missile_id: int):
+        super().__init__(type=MessageType.UPDATE_TARGET, time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.target = target
+        self.missile_id = missile_id
 
 
 class ActiveObjectsMessage(BaseMessage):
