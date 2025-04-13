@@ -9,6 +9,7 @@ class MessageType(Enum):
     ACTIVE_OBJECTS = "active_objects"
     UPDATE_TARGET = 'upd_target'
     MISSILE_GET_HIT = 'missile_get_hit'
+    DESTROYED_MISSILE = 'destroyed_missile'
 
 GUIDED_MISSILE_SPEED = 1000  # м/с
 GUIDED_MISSILE_LIFETIME = 60  # секунд
