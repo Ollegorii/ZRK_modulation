@@ -105,3 +105,13 @@ class UpdateTargetPosition(BaseMessage):
     def __init__(self, time: int, sender_id: int, receiver_id: int, upd_object: Target):
         super().__init__(type=MessageType.UPDATE_TARGET, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.upd_object = upd_object
+
+
+class DestroyedMissileId(BaseMessage):
+    """
+    Radar -> CCP
+    Сообщение с id уничтноженной ракеты
+    """
+    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: Target):
+        super().__init__(type=MessageType.DESTROYED_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.missile_id = missile_id

@@ -146,6 +146,7 @@ class SectorRadar(BaseModel):
         """
         Выполнение одного шага симуляции для МФР
         """
+        current_time = self._manager.time.get_time()
         objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS).active_objects
         if not isinstance(objects, ActiveObjectsMessage):
             raise "RADAR ERROR: Message from AirEnv does not belong to expected class"
@@ -153,13 +154,16 @@ class SectorRadar(BaseModel):
             raise "RADAR ERROR: Air Env send empty message to Radar"
         visible_objects = self.find_visible_objects(objects)
         print(f"Видимые объекты: {visible_objects}")
-        self._manager.add_message(FoundObjectsMessage(self._manager.time.get_time(), self.id, CCP_ID, visible_objects))
+        self._manager.add_message(FoundObjectsMessage(current_time, self.id, CCP_ID, visible_objects))
         ### tbd ! ПРИЕМ СООБЩЕНИЯ ОТ ПБУ
         messages_to_missile = {'id_missile' : Target}
         # ОТПРАВКА СООБЩЕНИЙ РАКЕТАМ
         for id_missile in messages_to_missile.keys:
-            self._manager.add_message(UpdateTargetPosition(self._manager.time.get_time(), self.id, id_missile, messages_to_missile[id_missile]))
-        ### tbd ! ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ (нужно ли оно?)
+            self._manager.add_message(UpdateTargetPosition(current_time, self.id, id_missile, messages_to_missile[id_missile]))
+        ### tbd ! ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ 
+        destroy_missile_id = self._manager.give_messages_by_type()
+        ### ОТПРАВКА УНИЧТНОЖЕННОЙ РАКЕТЫ НА ПБУ
+        self._manager.add_message(DestroyedMissileId(current_time, self.id, CCP_ID, destroy_missile_id))
         self.move_to_next_sector()
 
 
