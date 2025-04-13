@@ -9,6 +9,7 @@ class AirObject(metaclass=ABCMeta):
         self.id = id
         self.__pos = pos
         self.__velocity = velocity
+        self.__speed = np.linalg.norm(velocity)
 
     @property
     def pos(self):
@@ -21,10 +22,15 @@ class AirObject(metaclass=ABCMeta):
     @property
     def velocity(self):
         return self.__velocity
+    
+    @property
+    def speed(self):
+        return self.__speed
 
     @velocity.setter
     def velocity(self, value):
         self.__velocity = value
+        self.__speed = np.linalg.norm(self.__velocity)
 
     def step(self):
         """
