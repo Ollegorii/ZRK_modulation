@@ -1,5 +1,7 @@
 from .BaseMessage import BaseMessage
 import numpy as np
+
+from .Missile import Missile
 from .constants import MessageType
 from enum import Enum
 from typing import List
@@ -38,7 +40,7 @@ class CPPLaunchMissileRequestMessage(BaseMessage):
     Сообщение на запуск ракеты по указанной цели
     """
     def __init__(self, time: int, sender_id: int, receiver_id: int, target_id: int, target_position: int, radar_id: int):
-        super().__init__(type=MessageType.LAUNCH_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
+        super().__init__(type=MessageType.LAUNCH_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.target_id = target_id
         self.target_position = target_position
         self.radar_id = radar_id
@@ -49,9 +51,9 @@ class LaunchedMissileMessage(BaseMessage):
     MissileLauncher -> CCP
     Сообщение об успешном запуске ракеты
     """
-    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int, target_id: int):
+    def __init__(self, time: int, sender_id: int, receiver_id: int, missile: Missile, target_id: int):
         super().__init__(type=MessageType.LAUNCHED_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
-        self.missile_id = missile_id
+        self.missile = missile
         self.target_id = target_id
 
 
