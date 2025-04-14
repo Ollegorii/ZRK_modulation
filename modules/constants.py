@@ -10,6 +10,7 @@ class MessageType(Enum):
     UPDATE_TARGET = 'upd_target'
     MISSILE_GET_HIT = 'missile_get_hit'
     DESTROYED_MISSILE = 'destroyed_missile'
+    CCP_INIT_MESSAGE = 'CPP_init_message'
 
 GUIDED_MISSILE_SPEED = 1000  # м/с
 GUIDED_MISSILE_LIFETIME = 60  # секунд
@@ -22,3 +23,5 @@ MISSILE_TYPE_DRAWER = 0
 TARGET_TYPE_DRAWER = 1
 
 CCP_ID = 0
+DRAWER_ID = 1
+MANAGER_ID = 2
