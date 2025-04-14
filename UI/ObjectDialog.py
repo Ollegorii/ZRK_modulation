@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QComboBox, QDialog, QDialogButtonBox, QFormLayout, QLineEdit)
 
-from Enums import ObjectType
+from UI.Enums import ObjectType
 
 
 class ObjectDialog(QDialog):

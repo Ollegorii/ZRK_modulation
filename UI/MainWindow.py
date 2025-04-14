@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication
 
 
-from PolygonEditor import PolygonEditor
+from UI.PolygonEditor import PolygonEditor
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
