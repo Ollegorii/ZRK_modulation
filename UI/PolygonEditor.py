@@ -8,10 +8,10 @@ from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout,
                              QDialog, QGraphicsScene, QGraphicsTextItem,
                              QMessageBox, QSlider, QStatusBar)
 
-from Enums import ObjectType
-from MapGraphicsView import MapGraphicsView
-from MapObject import MapObject
-from ObjectDialog import ObjectDialog
+from UI.Enums import ObjectType
+from UI.MapGraphicsView import MapGraphicsView
+from UI.MapObject import MapObject
+from UI.ObjectDialog import ObjectDialog
 
 
 class PolygonEditor(QMainWindow):
