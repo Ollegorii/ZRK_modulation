@@ -29,7 +29,7 @@ class CPPLaunchMissileRequestMessage(BaseMessage):
     Сообщение на запуск ракеты по указанной цели
     """
     def __init__(self, time: int, sender_id: int, receiver_id: int, target_id: int, target_position: int, radar_id: int):
-        super().__init__(type=MessageType.LAUNCHED_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
+        super().__init__(type=MessageType.LAUNCH_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.target_id = target_id
         self.target_position = target_position
         self.radar_id = radar_id
