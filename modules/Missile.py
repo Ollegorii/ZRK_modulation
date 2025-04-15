@@ -4,6 +4,7 @@ from AirObject import AirObject, Trajectory
 from Messages import MissileDetonateMessage, MissilePosMessage
 from constants import MessageType, MISSILE_VELOCITY_MODULE, MISSILE_DETONATE_RADIUS, MISSILE_DETONATE_PERIOD
 
+
 class Missile(AirObject):
     """Класс, моделирующий работу ЗУР с корректировкой траектории"""
 
