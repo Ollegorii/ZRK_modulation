@@ -2,10 +2,8 @@ from .BaseMessage import BaseMessage
 import numpy as np
 from .constants import MessageType
 from enum import Enum
-from typing import List, Tuple
+from typing import List
 
-from .BaseModel import BaseModel
-from .AirObject import AirObject
 from .AirEnv import Target
 
 
