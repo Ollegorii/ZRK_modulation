@@ -46,8 +46,6 @@ class LaunchedMissileMessage(BaseMessage):
         self.target_id = target_id
 
 
-
-
 class MissileCountRequestMessage(BaseMessage):
     """
     CCP -> MissileLauncher
@@ -92,7 +90,7 @@ class ActiveObjectsMessage(BaseMessage):
     AirEnv -> Radar
     Сообщение об активных объектах
     """
-    def __init__(self, time: int, sender_id: int, receiver_id: int, active_objects: List[Target]):
+    def __init__(self, time: int, sender_id: int, receiver_id: int, active_objects: List[AirObject]):
         super().__init__(type=MessageType.ACTIVE_OBJECTS, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.active_objects = active_objects
 
