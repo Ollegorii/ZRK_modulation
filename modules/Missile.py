@@ -1,171 +1,141 @@
 import numpy as np
-from typing import Optional, Tuple, Any
-from .constants import *
+from typing import Optional
+from AirObject import AirObject, Trajectory
+from Messages import MissileDetonateMessage, MissilePosMessage
+from constants import MessageType, MISSILE_VELOCITY_MODULE, MISSILE_DETONATE_RADIUS, MISSILE_DETONATE_PERIOD
 
+class Missile(AirObject):
+    """Класс, моделирующий работу ЗУР с корректировкой траектории"""
 
-class Missile:
-    """
-    Класс, представляющий управляемую ракету зенитно-ракетного комплекса.
-    Моделирует движение, наведение и подрыв ракеты.
-    """
-    
-    def __init__(self, 
-                 dispatcher: Any, 
-                 ID: int,
-                 vel: float = GUIDED_MISSILE_SPEED,
-                 life_time: float = GUIDED_MISSILE_LIFETIME,
-                 expl_radius: float = GUIDED_MISSILE_EXPL_RADIUS) -> None:
-        """
-        Инициализация ракеты
-        
-        :param dispatcher: Диспетчер модели, обеспечивающий связь между компонентами
-        :param ID: Уникальный идентификатор ракеты
-        :param vel: Скорость полета ракеты в м/с
-        :param life_time: Максимальное время жизни ракеты в секундах
-        :param expl_radius: Радиус поражения при взрыве в метрах
-        """
-        self.id = ID
-        self.dispatcher = dispatcher
-        self.velocity = vel
-        self.life_time = life_time
-        self.expl_radius = expl_radius
-        
-        # Текущие параметры состояния
-        self.pos = None  # Текущая позиция (будет установлена при запуске)
-        self.target_pos = None  # Позиция цели для наведения
-        self.launch_time = None  # Время запуска
-        self.is_active = False  # Активна ли ракета
-        self.is_launched = False  # Запущена ли ракета
-        self.distance_traveled = 0.0  # Пройденное расстояние
-        self.flight_time = 0.0  # Время полёта
-        
-        # Параметры наведения
-        self.guidance_type = "proportional"  # Тип наведения: "proportional", "pursuit", "lead"
-        self.target_id = None  # ID цели
-        self.hit_probability = 0.9  # Вероятность попадания при подлете на расстояние поражения
-        
-        # Траектория полета
-        self.trajectory = []  # Для сохранения истории полета
-        
-        print(f"Создана ракета ID: {self.id}, скорость: {self.velocity} м/с, "
-              f"время жизни: {self.life_time} с, радиус поражения: {self.expl_radius} м")
-    
-    def launch(self, start_pos: np.ndarray, target_pos: np.ndarray, 
-               target_id: Optional[int] = None, current_time: float = 0) -> bool:
-        """
-        Запуск ракеты
-        
-        :param start_pos: Начальная позиция ракеты (координаты пусковой установки)
-        :param target_pos: Текущая позиция цели
-        :param target_id: ID цели (если известно)
-        :param current_time: Текущее время симуляции
-        :return: Успешность запуска
-        """
-        if self.is_launched:
-            print(f"Ракета {self.id} уже запущена")
-            return False
-        
-        self.pos = np.array(start_pos, dtype=float)
-        self.target_pos = np.array(target_pos, dtype=float)
-        self.target_id = target_id
-        self.launch_time = current_time
-        self.is_launched = True
-        self.is_active = True
-        self.trajectory = [self.pos.copy()]
-        
-        # Вектор направления на цель
-        direction = self.target_pos - self.pos
-        self.direction_norm = direction / np.linalg.norm(direction)
-        
-        print(f"Ракета {self.id} запущена с позиции {self.pos} в направлении цели {self.target_pos}")
-        return True
-    
-    def update(self, dt: float, current_time: float, new_target_pos: Optional[np.ndarray] = None) -> Tuple[bool, bool]:
-        """
-        Обновление состояния ракеты
-        
-        :param dt: Шаг времени
-        :param current_time: Текущее время симуляции
-        :param new_target_pos: Новая позиция цели (если есть обновленные данные)
-        :return: Кортеж (hit, active): hit - произошло ли поражение цели, active - активна ли ракета
-        """
-        if not self.is_launched or not self.is_active:
-            return False, False
-        
-        # Обновляем время полета
-        self.flight_time = current_time - self.launch_time
-        
-        # Проверяем время жизни
-        if self.flight_time >= self.life_time:
-            print(f"Ракета {self.id} исчерпала время жизни")
-            self.is_active = False
-            return False, False
-        
-        # Обновляем позицию цели, если есть новые данные
-        if new_target_pos is not None:
-            self.target_pos = np.array(new_target_pos, dtype=float)
-        
-        # Вычисляем новое направление на цель (для систем наведения)
-        if self.guidance_type in ["proportional", "lead"]:
-            direction = self.target_pos - self.pos
-            distance = np.linalg.norm(direction)
-            
-            # Если цель в радиусе поражения, считаем попадание
-            if distance <= self.expl_radius:
-                print(f"Ракета {self.id} достигла цели! Расстояние: {distance:.2f} м")
-                self.is_active = False
-                return True, False
-            
-            # Обновляем направление движения
-            self.direction_norm = direction / distance
-        
-        # Вычисляем перемещение
-        movement = self.direction_norm * self.velocity * dt
-        self.pos += movement
-        self.distance_traveled += np.linalg.norm(movement)
-        
-        # Сохраняем точку траектории
-        self.trajectory.append(self.pos.copy())
-        
-        return False, True
-    
-    def detonate(self) -> bool:
-        """
-        Принудительный подрыв ракеты
-        
-        :return: Успешность подрыва
-        """
-        if not self.is_active:
-            return False
-        
-        print(f"Ракета {self.id} подорвана принудительно")
-        self.is_active = False
-        return True
-    
-    def get_status(self) -> dict:
-        """
-        Получение текущего статуса ракеты
-        
-        :return: Словарь с параметрами состояния
-        """
-        return {
-            "id": self.id,
-            "active": self.is_active,
-            "launched": self.is_launched,
-            "position": self.pos.tolist() if self.pos is not None else None,
-            "target_position": self.target_pos.tolist() if self.target_pos is not None else None,
-            "flight_time": self.flight_time,
-            "distance_traveled": self.distance_traveled,
-            "remaining_lifetime": max(0, self.life_time - self.flight_time) if self.is_launched else self.life_time
-        }
-    
-    def __str__(self) -> str:
-        """
-        Строковое представление ракеты
-        
-        :return: Информация о ракете в текстовом виде
-        """
-        status = "активна" if self.is_active else "неактивна"
-        launched = "запущена" if self.is_launched else "не запущена"
-        position = f"позиция: {self.pos}" if self.pos is not None else "не установлена позиция"
-        return f"Ракета ID:{self.id}, {status}, {launched}, {position}"
+    def __init__(self,
+                 manager,
+                 id: int,
+                 pos: np.ndarray,
+                 velocity_module: float = MISSILE_VELOCITY_MODULE,
+                 detonate_radius: float = MISSILE_DETONATE_RADIUS,
+                 detonate_period: float = MISSILE_DETONATE_PERIOD):
+
+        initial_trajectory = Trajectory(start_pos=pos)
+        super().__init__(manager, id, pos, initial_trajectory)
+        self.velocity_module = velocity_module
+        self.detonate_radius = detonate_radius
+        self.detonate_period = detonate_period
+        self.status = 'wait'
+        self.launch_time: Optional[float] = None
+        self.target: Optional[AirObject] = None
+
+    def set(self, target: AirObject) -> None:
+        """Взведение ЗУР в боевое положение"""
+        if self.status != 'wait':
+            return
+
+        self.status = 'ready'
+        self.target = target
+        self._calculate_trajectory(target)
+
+    def _calculate_trajectory(self, target: AirObject) -> None:
+        # Расчет параметров траектории с текущей позиции
+        target_vel = target.trajectory.velocity
+        D = target.pos - self.pos
+
+        A = np.sum(np.square(target_vel)) - self.velocity_module**2
+        B = 2 * np.dot(target_vel, D)
+        C = np.sum(np.square(D))
+
+        discriminant = B**2 - 4*A*C
+        if discriminant < 0:
+            raise ValueError("Невозможно рассчитать траекторию")
+
+        roots = [
+            (-B + np.sqrt(discriminant)) / (2*A),
+            (-B - np.sqrt(discriminant)) / (2*A)
+        ]
+
+        delta_t = min([r for r in roots if r > 0], default=None)
+        if delta_t is None:
+            raise ValueError("Нет допустимого времени перехвата")
+
+        V_rocket = target_vel + D/delta_t
+        V_norm = V_rocket / np.linalg.norm(V_rocket) * self.velocity_module
+
+        # Сохраняем оригинальное время запуска при обновлении траектории
+        new_trajectory = Trajectory(
+            velocity=tuple(V_norm),
+            start_pos=tuple(self.pos),
+            start_time=self._manager.time.get_time() if self.status == 'active' else 0
+        )
+        self._set_trajectory(new_trajectory)
+
+    def _launch(self) -> None:
+        """Запуск ракеты"""
+        self.status = 'active'
+        self.launch_time = self._manager.time.get_time()
+        # Обновляем время старта в траектории
+        self.trajectory.start_time = self.launch_time
+
+    def _set_trajectory(self, new_trajectory: Trajectory) -> None:
+        self.trajectory = new_trajectory
+
+    def _detonate(self) -> None:
+        """Инициирование подрыва"""
+        self.status = 'detonated'
+        current_time = self._manager.time.get_time()
+
+        # Отправка сообщений о подрыве
+        detonate_msg = MissileDetonateMessage(
+            time=current_time,
+            sender_id=self.id,
+            receiver_id=None,
+            missile_id=self.id
+        )
+        self._manager.add_message(detonate_msg)
+
+    def step(self) -> None:
+        current_time = self._manager.time.get_time()
+
+        if self.status == 'ready':
+            # Проверка сообщений на запуск
+            messages = self._manager.give_messages_by_type(
+                MessageType.LAUNCH_MISSILE,
+                self.id
+            )
+            if messages:
+                self._launch()
+
+        elif self.status == 'active':
+            # Обработка сообщений с обновлением цели
+            update_messages = self._manager.give_messages_by_type(
+                MessageType.UPDATE_TARGET,
+                self.id,
+                current_time
+            )
+            for msg in update_messages:
+                self.target = msg.upd_object
+                self._calculate_trajectory(self.target)
+
+            # Расчет времени относительно оригинального запуска
+            dt = current_time - self.launch_time
+
+            # Обновление позиции с учетом времени жизни ракеты
+            self.pos = self.trajectory.get_pos(dt)
+
+            # Отправка позиции
+            pos_msg = MissilePosMessage(
+                time=current_time,
+                sender_id=self.id,
+                receiver_id=None,
+                missile_id=self.id
+            )
+            self._manager.add_message(pos_msg)
+
+            # Проверка дистанции до цели
+            if self.target and np.linalg.norm(self.pos - self.target.pos) < self.detonate_radius:
+                self._detonate()
+
+            # Проверка таймера (время с момента запуска)
+            if dt >= self.detonate_period:
+                self._detonate()
+
+        elif self.status == 'detonated':
+            # Удаление из системы
+            self._manager.remove_module(self.id)

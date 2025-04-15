@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class MessageType(Enum):
     LAUNCH_MISSILE = "launch_missile"
     LAUNCHED_MISSILE = "launched_missile"
@@ -11,17 +12,19 @@ class MessageType(Enum):
     MISSILE_GET_HIT = 'missile_get_hit'
     DESTROYED_MISSILE = 'destroyed_missile'
     CCP_INIT_MESSAGE = 'CPP_init_message'
+    MISSILE_POS = 'missile_pos'
+    MISSILE_DETONATE = 'missile_detonate'
 
 
-SIMULATION_STEP = 1  # d_t
+SIMULATION_STEP = 0.1  # d_t в секундах
 
-GUIDED_MISSILE_SPEED = 1000  # м/с
-GUIDED_MISSILE_LIFETIME = 60  # секунд
-GUIDED_MISSILE_EXPL_RADIUS = 50  # метров
+MISSILE_VELOCITY_MODULE = 1600  # м/с
+MISSILE_DETONATE_PERIOD = 120  # секунд
+MISSILE_DETONATE_RADIUS = MISSILE_VELOCITY_MODULE * 2 * SIMULATION_STEP  # метров
 
 MIN_DIST_DETECTION = 30  # метров
-MAX_DIST_DETECTION = 50000 # метров
-POSSIBLE_TARGET_RADIUS = 10 # метров
+MAX_DIST_DETECTION = 50000  # метров
+POSSIBLE_TARGET_RADIUS = 10  # метров
 
 MISSILE_TYPE_DRAWER = 0
 TARGET_TYPE_DRAWER = 1
