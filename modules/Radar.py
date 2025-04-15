@@ -50,7 +50,7 @@ class SectorRadar(BaseModel):
         self.current_azimuth = azimuth_start
         self.current_elevation = elevation_start
 
-    def find_visible_objects(self, objects: List[Target]) -> List[Tuple[Target, float]]:
+    def find_visible_objects(self, objects: List[AirObject]) -> List[AirObject]:
         """
         Поиск объектов, видимых радаром в текущем секторе.
 
@@ -76,7 +76,7 @@ class SectorRadar(BaseModel):
                 self.current_azimuth <= azimuth <= self.current_azimuth + self.azimuth_range
                 and self.current_elevation <= elevation <= self.current_elevation + self.elevation_range
             ):
-                visible_objects.append((obj, distance))
+                visible_objects.append(obj)
 
         return visible_objects
 
@@ -147,7 +147,8 @@ class SectorRadar(BaseModel):
         Выполнение одного шага симуляции для МФР
         """
         current_time = self._manager.time.get_time()
-        objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS).active_objects
+        dt = self._manager.time.get_dt()
+        objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)[0].active_objects
         if not isinstance(objects, ActiveObjectsMessage):
             raise "RADAR ERROR: Message from AirEnv does not belong to expected class"
         if len(objects) == 0:
@@ -156,10 +157,12 @@ class SectorRadar(BaseModel):
         print(f"Видимые объекты: {visible_objects}")
         self._manager.add_message(FoundObjectsMessage(current_time, self.id, CCP_ID, visible_objects))
         ### tbd ! ПРИЕМ СООБЩЕНИЯ ОТ ПБУ
-        messages_to_missile = {'id_missile' : Target}
+        messages_to_missile = self._manager.give_messages_by_type(MessageType.UPDATE_TARGET, step_time=current_time-dt)
         # ОТПРАВКА СООБЩЕНИЙ РАКЕТАМ
-        for id_missile in messages_to_missile.keys:
-            self._manager.add_message(UpdateTargetPosition(current_time, self.id, id_missile, messages_to_missile[id_missile]))
+        for message in messages_to_missile:
+            id_missile = message.missile_id
+            target = message.target
+            self._manager.add_message(UpdateTargetPosition(current_time, self.id, id_missile, target))
         ### tbd ! ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ 
         destroy_missile_id = self._manager.give_messages_by_type()
         ### ОТПРАВКА УНИЧТНОЖЕННОЙ РАКЕТЫ НА ПБУ
