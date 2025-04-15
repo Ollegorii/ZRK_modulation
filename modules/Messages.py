@@ -2,7 +2,7 @@ from .BaseMessage import BaseMessage
 import numpy as np
 from .constants import MessageType
 from enum import Enum
-from typing import List
+from typing import List, Tuple
 
 from .BaseModel import BaseModel
 from .AirObject import AirObject
@@ -115,3 +115,56 @@ class DestroyedMissileId(BaseMessage):
     def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: Target):
         super().__init__(type=MessageType.DESTROYED_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile_id = missile_id
+
+
+class MissileDetonateMessage(BaseMessage):
+    """
+    ЗУР -> ВО, РЛС
+    Сообщение о подрыве ЗУР
+    """
+    def __init__(
+        self,
+        time: int,
+        sender_id: int,
+        receiver_id: int,
+        missile_id: int,
+        pos: Tuple[float, float, float]
+    ):
+        super().__init__(
+            type=MessageType.MISSILE_DETONATE,
+            time=time,
+            sender_id=sender_id,
+            receiver_id=receiver_id
+        )
+        self.missile_id = missile_id
+        self.position = np.array(pos, dtype=np.float64)
+
+    def __repr__(self):
+        return (f"MissileDetonateMessage(time={self.time}, missile_id={self.missile_id}, "
+                f"pos={self.position.tolist()})")
+
+class MissilePosMessage(BaseMessage):
+    """
+    ЗУР -> ВО
+    Сообщение о текущем положении ЗУР
+    """
+    def __init__(
+        self,
+        time: int,
+        sender_id: int,
+        receiver_id: int,
+        missile_id: int,
+        pos: Tuple[float, float, float]
+    ):
+        super().__init__(
+            type=MessageType.MISSILE_POSITION,
+            time=time,
+            sender_id=sender_id,
+            receiver_id=receiver_id
+        )
+        self.missile_id = missile_id
+        self.position = np.array(pos, dtype=np.float64)
+
+    def __repr__(self):
+        return (f"MissilePosMessage(time={self.time}, missile_id={self.missile_id}, "
+                f"pos={self.position.tolist()})")
