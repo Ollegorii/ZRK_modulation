@@ -3,6 +3,7 @@ import numpy as np
 from .Messages import *
 from .Missile import Missile
 from typing import List, Optional
+from .AirEnv import AirEnv
 
 class MissileLauncher(BaseModel):
     """
@@ -10,7 +11,7 @@ class MissileLauncher(BaseModel):
     Отвечает за хранение, подготовку и запуск ракет по воздушным целям
     """
 
-    def __init__(self, manager: Manager, id: int, pos: np.ndarray, max_missiles: int = 5) -> None:
+    def __init__(self, manager: Manager, id: int, pos: np.ndarray, max_missiles: int = 5, air_env: AirEnv = None) -> None:
         """
         Инициализация пусковой установки
 
@@ -23,7 +24,7 @@ class MissileLauncher(BaseModel):
         self.max_missiles = max_missiles
         self.missiles: List[Missile] = []  # Список доступных ракет
         self.launched_missiles: List[Missile] = []  # Список запущенных ракет
-
+        self.air_env = air_env
         print(f"Пусковая установка (ID: {self.id}) инициализирована на позиции {self.pos}")
 
     def add_missile(self, missile: Missile) -> bool:
@@ -49,7 +50,7 @@ class MissileLauncher(BaseModel):
         """
         return len(self.missiles)
 
-    def launch_missile(self, target_pos: Optional[np.ndarray] = None, target_id: Optional[int] = None) -> Optional[Missile]:
+    def launch_missile(self, target_pos: Optional[np.ndarray] = None, target_id: Optional[int] = None, radar_id: Optional[int] = None) -> Optional[Missile]:
         """
         Запуск ракеты по указанной цели
 
@@ -87,10 +88,10 @@ class MissileLauncher(BaseModel):
                 receiver_ID=0,
                 missile_id=missile.id,
                 target_id=target_id,
-                launch_position=self.pos,
-                target_position=target_pos
             )
             self._manager.add_message(launch_msg)
+            # TODO раскоментить когда air_env добавит функциональность
+            # self.air_env.add_missile(missile)
             return missile
 
         # Если запуск не удался, возвращаем ракету обратно
@@ -108,11 +109,12 @@ class MissileLauncher(BaseModel):
         # Обработка сообщений
         messages = self._manager.give_messages_by_id(self.id)
         for msg in messages:
-            if isinstance(msg, LaunchMissileMessage):
+            if isinstance(msg, CPPLaunchMissileRequestMessage):
                 print(f"Получена команда на запуск ракеты к цели ID: {msg.target_id}")
                 self.launch_missile(
                     target_pos=msg.target_position,
-                    target_id=msg.target_id
+                    target_id=msg.target_id,
+                    radar_id=msg.radar_id
                 )
             elif isinstance(msg, MissileCountRequestMessage):
                 # Отправляем ответ с количеством ракет
