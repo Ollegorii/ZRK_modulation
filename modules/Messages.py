@@ -123,49 +123,22 @@ class MissileDetonateMessage(BaseMessage):
     ЗУР -> ВО, РЛС
     Сообщение о подрыве ЗУР
     """
-    def __init__(
-        self,
-        time: int,
-        sender_id: int,
-        receiver_id: int,
-        missile_id: int,
-        pos: Tuple[float, float, float]
-    ):
-        super().__init__(
-            type=MessageType.MISSILE_DETONATE,
-            time=time,
-            sender_id=sender_id,
-            receiver_id=receiver_id
-        )
+    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int):
+        super().__init__(type=MessageType.MISSILE_DETONATE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile_id = missile_id
-        self.position = np.array(pos, dtype=np.float64)
 
     def __repr__(self):
-        return (f"MissileDetonateMessage(time={self.time}, missile_id={self.missile_id}, "
-                f"pos={self.position.tolist()})")
+        return f"MissileDetonateMessage (time={self.time}, missile_id={self.missile_id})"
+
 
 class MissilePosMessage(BaseMessage):
     """
     ЗУР -> ВО
     Сообщение о текущем положении ЗУР
     """
-    def __init__(
-        self,
-        time: int,
-        sender_id: int,
-        receiver_id: int,
-        missile_id: int,
-        pos: Tuple[float, float, float]
-    ):
-        super().__init__(
-            type=MessageType.MISSILE_POSITION,
-            time=time,
-            sender_id=sender_id,
-            receiver_id=receiver_id
-        )
+    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int):
+        super().__init__(type=MessageType.MISSILE_POS, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile_id = missile_id
-        self.position = np.array(pos, dtype=np.float64)
 
     def __repr__(self):
-        return (f"MissilePosMessage(time={self.time}, missile_id={self.missile_id}, "
-                f"pos={self.position.tolist()})")
+        return f"MissilePosMessage (time={self.time}, missile_id={self.missile_id})"
