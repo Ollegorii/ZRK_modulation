@@ -14,7 +14,6 @@ class MessageType(Enum):
     MISSILE_DETONATE = 'missile_detonate'
 
 
-
 MISSILE_VELOCITY_MODULE = 1600  # м/с
 MISSILE_DETONATE_PERIOD = 120  # секунд
 MISSILE_DETONATE_RADIUS = 2  # метров
