@@ -16,14 +16,6 @@ class LaunchStatus(Enum):
     FAILED = "провал"
 
 
-class CCPInitMessage(BaseMessage):
-    """
-    CCP -> Radar
-    Сообщение на обновление координат цели
-    """
-    def __init__(self, time: int, sender_id: int, receiver_id: int):
-        super().__init__(type=MessageType.CCP_INIT_MESSAGE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
-
 
 class LaunchMissileMessage(BaseMessage):
     """
