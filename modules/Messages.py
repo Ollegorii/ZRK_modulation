@@ -23,6 +23,7 @@ class LaunchMissileMessage(BaseMessage):
         super().__init__(type=MessageType.LAUNCH_MISSILE, time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.status = status
 
+
 class CPPLaunchMissileRequestMessage(BaseMessage):
     """
     CCP -> MissileLauncher
