@@ -1,3 +1,6 @@
+import constants
+
+
 class Timer:
     """Класс для управления временем симуляции"""
     _instance = None
@@ -5,7 +8,7 @@ class Timer:
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super(Timer, cls).__new__(cls)
-            cls._instance.dt = 0.1 # в секундах
+            cls._instance.dt = constants.SUMULATION_TIME_STEP  # в секундах
             cls._instance.time = 0
         return cls._instance
     
