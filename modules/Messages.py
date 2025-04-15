@@ -49,8 +49,6 @@ class LaunchedMissileMessage(BaseMessage):
         self.target_id = target_id
 
 
-
-
 class MissileCountRequestMessage(BaseMessage):
     """
     CCP -> MissileLauncher
@@ -84,7 +82,7 @@ class CPPUpdateTargetRadarMessage(BaseMessage):
     CCP -> Radar
     Сообщение на обновление координат цели
     """
-    def __init__(self, time: int, sender_id: int, receiver_id: int, target: Target, missile_id: int):
+    def __init__(self, time: int, sender_id: int, receiver_id: int, target: AirObject, missile_id: int):
         super().__init__(type=MessageType.UPDATE_TARGET, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.target = target
         self.missile_id = missile_id

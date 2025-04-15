@@ -20,3 +20,7 @@ class Timer:
     def update_time(self) -> None:
         """Обновление времени на один шаг"""
         self.time += self.dt
+    
+    def get_dt(self) -> float:
+        """Получение разницы между шагами времени"""
+        return self.dt
