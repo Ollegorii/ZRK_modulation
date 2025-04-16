@@ -1,3 +1,4 @@
 .venv
 modules/__pycache__/
 .idea
+__pycache__/

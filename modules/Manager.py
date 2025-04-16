@@ -39,14 +39,17 @@ class Manager:
         """Добавление нового сообщения в список сообщений для указанного шага
         
         :param msg: Сообщение для добавления
-        :param step_time: Время шага, на котором сообщение будет обработано (если None - текущее время + 1)
+        :param step_time: Время шага, на котором сообщение будет обработано (если None - текущее время)
         """
         if step_time is None:
-            step_time = self.time.get_time() + 1  # По умолчанию сообщение обрабатывается на следующем шаге
+            step_time = self.time.get_time()
         
         if step_time not in self.messages:
             self.messages[step_time] = []
         
+        if msg.send_time is None:
+            msg.send_time = step_time
+
         self.messages[step_time].append(msg)
         # Сортировка сообщений по важности (если требуется)
         self.messages[step_time].sort(key=lambda x: -x.priority)

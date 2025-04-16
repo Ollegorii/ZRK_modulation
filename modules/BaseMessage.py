@@ -9,7 +9,7 @@ class BaseMessage(metaclass=ABCMeta):
     :param sender_ID: ID модуля отправителя
     :param receiver_ID: ID модуля получателя
     """
-    def __init__(self, type: MessageType, send_time: int, sender_id: int, receiver_id: int, relevance: int = 1) -> None:
+    def __init__(self, type: MessageType, sender_id: int, receiver_id: int = None, send_time: int = None, relevance: int = 1) -> None:
         self.relevance = relevance
         self.send_time = send_time
         self.type = type

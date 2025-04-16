@@ -5,32 +5,7 @@ from enum import Enum
 from .BaseModel import BaseModel
 from .AirObject import AirObject
 from .Messages import ActiveObjectsMessage
-
-
-class TargetType(Enum):
-    AIR_PLANE = "самолет"
-    HELICOPTER = "вертолет"
-    ANOTHER = "другое"
-
-
-class Target(AirObject):
-    """
-    Класс воздушной цели
-    """
-
-    def __init__(self, id: int, type: TargetType, pos: np.ndarray = None, velocity: np.ndarray = None):
-        """
-        Инициализация воздушной цели
-
-        :param type: тип цели
-        """
-        super().__init__(id, pos, velocity)  # Вызываем инициализатор родительского класса
-        self.__type = type
-
-    @property
-    def type(self) -> TargetType:
-        return self.__type
-
+from .utils import Target
 
 class AirEnv(BaseModel):
     """
