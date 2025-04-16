@@ -1,9 +1,11 @@
 from .Manager import Manager
 import numpy as np
-from .Messages import *
+from .Messages import LaunchMissileMessage, LaunchedMissileMessage, MissileCountRequestMessage, CPPLaunchMissileRequestMessage, MissileCountResponseMessage
 from .Missile import Missile
 from typing import List, Optional
-from .AirEnv import AirEnv
+from .AirEnv import AirEnv, Target
+from .constants import *
+from .BaseModel import BaseModel
 
 class MissileLauncher(BaseModel):
     """
@@ -50,7 +52,7 @@ class MissileLauncher(BaseModel):
         """
         return len(self.missiles)
 
-    def launch_missile(self, target_pos: Optional[np.ndarray] = None, target_id: Optional[int] = None, radar_id: Optional[int] = None) -> Optional[Missile]:
+    def launch_missile(self, target: Target, target_id: Optional[int] = None, radar_id: Optional[int] = None) -> Optional[Missile]:
         """
         Запуск ракеты по указанной цели
 
@@ -63,41 +65,32 @@ class MissileLauncher(BaseModel):
             return None
 
         missile = self.missiles.pop(0)
-        current_time = self._manager.time.get_time()
-
-        # Если позиция цели не указана, используем текущую позицию ракеты + направление по умолчанию
-        if target_pos is None:
-            target_pos = self.pos + np.array([1000, 1000, 1000])  # Направление по умолчанию
 
         # Запускаем ракету
-        success = missile.launch(
-            start_pos=self.pos,
-            target_pos=target_pos,
-            target_id=target_id,
-            current_time=current_time
+        missile.set(target)
+        launch_msg = LaunchMissileMessage(
+            receiver_id=missile.id,
+            sender_id=self.id,
         )
 
-        if success:
-            self.launched_missiles.append(missile)
-            print(f"Ракета ID: {missile.id} успешно запущена с пусковой установки (ID: {self.id})")
+        self._manager.add_message(launch_msg)
 
-            # Отправляем сообщение о запуске ракеты
-            launch_msg = LaunchedMissileMessage(
-                time=current_time,
-                sender_ID=self.id,
-                receiver_ID=0,
-                missile_id=missile.id,
-                target_id=target_id,
-            )
-            self._manager.add_message(launch_msg)
-            # TODO раскоментить когда air_env добавит функциональность
-            # self.air_env.add_missile(missile)
-            return missile
+        self.launched_missiles.append(missile)
+        print(f"Ракета ID: {missile.id} успешно запущена с пусковой установки (ID: {self.id})")
 
-        # Если запуск не удался, возвращаем ракету обратно
-        self.missiles.insert(0, missile)
-        print(f"Не удалось запустить ракету ID: {missile.id} с пусковой установки (ID: {self.id})")
-        return None
+        # Отправляем сообщение о запуске ракеты
+        launched_msg = LaunchedMissileMessage(
+            sender_id=self.id,
+            receiver_id=CCP_ID,
+            missile=missile,
+            target_id=target_id,
+        )
+
+        self._manager.add_message(launched_msg)
+        # TODO раскоментить когда air_env добавит функциональность
+        # self.air_env.add_missile(missile)
+
+        return None if missile is None else missile
 
     def step(self) -> None:
         """
@@ -112,7 +105,7 @@ class MissileLauncher(BaseModel):
             if isinstance(msg, CPPLaunchMissileRequestMessage):
                 print(f"Получена команда на запуск ракеты к цели ID: {msg.target_id}")
                 self.launch_missile(
-                    target_pos=msg.target_position,
+                    target_pos=msg.target,
                     target_id=msg.target_id,
                     radar_id=msg.radar_id
                 )
