@@ -32,7 +32,7 @@ class CPPLaunchMissileRequestMessage(BaseMessage):
     Сообщение на запуск ракеты по указанной цели
     """
     def __init__(self, time: int, sender_id: int, receiver_id: int, target_id: int, target_position: int, radar_id: int):
-        super().__init__(type=MessageType.LAUNCH_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        super().__init__(type=MessageType.LAUNCH_COMMAND, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.target_id = target_id
         self.target_position = target_position
         self.radar_id = radar_id
@@ -85,7 +85,7 @@ class CPPUpdateTargetRadarMessage(BaseMessage):
     Сообщение на обновление координат цели
     """
     def __init__(self, time: int, sender_id: int, receiver_id: int, target: Target, missile_id: int):
-        super().__init__(type=MessageType.UPDATE_TARGET, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        super().__init__(type=MessageType.CCP_UPDATE_TARGET, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.target = target
         self.missile_id = missile_id
 
@@ -115,7 +115,7 @@ class DestroyedMissileId(BaseMessage):
     Radar -> CCP
     Сообщение с id уничтноженной ракеты
     """
-    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: Target):
+    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int):
         super().__init__(type=MessageType.DESTROYED_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile_id = missile_id
 
@@ -125,7 +125,7 @@ class CPPDrawerObjectsMessage(BaseMessage):
     Сообщение на обновление координат цели
     """
     def __init__(self, time: int, sender_id: int, receiver_id: int, obj_id: int, type, coordinates: np.ndarray):
-        super().__init__(type=MessageType.UPDATE_TARGET, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        super().__init__(type=MessageType.DRAW_OBJECTS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.obj_id = obj_id
         self.type = type
         self.coordinates = coordinates

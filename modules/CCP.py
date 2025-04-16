@@ -65,9 +65,9 @@ class CombatControlPoint(BaseModel):
         """
         super().__init__(manager, id, position)
         self._target_dict = {}  # Отслеживаемые цели
-        self._next_target_id = 0
+        # self._next_target_id = 0
         self._missile_dict = {}  # Отслеживаемые ЗУР
-        self._next_missile_id = 0
+        # self._next_missile_id = 0
         self.radars_coords = radars_coords  # координаты МФР
         self.missile_launcher_coords = missile_launcher_coords  # координаты ПУ
         self.missile_launcher_launched = {}
@@ -75,13 +75,14 @@ class CombatControlPoint(BaseModel):
 
         self.initialized = False
 
-    def add_target(self, target: TargetCCP):
+    def add_target(self, target_ccp: TargetCCP):
         """
         Добавление новой цели в список целей ПБУ
         """
-        self._target_dict[self._next_target_id] = target.target
-        print(f"В ПБУ добавлена цель с id: {self._next_target_id}")
-        self._next_target_id += 1
+        self._target_dict[target_ccp.target.id] = target_ccp.target
+        # self._target_dict[self._next_target_id] = target_ccp.target
+        print(f"В ПБУ добавлена цель с id: {target_ccp.target.id}")
+        # self._next_target_id += 1
 
     def delete_target(self, target_id):
         """
@@ -90,15 +91,16 @@ class CombatControlPoint(BaseModel):
         self._target_dict.pop(target_id, None)
         print(f"В ПБУ удалена цель с id: {target_id}")
 
-    def add_rocket(self, missile: MissileCCP):
+    def add_missile(self, missile_ccp: MissileCCP):
         """
         Добавление новой ЗУР в список ракет ПБУ
         """
-        self._missile_dict[self._next_missile_id] = missile
-        print(f"В ПБУ добавлена ракета с id: {self._next_missile_id}")
-        self._next_missile_id += 1
+        self._missile_dict[missile_ccp.missile.id] = missile_ccp.missile
+        # self._missile_dict[self._next_missile_id] = missile_ccp.missile
+        print(f"В ПБУ добавлена ракета с id: {missile_ccp.missile.id}")
+        # self._next_missile_id += 1
 
-    def delete_rocket(self, missile_id: int):
+    def delete_missile(self, missile_id: int):
         """
         :param missile_id: id ракеты
         """
@@ -138,13 +140,13 @@ class CombatControlPoint(BaseModel):
         """
         ПБУ получает сообщения от МФР об уничтожении ЗУР
         """
-        msg_hit_missiles = self._manager.give_messages_by_type(MessageType.MISSILE_GET_HIT)  # remember Oleg
+        msg_hit_missiles = self._manager.give_messages_by_type(MessageType.DESTROYED_MISSILE)
 
         if len(msg_hit_missiles) != 0:
             print(f"ПБУ получил сообщения от МФР об уничтожении ЗУР")
 
             for msg in msg_hit_missiles:
-                self.delete_rocket(msg.missile_id)
+                self.delete_missile(msg.missile_id)
 
     def check_if_missiles_launched(self):
         """
@@ -153,7 +155,7 @@ class CombatControlPoint(BaseModel):
         msg_launched_missiles = self._manager.give_messages_by_type(MessageType.LAUNCHED_MISSILE, receiver_id=self.id)
         if len(msg_launched_missiles) > 0:
             for msg in msg_launched_missiles:
-                self.add_rocket(MissileCCP(msg.missile, self._manager.time.get_time()))
+                self.add_missile(MissileCCP(msg.missile, self._manager.time.get_time()))
                 print(f"ПБУ получил от ПУ запуске ЗУР c id:{msg.missile.id}")
 
     def link_object(self, detected_object):
@@ -199,7 +201,7 @@ class CombatControlPoint(BaseModel):
 
         return classification, matched_object_id
 
-    def send_new_target_coords_to_gm_through_MFR(self, target, missile_id, radar_id):
+    def send_update_msg_to_radar(self, target, missile_id, radar_id):
         """
         ПБУ отправляет сообщение на обновление координат цели
         """
@@ -278,7 +280,7 @@ class CombatControlPoint(BaseModel):
             print(
                 f"ПБУ отправляет сообщение ПУ с id {curr_ml_id} на запуск ЗУР по цели с координатами:{obj.pos}")
         else:
-            print(f"У ПУ больше нет ЗУР!!!")
+            print(f"У ПУ нет свободных ЗУР")
 
     def old_target(self, obj, old_obj_id, radar_id):
         """
@@ -286,7 +288,7 @@ class CombatControlPoint(BaseModel):
         """
         old_target_coord = self._target_dict[old_obj_id].target.pos
 
-        self._target_dict[old_obj_id].upd_target(obj, self._manager.time.get_time())
+        self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time())
 
         for key in self._missile_dict.keys():
             missile_ccp = self._missile_dict[key]
@@ -310,15 +312,15 @@ class CombatControlPoint(BaseModel):
         """
         Обработка случая, когда видимый объект является старой ЗУР
         """
-        self._missile_dict[old_obj_id].upd_missile(obj, self._manager.time.get_time())
+        self._missile_dict[old_obj_id].upd_missile_ccp(obj, self._manager.time.get_time())
         print(f"ПБУ увидел старую ЗУР с id:{self._missile_dict[old_obj_id].missile.id}")
 
     def step(self) -> None:
         """
         Запуск моделирования
 
-        1. Проверяет есть ли сообщения от радара о том, что перестала существовать ЗУР
-        2. Запрашивает у ПУ количество доступных ЗУР
+        1. Запрашивает у ПУ количество доступных ЗУР
+        2. Проверяет есть ли сообщения от радара о том, что перестала существовать ЗУР
         3. Просматривает сообщение от ПУ о запуске ЗУР (добавляет к себе ракету и её цель в словарь)
         4. Просматривает сообщения от Радара в которых передается обнаруженные обьекты
         5. Разделение обьектов на старые/новые цели, ЗУР

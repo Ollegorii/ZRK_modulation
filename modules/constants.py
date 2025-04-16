@@ -3,14 +3,16 @@ from enum import Enum
 class MessageType(Enum):
     LAUNCH_MISSILE = "launch_missile"
     LAUNCHED_MISSILE = "launched_missile"
+    LAUNCH_COMMAND = "launch_command"
     MISSILE_COUNT_REQUEST = "missile_count_request"
     MISSILE_COUNT_RESPONSE = "missile_count_response"
     FOUND_OBJECTS = "found_objects"
     ACTIVE_OBJECTS = "active_objects"
+    CCP_UPDATE_TARGET = 'ccp_upd_target'
     UPDATE_TARGET = 'upd_target'
     MISSILE_GET_HIT = 'missile_get_hit'
     DESTROYED_MISSILE = 'destroyed_missile'
-    CCP_INIT_MESSAGE = 'CPP_init_message'
+    DRAW_OBJECTS = 'draw_objects'
 
 
 SIMULATION_STEP = 1  # d_t
