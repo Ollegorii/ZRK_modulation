@@ -1,41 +1,35 @@
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 import numpy as np
+from BaseModel import BaseModel
 
-class AirObject(metaclass=ABCMeta):
+
+class Trajectory:
     """
-    Базовый абстрактный класс для воздушных объектов
+    Моделирует движение с учетом времени старта
+    S = start_pos + V * (t - start_time)
     """
-    def __init__(self, id: int, pos: np.ndarray=None, velocity: np.ndarray=None):
-        self.id = id
-        self.__pos = pos
-        self.__velocity = velocity
-        self.__speed = np.linalg.norm(velocity)
 
-    @property
-    def pos(self):
-        return self.__pos
+    def __init__(self,
+                 velocity=(0.0, 0.0, 0.0),
+                 start_pos=(0.0, 0.0, 0.0),
+                 start_time: float = 0.0):
+        self.velocity = np.array(velocity, dtype=np.float64)
+        self.start_pos = np.array(start_pos, dtype=np.float64)
+        self.start_time = start_time
 
-    @pos.setter
-    def pos(self, value):
-        self.__pos = value
+    def get_pos(self, t: float) -> np.ndarray:
+        """Вычисляет координаты в момент времени t"""
+        return self.start_pos + self.velocity * (t - self.start_time)
 
-    @property
-    def velocity(self):
-        return self.__velocity
-    
-    @property
-    def speed(self):
-        return self.__speed
 
-    @velocity.setter
-    def velocity(self, value):
-        self.__velocity = value
-        self.__speed = np.linalg.norm(self.__velocity)
+class AirObject(BaseModel):
+    """
+    Абстрактный базовый класс для воздушных объектов
+    """
+    def __init__(self, manager, id: int, pos: np.ndarray, trajectory: Trajectory):
+        super().__init__(manager, id, pos)
+        self.trajectory = trajectory
 
-    def step(self):
-        """
-        Метод для выполнения шага симуляции
-        """
-        # Базовая реализация, например, обновление позиции
-        if self.__pos is not None and self.__velocity is not None:
-            self.__pos += self.__velocity
+    @abstractmethod
+    def step(self) -> None:
+        super().step()

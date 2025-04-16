@@ -16,7 +16,6 @@ class LaunchStatus(Enum):
     FAILED = "провал"
 
 
-
 class LaunchMissileMessage(BaseMessage):
     """
     MissileLauncher -> Missile
@@ -47,8 +46,6 @@ class LaunchedMissileMessage(BaseMessage):
         super().__init__(type=MessageType.LAUNCHED_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile = missile
         self.target_id = target_id
-
-
 
 
 class MissileCountRequestMessage(BaseMessage):
@@ -118,6 +115,33 @@ class DestroyedMissileId(BaseMessage):
     def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int):
         super().__init__(type=MessageType.DESTROYED_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.missile_id = missile_id
+
+
+class MissileDetonateMessage(BaseMessage):
+    """
+    ЗУР -> ВО, РЛС
+    Сообщение о подрыве ЗУР
+    """
+    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int):
+        super().__init__(type=MessageType.MISSILE_DETONATE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.missile_id = missile_id
+
+    def __repr__(self):
+        return f"MissileDetonateMessage (time={self.send_time}, missile_id={self.missile_id})"
+
+
+class MissilePosMessage(BaseMessage):
+    """
+    ЗУР -> ВО
+    Сообщение о текущем положении ЗУР
+    """
+    def __init__(self, time: int, sender_id: int, receiver_id: int, missile_id: int):
+        super().__init__(type=MessageType.MISSILE_POS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.missile_id = missile_id
+
+    def __repr__(self):
+        return f"MissilePosMessage (time={self.send_time}, missile_id={self.missile_id})"
+
 
 class CPPDrawerObjectsMessage(BaseMessage):
     """
