@@ -148,25 +148,48 @@ class SectorRadar(BaseModel):
         """
         current_time = self._manager.time.get_time()
         dt = self._manager.time.get_dt()
+
         objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)[0].active_objects
         if not isinstance(objects, ActiveObjectsMessage):
-            raise "RADAR ERROR: Message from AirEnv does not belong to expected class"
+            raise "ОШИБКА РАДАРА: Сообщение от ВО не принадлежит ожидаемому классу"
         if len(objects) == 0:
-            raise "RADAR ERROR: Air Env send empty message to Radar"
+            raise "ОШИБКА РАДАРА: ВО отправило пустое сообщение"
         visible_objects = self.find_visible_objects(objects)
         print(f"Видимые объекты: {visible_objects}")
-        self._manager.add_message(FoundObjectsMessage(current_time, self.id, CCP_ID, visible_objects))
-        ### tbd ! ПРИЕМ СООБЩЕНИЯ ОТ ПБУ
+        visible_objects_msg = FoundObjectsMessage(
+            time=current_time, 
+            sender_id=self.id, 
+            receiver_id=CCP_ID, 
+            visible_objects=visible_objects
+        )
+        self._manager.add_message(visible_objects_msg)
+
+        # ПРИЕМ ТАРГЕТОВ, КОТОРЫЕ НУЖНО ОБНОВИТЬ, ОТ ПБУ
         messages_to_missile = self._manager.give_messages_by_type(MessageType.UPDATE_TARGET, step_time=current_time-dt)
         # ОТПРАВКА СООБЩЕНИЙ РАКЕТАМ
         for message in messages_to_missile:
             id_missile = message.missile_id
             target = message.target
-            self._manager.add_message(UpdateTargetPosition(current_time, self.id, id_missile, target))
-        ### tbd ! ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ 
-        destroy_missile_id = self._manager.give_messages_by_type()
-        ### ОТПРАВКА УНИЧТНОЖЕННОЙ РАКЕТЫ НА ПБУ
-        self._manager.add_message(DestroyedMissileId(current_time, self.id, CCP_ID, destroy_missile_id))
+            upd_msg = UpdateTargetPosition(
+                time=current_time, 
+                sender_id=self.id, 
+                receiver_id=id_missile, 
+                upd_object=target
+            )
+            self._manager.add_message(upd_msg)
+
+        # ПРОВЕРКА СООБЩЕНИЯ ОБ УНИЧТОЖЕНИИ РАКЕТЫ 
+        destroy_missile_id_msg = self._manager.give_messages_by_type(MessageType.MISSILE_DETONATE, step_time=current_time-dt)
+        # ОТПРАВКА УНИЧТНОЖЕННОЙ РАКЕТЫ НА ПБУ
+        for destroy_missile_id in destroy_missile_id_msg:
+            destroy_msg = DestroyedMissileId(
+                time=current_time, 
+                sender_id=self.id, 
+                receiver_id=CCP_ID, 
+                missile_id=destroy_missile_id
+            )
+            self._manager.add_message(destroy_msg)   
+                 
         self.move_to_next_sector()
 
 
