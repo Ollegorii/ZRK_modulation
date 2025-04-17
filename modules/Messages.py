@@ -85,7 +85,7 @@ class ActiveObjectsMessage(BaseMessage):
     AirEnv -> Radar
     Сообщение об активных объектах
     """
-    def __init__(self, sender_id: int, active_objects: List[Target], time: int = None, receiver_id: int = None):
+    def __init__(self, sender_id: int, active_objects: List[AirObject], time: int = None, receiver_id: int = None):
         super().__init__(type=MessageType.ACTIVE_OBJECTS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.active_objects = active_objects
 
