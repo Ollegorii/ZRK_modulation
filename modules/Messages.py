@@ -115,9 +115,10 @@ class MissileDetonateMessage(BaseMessage):
     ЗУР -> ВО, РЛС
     Сообщение о подрыве ЗУР
     """
-    def __init__(self, sender_id: int, missile_id: int, time: int = None, receiver_id: int = None):
-        super().__init__(type=MessageType.MISSILE_DETONATE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
-        self.missile_id = missile_id
+    def __init__(self, sender_id: int, target_id: int):
+        super().__init__(type=MessageType.MISSILE_DETONATE, sender_id=sender_id)
+        self.missile_id = sender_id
+        self.target_id = target_id
 
     def __repr__(self):
         return f"MissileDetonateMessage (time={self.send_time}, missile_id={self.missile_id})"
@@ -128,9 +129,9 @@ class MissilePosMessage(BaseMessage):
     ЗУР -> ВО
     Сообщение о текущем положении ЗУР
     """
-    def __init__(self, sender_id: int, missile_id: int, time: int = None, receiver_id: int = None):
-        super().__init__(type=MessageType.MISSILE_POS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
-        self.missile_id = missile_id
+    def __init__(self, sender_id: int):
+        super().__init__(type=MessageType.MISSILE_POS, sender_id=sender_id)
+        self.missile_id = sender_id
 
     def __repr__(self):
         return f"MissilePosMessage (time={self.send_time}, missile_id={self.missile_id})"
