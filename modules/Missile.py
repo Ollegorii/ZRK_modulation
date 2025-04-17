@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Optional
 from .AirObject import AirObject, Trajectory
-# from .Messages import MissileDetonateMessage, MissilePosMessage
+from .Messages import MissileDetonateMessage, MissilePosMessage
 from .constants import MessageType, MISSILE_VELOCITY_MODULE, MISSILE_DETONATE_RADIUS, MISSILE_DETONATE_PERIOD
 
 
@@ -77,17 +77,14 @@ class Missile(AirObject):
     def _set_trajectory(self, new_trajectory: Trajectory) -> None:
         self.trajectory = new_trajectory
 
-    def _detonate(self) -> None:
+    def _detonate(self, target_id: int = None) -> None:
         """Инициирование подрыва"""
         self.status = 'detonated'
-        current_time = self._manager.time.get_time()
 
         # Отправка сообщений о подрыве
         detonate_msg = MissileDetonateMessage(
-            time=current_time,
             sender_id=self.id,
-            receiver_id=None,
-            missile_id=self.id
+            target_id=target_id
         )
         self._manager.add_message(detonate_msg)
 
@@ -122,16 +119,13 @@ class Missile(AirObject):
 
             # Отправка позиции
             pos_msg = MissilePosMessage(
-                time=current_time,
-                sender_id=self.id,
-                receiver_id=None,
-                missile_id=self.id
+                sender_id=self.id
             )
             self._manager.add_message(pos_msg)
 
             # Проверка дистанции до цели
             if self.target and np.linalg.norm(self.pos - self.target.pos) < self.detonate_radius:
-                self._detonate()
+                self._detonate(target_id=self.target.id)
 
             # Проверка таймера (время с момента запуска)
             if dt >= self.detonate_period:
@@ -139,4 +133,4 @@ class Missile(AirObject):
 
         elif self.status == 'detonated':
             # Удаление из системы
-            self._manager.remove_module(self.id)
+            pass
