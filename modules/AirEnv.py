@@ -1,11 +1,11 @@
 from typing import List
 import numpy as np
-from enum import Enum
 
+from .constants import *
 from .BaseModel import BaseModel
 from .AirObject import AirObject
 from .Messages import ActiveObjectsMessage
-from .utils import Target
+
 
 class AirEnv(BaseModel):
     """
@@ -21,27 +21,28 @@ class AirEnv(BaseModel):
         :param pos: позиция объекта
         """
         super().__init__(manager, id, pos)
-        self.__targets = []
-
-    def add_targets(self, targets: List[Target]) -> None:
-        """
-        Добавление новой цели в ВО
-
-        :param targets: цель для добавления
-        """
-        for target in targets:
-            self.__targets.append(target)
+        self.__objects: List[AirObject] = []
 
     def step(self) -> None:
         """
         Шаг симуляции ВО
         """
-        for target in self.__targets:
-            target.step()
+        objects_to_remove = []
+        for msg in self._manager.give_messages_by_type(MessageType.MISSILE_DETONATE):
+            objects_to_remove.append(msg.missile_id)
+            if msg.target_id is not None:
+                objects_to_remove.append(msg.target_id)
+
+        # !!! objects to add
+
+        for idx, objects in enumerate(self.__objects[:]):
+            if objects.id in objects_to_remove:
+                del self.__objects[idx]
+
+        for object in self.__objects:
+            object.step()
 
         self._manager.add_message(ActiveObjectsMessage(
-            time=self._manager.time.get_time(),
             sender_id=self.id,
-            receiver_id=None,
-            active_objects=self.__targets,
+            active_objects=self.__objects,
         ))

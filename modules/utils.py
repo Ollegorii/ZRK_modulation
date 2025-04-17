@@ -14,7 +14,14 @@ class Target(AirObject):
     Класс воздушной цели
     """
 
-    def __init__(self, manager: Manager,id: int, pos: np.ndarray = None, trajectory: np.ndarray = None, type: TargetType = TargetType.ANOTHER):
+    def __init__(
+        self,
+        manager: Manager,
+        id: int,
+        pos: np.ndarray = None,
+        trajectory: np.ndarray = None,
+        type: TargetType = TargetType.ANOTHER
+    ):
         """
         Инициализация воздушной цели
 
@@ -26,6 +33,6 @@ class Target(AirObject):
     @property
     def type(self) -> TargetType:
         return self.__type
-    
+
     def step(self):
         return super().step()
