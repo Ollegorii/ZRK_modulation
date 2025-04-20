@@ -30,6 +30,6 @@ class AirObject(BaseModel):
         super().__init__(manager, id, pos)
         self.trajectory = trajectory
 
-    @abstractmethod
-    def step(self) -> None:
-        super().step()
+    def step(self):
+        current_time = self._manager.time.get_time()
+        self.pos = self.trajectory.get_pos(current_time)

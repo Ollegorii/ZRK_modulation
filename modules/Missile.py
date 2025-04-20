@@ -111,11 +111,8 @@ class Missile(AirObject):
                 self.target = msg.upd_object
                 self._calculate_trajectory(self.target)
 
-            # Расчет времени относительно оригинального запуска
-            dt = current_time - self.launch_time
-
-            # Обновление позиции с учетом времени жизни ракеты
-            self.pos = self.trajectory.get_pos(dt)
+            # Обновление позиции
+            super().step()
 
             # Отправка позиции
             pos_msg = MissilePosMessage(
@@ -124,13 +121,15 @@ class Missile(AirObject):
             self._manager.add_message(pos_msg)
 
             # Проверка дистанции до цели
-            if self.target and np.linalg.norm(self.pos - self.target.pos) < self.detonate_radius:
+            if self.target and np.linalg.norm(self.pos - self.target.pos) <= self.detonate_radius:
                 self._detonate(target_id=self.target.id)
+
+            # Расчет времени относительно оригинального запуска
+            dt = current_time - self.launch_time
 
             # Проверка таймера (время с момента запуска)
             if dt >= self.detonate_period:
                 self._detonate()
 
         elif self.status == 'detonated':
-            # Удаление из системы
             pass
