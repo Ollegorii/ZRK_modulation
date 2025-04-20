@@ -33,11 +33,12 @@ class AirEnv(BaseModel):
             if msg.target_id is not None:
                 objects_to_remove.append(msg.target_id)
 
-        # !!! objects to add
-
         for idx, objects in enumerate(self.__objects[:]):
             if objects.id in objects_to_remove:
                 del self.__objects[idx]
+
+        for msg in self._manager.give_messages_by_type(MessageType.NEW_MISSILE):
+            self.__objects.append(msg.missile)
 
         for object in self.__objects:
             object.step()
@@ -46,11 +47,11 @@ class AirEnv(BaseModel):
             sender_id=self.id,
             active_objects=self.__objects,
         ))
-    
+
     def add_target(self, target: Target) -> None:
         """
         Добавляет воздушную цель в воздушную обстановку
-        
+
         :param target: объект класса Target для добавления
         """
         self.__objects.append(target)
