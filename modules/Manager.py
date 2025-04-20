@@ -52,7 +52,7 @@ class Manager:
 
         self.messages[step_time].append(msg)
         # Сортировка сообщений по важности (если требуется)
-        self.messages[step_time].sort(key=lambda x: -x.priority)
+        self.messages[step_time].sort(key=lambda x: -x.relevance)
 
     def give_messages(self, step_time: Optional[int] = None) -> List[BaseMessage]:
         """Возвращает все сообщения для указанного шага (по умолчанию текущий шаг)
@@ -99,7 +99,7 @@ class Manager:
         
         result = []
         for msg in messages_at_step:
-            if isinstance(msg, msg_type):
+            if hasattr(msg, 'type') and msg.type == msg_type:
                 if receiver_id is None or msg.receiver_id == receiver_id:
                     result.append(msg)
         

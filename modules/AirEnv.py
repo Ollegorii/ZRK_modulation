@@ -5,7 +5,7 @@ from .constants import *
 from .BaseModel import BaseModel
 from .AirObject import AirObject
 from .Messages import ActiveObjectsMessage
-
+from .utils import Target
 
 class AirEnv(BaseModel):
     """
@@ -46,3 +46,11 @@ class AirEnv(BaseModel):
             sender_id=self.id,
             active_objects=self.__objects,
         ))
+    
+    def add_target(self, target: Target) -> None:
+        """
+        Добавляет воздушную цель в воздушную обстановку
+        
+        :param target: объект класса Target для добавления
+        """
+        self.__objects.append(target)
