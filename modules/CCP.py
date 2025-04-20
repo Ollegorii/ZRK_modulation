@@ -3,7 +3,7 @@ import numpy as np
 from modules.BaseModel import Manager
 from modules.Messages import *
 from modules.Missile import Missile
-from constants import *
+from modules.constants import *
 
 OLD_TARGET = "старая цель"
 NEW_TARGET = "новая цель"

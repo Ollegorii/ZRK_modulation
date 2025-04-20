@@ -37,8 +37,7 @@ class MissileLauncher(BaseModel):
         :param missile: Объект ракеты для добавления
         :return: Успешность добавления
         """
-        if len(self.missiles) < self.max_missiles and not missile.is_launched:
-            missile.dispatcher = self._manager  # Устанавливаем диспетчер
+        if len(self.missiles) < self.max_missiles:
             self.missiles.append(missile)
             print(f"Ракета ID: {missile.id} добавлена в пусковую установку (ID: {self.id})")
             return True

@@ -1,5 +1,5 @@
 import numpy as np
-from .AirEnv import Target
+from .utils import Target
 from .Manager import Manager
 from .constants import *
 from .BaseModel import BaseModel
@@ -35,8 +35,6 @@ class SectorRadar(BaseModel):
         :param scan_mode: Режим сканирования ("horizontal" или "vertical").
         """
         super().__init__(manager, id, pos)
-        self.pos = pos
-        self.id = id
         self.azimuth_start = azimuth_start
         self.elevation_start = elevation_start
         self.max_distance = max_distance
@@ -150,8 +148,9 @@ class SectorRadar(BaseModel):
         dt = self._manager.time.get_dt()
 
         objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)[0].active_objects
-        if not isinstance(objects, ActiveObjectsMessage):
-            raise "ОШИБКА РАДАРА: Сообщение от ВО не принадлежит ожидаемому классу"
+        # FIXME: Првоерка не того
+        # if not isinstance(objects, ActiveObjectsMessage):
+        #     raise "ОШИБКА РАДАРА: Сообщение от ВО не принадлежит ожидаемому классу"
         if len(objects) == 0:
             raise "ОШИБКА РАДАРА: ВО отправило пустое сообщение"
         visible_objects = self.find_visible_objects(objects)
