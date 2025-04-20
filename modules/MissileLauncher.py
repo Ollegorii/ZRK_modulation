@@ -1,9 +1,10 @@
 from .Manager import Manager
 import numpy as np
-from .Messages import LaunchMissileMessage, LaunchedMissileMessage, MissileCountRequestMessage, CPPLaunchMissileRequestMessage, MissileCountResponseMessage
+from .Messages import LaunchMissileMessage, LaunchedMissileMessage, MissileCountRequestMessage, CPPLaunchMissileRequestMessage, MissileCountResponseMessage, MissileToAirEnvMessage
 from .Missile import Missile
 from typing import List, Optional
-from .AirEnv import AirEnv, Target
+from .AirEnv import AirEnv
+from .utils import Target
 from .constants import *
 from .BaseModel import BaseModel
 
@@ -87,8 +88,14 @@ class MissileLauncher(BaseModel):
         )
 
         self._manager.add_message(launched_msg)
-        # TODO раскоментить когда air_env добавит функциональность
-        # self.air_env.add_missile(missile)
+        
+        # Отправляем сообщение AirEnv с новой ракетой
+        msg_for_air_env = MissileToAirEnvMessage(
+            sender_id=self.id,
+            missile=missile,
+        )
+
+        self._manager.add_message(msg_for_air_env)
 
         return None if missile is None else missile
 

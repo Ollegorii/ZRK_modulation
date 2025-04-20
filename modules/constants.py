@@ -15,7 +15,7 @@ class MessageType(Enum):
     DRAW_OBJECTS = 'draw_objects'
     MISSILE_POS = 'missile_pos'
     MISSILE_DETONATE = 'missile_detonate'
-
+    NEW_MISSILE = 'new_missile'
 
 SIMULATION_STEP = 0.1  # d_t в секундах
 

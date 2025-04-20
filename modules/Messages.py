@@ -147,3 +147,12 @@ class CPPDrawerObjectsMessage(BaseMessage):
         self.obj_id = obj_id
         self.type = type
         self.coordinates = coordinates
+
+class MissileToAirEnvMessage(BaseMessage):
+    """
+    MissileLauncher -> AirEnv
+    Сообщение об успешном запуске ракеты
+    """
+    def __init__(self, sender_id: int, missile: Missile, time: int = None, receiver_id: int = None):
+        super().__init__(type=MessageType.NEW_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.missile = missile

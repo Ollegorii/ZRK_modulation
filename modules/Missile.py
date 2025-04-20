@@ -1,7 +1,6 @@
 import numpy as np
 from typing import Optional
 from .AirObject import AirObject, Trajectory
-from .Messages import MissileDetonateMessage, MissilePosMessage
 from .constants import MessageType, MISSILE_VELOCITY_MODULE, MISSILE_DETONATE_RADIUS, MISSILE_DETONATE_PERIOD
 
 
@@ -79,6 +78,7 @@ class Missile(AirObject):
 
     def _detonate(self, target_id: int = None) -> None:
         """Инициирование подрыва"""
+        from .Messages import MissileDetonateMessage, MissilePosMessage
         self.status = 'detonated'
 
         # Отправка сообщений о подрыве
@@ -90,7 +90,7 @@ class Missile(AirObject):
 
     def step(self) -> None:
         current_time = self._manager.time.get_time()
-
+        from .Messages import MissileDetonateMessage, MissilePosMessage
         if self.status == 'ready':
             # Проверка сообщений на запуск
             messages = self._manager.give_messages_by_type(
