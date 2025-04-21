@@ -15,3 +15,9 @@ class BaseMessage(metaclass=ABCMeta):
         self.type = type
         self.sender_id = sender_id
         self.receiver_id = receiver_id
+    
+    def __repr__(self) -> str:
+        """
+        Возвращает строковое представление сообщения для отладки
+        """
+        return f"{self.__class__.__name__}: send_time={self.send_time}, type={self.type}, sender_id={self.sender_id}, receiver_id={self.receiver_id}, relevance={self.relevance}"
