@@ -5,6 +5,8 @@ from modules.Messages import *
 from modules.Missile import Missile
 from modules.constants import *
 
+import copy
+
 OLD_TARGET = "старая цель"
 NEW_TARGET = "новая цель"
 OLD_ROCKET = "старая ЗУР"
@@ -18,7 +20,7 @@ class TargetCCP:
         :param target: цель
         :param time: время, в которое произошло посл изменение класса
         """
-        self.target = target
+        self.target = copy.deepcopy(target)
         self.upd_time = time
 
     def upd_target_ccp(self, target: Target, time: int) -> None:
@@ -27,7 +29,7 @@ class TargetCCP:
         :param target: updated target
         :param time: время, когда вызвали функцию
         """
-        self.target = target
+        self.target = copy.deepcopy(target)
         self.upd_time = time
 
 
@@ -39,7 +41,7 @@ class MissileCCP:
         :param missile: ЗУР
         :param time: время, в которое произошло посл изменение класса
         """
-        self.missile = missile
+        self.missile = copy.deepcopy(missile)
         self.upd_time = time
 
     def upd_missile_ccp(self, missile: Missile, time: int) -> None:
@@ -48,7 +50,7 @@ class MissileCCP:
         :param missile: updated missile
         :param time: время, когда вызвали функцию
         """
-        self.missile = missile
+        self.missile = copy.deepcopy(missile)
         self.upd_time = time
 
 
