@@ -154,7 +154,9 @@ class SectorRadar(BaseModel):
         if len(objects) == 0:
             raise "ОШИБКА РАДАРА: ВО отправило пустое сообщение"
         visible_objects = self.find_visible_objects(objects)
-        print(f"Видимые объекты: {visible_objects}")
+        print(f"Видимые объекты:")
+        for obj in visible_objects:
+            print(obj)
         visible_objects_msg = FoundObjectsMessage(
             time=current_time, 
             sender_id=self.id, 

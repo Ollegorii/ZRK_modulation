@@ -115,13 +115,15 @@ class Manager:
             print(f"Текущее время: {current_time}")
             
             # Обработка сообщений для текущего шага (если есть)
-            current_messages = self.give_messages(current_time)
-            if current_messages:
-                print(f"Обработка {len(current_messages)} сообщений на шаге {current_time}")
             
             # Запуск шага симуляции для каждого модуля
             for module in self.modules:
                 module.step()
             
+            current_messages = self.give_messages(current_time)
+            if len(current_messages) > 0:
+                print(f"Обработка {len(current_messages)} сообщений на шаге {current_time}")
+                for msg in current_messages:
+                    print(f"  - {msg}")  # __repr__ будет вызван автоматически
             # Обновление времени после обработки всех модулей
             self.time.update_time()

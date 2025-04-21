@@ -5,6 +5,7 @@ from typing import Dict, List, Any, Tuple
 from modules.Manager import Manager
 from modules.AirEnv import AirEnv
 from modules.utils import Target, TargetType
+from modules.AirObject import Trajectory
 from modules.CCP import CombatControlPoint
 from modules.MissileLauncher import MissileLauncher
 from modules.Missile import Missile
@@ -69,10 +70,17 @@ def create_objects_from_config(config: Dict[str, Any]) -> Tuple[Manager, Dict[in
         
         # Добавление ракет в пусковую установку
         for missile_config in ml_config.get('missiles', []):
+            # Создаем начальную траекторию (стационарную, потому что ракета ещё не запущена)
+            initial_traj = Trajectory(
+                velocity=(0, 0, 0),
+                start_pos=ml_config['position'],
+                start_time=0.0
+            )
+            
             missile = Missile(
                 manager=manager,
                 id=missile_config['id'],
-                pos=np.array(ml_config['position']),  # изначально ракета находится на позиции ПУ
+                pos=np.array(ml_config['position']),  # позиция ПУ
                 velocity_module=missile_config.get('velocity', 1000),
                 detonate_radius=missile_config.get('explosion_radius', 50),
                 detonate_period=missile_config.get('life_time', 60)
@@ -100,28 +108,36 @@ def create_objects_from_config(config: Dict[str, Any]) -> Tuple[Manager, Dict[in
         ccp = CombatControlPoint(
             manager=manager, 
             id=ccp_config['id'],
-            position=np.array([0, 0, 0]),  # позиция ПБУ (можно добавить в конфиг)
+            position=np.array([0, 0, 0]),  # позиция ПБУ
             missile_launcher_coords=missile_launcher_coords,
             radars_coords=radars_coords
         )
         manager.add_module(ccp)
         objects_by_id[ccp_config['id']] = ccp
     
-    # Добавление целей в воздушную обстановку 
-    # (после создания всех объектов, чтобы быть уверенными, что air_env уже добавлен в manager)
+    # Добавление целей в воздушную обстановку
     for target_config in air_env_config.get('targets', []):
         target_type_str = target_config['type']
         target_type = getattr(TargetType, target_type_str)
         target_id = target_config['id']
+        pos = np.array(target_config['position'])
+        velocity = np.array(target_config['velocity'])
         
+        # Создаем траекторию для цели
+        target_trajectory = Trajectory(
+            velocity=velocity,
+            start_pos=pos,
+            start_time=0.0  # В начальный момент времени
+        )
+        
+        # Создаем цель с заданной траекторией
         target = Target(
             manager=manager, 
             id=target_id,
-            pos=np.array(target_config['position']),
+            pos=pos,  # Начальная позиция
+            trajectory=target_trajectory,  # Передаем траекторию
             type=target_type
         )
-        # Установка скорости цели
-        target.velocity = np.array(target_config['velocity'])
         
         # Добавляем цель в воздушную обстановку
         air_env.add_target(target)
