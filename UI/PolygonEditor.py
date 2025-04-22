@@ -1,7 +1,8 @@
 import os
 
+import numpy as np
 import yaml
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QTimer
 from PyQt5.QtGui import QColor, QPen, QPainter, QPixmap, QIcon
 from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout,
                              QWidget, QLabel, QPushButton, QListWidget, QComboBox,
@@ -12,11 +13,17 @@ from UI.Enums import ObjectType
 from UI.MapGraphicsView import MapGraphicsView
 from UI.MapObject import MapObject
 from UI.ObjectDialog import ObjectDialog
+from modules.Manager import Manager
+from modules.Messages import CPPDrawerObjectsMessage
+from modules.constants import MessageType
 
 
 class PolygonEditor(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.manager = Manager()
+        self.scene_objects = {}  # {obj_id: {'object': MapObject, 'label': QGraphicsTextItem}}
+
         self.setWindowTitle("Редактор полигона")
         self.setGeometry(100, 100, 1600, 1000)
 
@@ -207,12 +214,14 @@ class PolygonEditor(QMainWindow):
                 self.scene.addLine(-15000, i, 15000, i, pen)
 
     def update_scene(self):
-        # Очищаем только объекты
-        for item in self.scene.items():
-            if isinstance(item, (MapObject, QGraphicsTextItem)):
-                self.scene.removeItem(item)
+        # Очищаем только объекты и подписи
+        for obj_id, obj_data in list(self.scene_objects.items()):
+            self.scene.removeItem(obj_data['object'])
+            if obj_data['label'] and obj_data['label'].scene():
+                self.scene.removeItem(obj_data['label'])
+        self.scene_objects.clear()
 
-        # Рисуем объекты
+        # Рисуем объекты заново
         for target in self.config["air_environment"]["targets"]:
             self.draw_map_object(target["position"], target["type"], target.get("id", ""))
 
@@ -225,15 +234,30 @@ class PolygonEditor(QMainWindow):
     def draw_map_object(self, position, obj_type, obj_id):
         enum_type = ObjectType(obj_type) if isinstance(obj_type, str) else obj_type
         icon = self.icons.get(enum_type, self.icons[ObjectType.AIR_PLANE])
+
+        # Создаем графический объект
         obj = MapObject(icon, enum_type, obj_id)
-        obj.setPos(position[0] - icon.width() / 2, position[1] - icon.height() / 2)
+        x = position[0] - icon.width() / 2
+        y = position[1] - icon.height() / 2
+        obj.setPos(x, y)
         self.scene.addItem(obj)
 
-        # Подпись
+        # Создаем подпись и делаем ее дочерним элементом
         label = QGraphicsTextItem(f"{ObjectType.get_display_name(enum_type)} {obj_id}")
+        label.setParentItem(obj)  # Делаем подпись дочерним элементом
+
+
         label.setPos(position[0] - label.boundingRect().width() / 2,
                      position[1] - icon.height() / 2 - 30)
+
+
         self.scene.addItem(label)
+
+        # Сохраняем в словарь объектов
+        self.scene_objects[str(obj_id)] = {
+            'object': obj,
+            'label': label
+        }
 
     def update_objects_list(self):
         self.objects_list.clear()
@@ -368,4 +392,137 @@ class PolygonEditor(QMainWindow):
             QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить конфигурацию:\n{str(e)}")
 
     def run_simulation(self):
-        QMessageBox.information(self, "Моделирование", "Моделирование запущено с текущей конфигурацией")
+        # Запускаем моделирование
+        self.manager.run_simulation(10)
+
+        # Тестовые сообщения для демонстрации
+        test_messages = {
+            0: [CPPDrawerObjectsMessage(
+                sender_id=0,
+                receiver_id=0,
+                obj_id=1,
+                type=MessageType.DRAW_OBJECTS,
+                coordinates=np.array([100, 100, 0]),
+                time=0
+            )],
+            1: [CPPDrawerObjectsMessage(
+                sender_id=0,
+                receiver_id=0,
+                obj_id=1,
+                type=MessageType.DRAW_OBJECTS,
+                coordinates=np.array([150, 120, 0]),
+                time=1
+            )],
+            2: [CPPDrawerObjectsMessage(
+                sender_id=0,
+                receiver_id=0,
+                obj_id=1,
+                type=MessageType.DRAW_OBJECTS,
+                coordinates=np.array([200, 140, 0]),
+                time=2
+            )],
+            3: [CPPDrawerObjectsMessage(
+                sender_id=0,
+                receiver_id=0,
+                obj_id=1,
+                type=MessageType.DRAW_OBJECTS,
+                coordinates=np.array([250, 160, 0]),
+                time=3
+            )],
+            4: [CPPDrawerObjectsMessage(
+                sender_id=0,
+                receiver_id=0,
+                obj_id=1,
+                type=MessageType.DRAW_OBJECTS,
+                coordinates=np.array([300, 180, 0]),
+                time=4
+            )]
+        }
+
+        self.manager.messages = test_messages
+
+        # Получаем все временные метки
+        time_steps = sorted(self.manager.messages.keys())
+
+        # Инициализация таймера
+        self.simulation_timer = QTimer()
+        self.current_step = 0
+        self.max_step = len(time_steps)
+
+        def update_simulation():
+            if self.current_step >= self.max_step:
+                self.simulation_timer.stop()
+                QMessageBox.information(self, "Моделирование", "Моделирование завершено")
+                return
+
+            current_time = time_steps[self.current_step]
+            messages = self.manager.give_messages_by_type(
+                msg_type=MessageType.DRAW_OBJECTS,
+                step_time=current_time
+            )
+
+            # Обрабатываем все сообщения для текущего времени
+            for msg in messages:
+                if not isinstance(msg, CPPDrawerObjectsMessage):
+                    continue
+
+                obj_id = str(msg.obj_id)
+                x, y, _ = msg.coordinates
+
+                # Если объект существует - обновляем его позицию
+                if obj_id in self.scene_objects:
+                    obj = self.scene_objects[obj_id]['object']
+                    # Подпись двигается автоматически, так как она дочерний элемент
+                    obj.setPos(x - obj.pixmap().width() / 2, y - obj.pixmap().height() / 2)
+
+            self.status_bar.showMessage(
+                f"Шаг: {self.current_step + 1}/{self.max_step} Время: {current_time}"
+            )
+            self.current_step += 1
+
+        # Настраиваем таймер (обновление каждые 500 мс)
+        self.simulation_timer.timeout.connect(update_simulation)
+        self.simulation_timer.start(500)
+
+        QMessageBox.information(self, "Моделирование", "Моделирование запущено")
+
+    def initialize_scene_objects(self):
+        """Инициализирует словарь scene_objects на основе текущей сцены"""
+        # Очищаем текущие объекты
+        self.scene_objects.clear()
+
+        # Временный словарь для хранения позиций подписей
+        label_positions = {}
+
+        # Сначала собираем все подписи и запоминаем их позиции
+        for item in self.scene.items():
+            if isinstance(item, QGraphicsTextItem):
+                # Запоминаем позицию подписи и текст
+                label_positions[(item.x(), item.y())] = item
+
+        # Теперь обрабатываем объекты MapObject
+        for item in self.scene.items():
+            if isinstance(item, MapObject):
+                # Вычисляем ожидаемую позицию подписи для этого объекта
+                obj_center_x = item.x() + item.pixmap().width() / 2
+                expected_label_y = item.y() - 30  # 30 пикселей выше объекта
+                expected_label_x = obj_center_x  # Центр по X
+
+                # Ищем подпись вблизи ожидаемой позиции
+                label = None
+                for (x, y), lbl in label_positions.items():
+                    if (abs(x - expected_label_x) < 50 and
+                            abs(y - expected_label_y) < 50 and
+                            str(item.obj_id) in lbl.toPlainText()):
+                        label = lbl
+                        break
+
+                # Добавляем в словарь
+                self.scene_objects[item.obj_id] = {
+                    'object': item,
+                    'label': label
+                }
+
+                # Если нашли подпись, устанавливаем родительский элемент
+                if label is not None:
+                    label.setParentItem(item)
