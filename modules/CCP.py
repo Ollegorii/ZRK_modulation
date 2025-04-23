@@ -338,12 +338,12 @@ class CombatControlPoint(BaseModel):
         self.check_if_missile_get_hit()
         self.check_if_missiles_launched()
 
-        msg_from_radar = self._manager.give_messages_by_type(MessageType.FOUND_OBJECTS, receiver_id=self.id)
+        msg_from_radar = self._manager.give_messages_by_type(MessageType.FOUND_OBJECTS)
         print(f"ПБУ получил сообщения от {len(msg_from_radar)} МФР")
 
         if len(msg_from_radar) != 0:
             for msg in msg_from_radar:
-                print(f"ПБУ получил {msg.visible_objects.id} от МФР с id {msg.sender_id}")
+                print(f"ПБУ получил {msg.visible_objects} от МФР с id {msg.sender_id}")
                 radar_id = msg.sender_id
 
                 objects = msg.visible_objects
