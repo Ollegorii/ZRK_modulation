@@ -81,7 +81,7 @@ class CombatControlPoint(BaseModel):
         """
         Добавление новой цели в список целей ПБУ
         """
-        self._target_dict[target_ccp.target.id] = target_ccp.target
+        self._target_dict[target_ccp.target.id] = target_ccp
         # self._target_dict[self._next_target_id] = target_ccp.target
         print(f"В ПБУ добавлена цель с id: {target_ccp.target.id}")
         # self._next_target_id += 1
@@ -97,7 +97,7 @@ class CombatControlPoint(BaseModel):
         """
         Добавление новой ЗУР в список ракет ПБУ
         """
-        self._missile_dict[missile_ccp.missile.id] = missile_ccp.missile
+        self._missile_dict[missile_ccp.missile.id] = missile_ccp
         # self._missile_dict[self._next_missile_id] = missile_ccp.missile
         print(f"В ПБУ добавлена ракета с id: {missile_ccp.missile.id}")
         # self._next_missile_id += 1
@@ -154,7 +154,7 @@ class CombatControlPoint(BaseModel):
         """
         ПБУ получает от ПУ сообщения о запуске ЗУР
         """
-        msg_launched_missiles = self._manager.give_messages_by_type(MessageType.LAUNCHED_MISSILE, receiver_id=self.id)
+        msg_launched_missiles = self._manager.give_messages_by_type(MessageType.LAUNCHED_MISSILE)
         if len(msg_launched_missiles) > 0:
             for msg in msg_launched_missiles:
                 self.add_missile(MissileCCP(msg.missile, self._manager.time.get_time()))
@@ -180,6 +180,7 @@ class CombatControlPoint(BaseModel):
 
         # Проверка на старую цель
         for target_id, target_ccp in self._target_dict.items():
+            print(target_id, target_ccp)
             if target_ccp.upd_time == self._manager.time.get_time():
                 continue
 
@@ -254,6 +255,7 @@ class CombatControlPoint(BaseModel):
         """
         Обработка случая, когда видимый объект является новой целью
         """
+        print("ПБУ определил этот объект как новую цель")
         min_dist = float('inf')
         curr_ml_id = None
         # ищем ближайший ПУ со свободными ЗУР
@@ -288,6 +290,7 @@ class CombatControlPoint(BaseModel):
         """
         Обработка случая, когда видимый объект является старой целью
         """
+        print("ПБУ определил этот объект как старую цель")
         old_target_coord = self._target_dict[old_obj_id].target.pos
 
         self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time())
@@ -314,6 +317,7 @@ class CombatControlPoint(BaseModel):
         """
         Обработка случая, когда видимый объект является старой ЗУР
         """
+        print("ПБУ определил этот объект как старую ЗУР")
         self._missile_dict[old_obj_id].upd_missile_ccp(obj, self._manager.time.get_time())
         print(f"ПБУ увидел старую ЗУР с id:{self._missile_dict[old_obj_id].missile.id}")
 
@@ -341,15 +345,16 @@ class CombatControlPoint(BaseModel):
         self.check_if_missiles_launched()
 
         msg_from_radar = self._manager.give_messages_by_type(MessageType.FOUND_OBJECTS)
-        print(f"ПБУ получил сообщения от {len(msg_from_radar)} МФР")
+        print(f"ПБУ получил сообщения от {len(msg_from_radar)} радаров/радара")
 
         if len(msg_from_radar) != 0:
             for msg in msg_from_radar:
-                print(f"ПБУ получил {msg.visible_objects} от МФР с id {msg.sender_id}")
+
                 radar_id = msg.sender_id
 
                 objects = msg.visible_objects
                 for obj in objects:
+                    print(f"ПБУ получил {obj} от МФР с id {msg.sender_id}")
                     # Завязываем трассу (определяем что это за объект)
                     obj_type, old_obj_id = self.link_object(obj)
                     if obj_type == NEW_TARGET:
