@@ -43,6 +43,7 @@ class MissileCCP:
         """
         self.missile = copy.deepcopy(missile)
         self.upd_time = time
+        self.target = self.missile.target
 
     def upd_missile_ccp(self, missile: Missile, time: int) -> None:
         """
@@ -51,6 +52,7 @@ class MissileCCP:
         :param time: время, когда вызвали функцию
         """
         self.missile = copy.deepcopy(missile)
+        self.target = self.missile.target
         self.upd_time = time
 
 
@@ -168,8 +170,9 @@ class CombatControlPoint(BaseModel):
         def calc_range(detected_obj, obj_to_link_pos, obj_to_link_upd_time):
             """ Метода расчета min/max расстояния до возможного объекта"""
             velocity = detected_obj.speed_mod
-            coord_diff = np.linalg.norm(obj_to_link_pos - detected_obj.coord)
-            d_t = self._manager.time.get_time() - obj_to_link_upd_time
+            cur_time = self._manager.time.get_time()
+            coord_diff = np.linalg.norm(obj_to_link_pos - detected_obj.pos)
+            d_t = cur_time - obj_to_link_upd_time
 
             return max(0, velocity * (d_t - POSSIBLE_TARGET_RADIUS * SIMULATION_STEP)), max(0, velocity * (
                     d_t + POSSIBLE_TARGET_RADIUS * SIMULATION_STEP)), coord_diff
@@ -225,7 +228,7 @@ class CombatControlPoint(BaseModel):
         """
         for key, missile in self._missile_dict.items():
             obj_id = self._missile_dict[key].missile.id
-            obj_type = self._missile_dict[key].missile.type
+            obj_type = self._missile_dict[key].missile.target.type
             msg2drawer = CPPDrawerObjectsMessage(
                 time=self._manager.time.get_time(),
                 sender_id=self.id,
@@ -298,7 +301,7 @@ class CombatControlPoint(BaseModel):
         for key in self._missile_dict.keys():
             missile_ccp = self._missile_dict[key]
             # если этот старый таргет был таргетом у этого ЗУР, то ЗУР надо перенаправить
-            if (missile_ccp.missile.target_pos == old_target_coord).all():
+            if (missile_ccp.missile.target.pos == old_target_coord).all():
                 radar_missile_dist = np.linalg.norm(self.radars_coords[radar_id] - missile_ccp.missile.pos)
                 if radar_missile_dist < MAX_DIST_DETECTION:
                     msg2radar = CPPUpdateTargetRadarMessage(
@@ -310,7 +313,7 @@ class CombatControlPoint(BaseModel):
                     )
                     self._manager.add_message(msg2radar)
                     print(
-                        f"ПБУ сообщает МФР {radar_id}, что у ЗУР с id:{missile_ccp.missile.id}, новые координаты ее цели:{obj.pos()}")
+                        f"ПБУ сообщает МФР {radar_id}, что у ЗУР с id:{missile_ccp.missile.id}, новые координаты ее цели:{obj.pos}")
                 break
 
     def old_rocket(self, obj, old_obj_id):
