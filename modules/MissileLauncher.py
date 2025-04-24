@@ -103,16 +103,18 @@ class MissileLauncher(BaseModel):
         Выполнение одного шага симуляции для пусковой установки
         """
         current_time = self._manager.time.get_time()
+        dt = self._manager.time.get_dt()
         print(f"Шаг симуляции пусковой установки (ID: {self.id}) в t={current_time}. Доступно ракет: {self.count_missiles()}")
 
         # Обработка сообщений
-        messages = self._manager.give_messages_by_id(self.id)
+        messages = self._manager.give_messages_by_id(self.id, step_time=current_time-dt)
+        print(f"ПУ сообщения {messages}")
         for msg in messages:
             if isinstance(msg, CPPLaunchMissileRequestMessage):
-                print(f"Получена команда на запуск ракеты к цели ID: {msg.target_id}")
+                print(f"Получена команда на запуск ракеты к цели ID: {msg.target}")
                 self.launch_missile(
-                    target_pos=msg.target,
-                    target_id=msg.target_id,
+                    target=msg.target,
+                    # target_id=msg.target_id,
                     radar_id=msg.radar_id
                 )
             elif isinstance(msg, MissileCountRequestMessage):
