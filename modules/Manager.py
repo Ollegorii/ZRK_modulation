@@ -116,8 +116,15 @@ class Manager:
             
             # Обработка сообщений для текущего шага (если есть)
             
-            # Запуск шага симуляции для каждого модуля
-            for module in self.modules:
+            # Сортируем модули в нужном порядке
+            priority_modules = ['AirEnv', 'SectorRadar', 'MissileLauncher', 'CombatControlPoint']
+            sorted_modules = sorted(self.modules, 
+                                key=lambda m: priority_modules.index(m.__class__.__name__) 
+                                if m.__class__.__name__ in priority_modules 
+                                else len(priority_modules))
+
+            # Вызываем step() в отсортированном порядке
+            for module in sorted_modules:
                 module.step()
             
             current_messages = self.give_messages(current_time)

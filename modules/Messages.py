@@ -26,8 +26,8 @@ class CPPLaunchMissileRequestMessage(BaseMessage):
     CCP -> MissileLauncher
     Сообщение на запуск ракеты по указанной цели
     """
-    def __init__(self, sender_id: int, target: Target, target_position: np.ndarray, radar_id: int, time: int = None, receiver_id: int = None):
-        super().__init__(type=MessageType.LAUNCH_COMMAND, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+    def __init__(self, sender_id: int, target: Target, target_position: np.ndarray, radar_id: int, time: int = None, receiver_id: int = None, relevance: int = 1):
+        super().__init__(type=MessageType.LAUNCH_COMMAND, send_time=time, sender_id=sender_id, receiver_id=receiver_id, relevance=relevance)
         self.target = target
         self.target_position = target_position
         self.radar_id = radar_id
@@ -55,8 +55,8 @@ class MissileCountRequestMessage(BaseMessage):
     CCP -> MissileLauncher
     Сообщение-запрос количества доступных ракет
     """
-    def __init__(self, sender_id: int, time: int = None, receiver_id: int = None):
-        super().__init__(type=MessageType.MISSILE_COUNT_REQUEST, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+    def __init__(self, sender_id: int, time: int = None, receiver_id: int = None, relevance: int = 3):
+        super().__init__(type=MessageType.MISSILE_COUNT_REQUEST, send_time=time, sender_id=sender_id, receiver_id=receiver_id, relevance=relevance)
     
     def __repr__(self) -> str:
         return super().__repr__()
