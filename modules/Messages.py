@@ -26,15 +26,15 @@ class CPPLaunchMissileRequestMessage(BaseMessage):
     CCP -> MissileLauncher
     Сообщение на запуск ракеты по указанной цели
     """
-    def __init__(self, sender_id: int, target_id: int, target_position: np.ndarray, radar_id: int, time: int = None, receiver_id: int = None):
+    def __init__(self, sender_id: int, target: Target, target_position: np.ndarray, radar_id: int, time: int = None, receiver_id: int = None):
         super().__init__(type=MessageType.LAUNCH_COMMAND, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
-        self.target_id = target_id
+        self.target = target
         self.target_position = target_position
         self.radar_id = radar_id
     
     def __repr__(self) -> str:
         base_info = super().__repr__()
-        return f"{base_info}, target_id={self.target_id}, target_position={self.target_position}, radar_id={self.radar_id}"
+        return f"{base_info}, target={self.target}, target_position={self.target_position}, radar_id={self.radar_id}"
 
 class LaunchedMissileMessage(BaseMessage):
     """

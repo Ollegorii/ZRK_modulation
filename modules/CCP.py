@@ -276,7 +276,7 @@ class CombatControlPoint(BaseModel):
                 time=self._manager.time.get_time(),
                 sender_id=self.id,
                 receiver_id=curr_ml_id,
-                target_id=obj.id,
+                target=obj,
                 target_position=obj.pos,
                 radar_id=radar_id
             )
