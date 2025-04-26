@@ -1,22 +1,29 @@
 import os
-
+import numpy as np
 import yaml
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QColor, QPen, QPainter, QPixmap, QIcon
+from PyQt5.QtCore import Qt, QSize, QTimer
+from PyQt5.QtGui import QColor, QPen, QPainter, QPixmap, QIcon, QBrush
 from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout,
                              QWidget, QLabel, QPushButton, QListWidget, QComboBox,
                              QDialog, QGraphicsScene, QGraphicsTextItem,
-                             QMessageBox, QSlider, QStatusBar)
+                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem)
 
 from UI.Enums import ObjectType
 from UI.MapGraphicsView import MapGraphicsView
 from UI.MapObject import MapObject
 from UI.ObjectDialog import ObjectDialog
+from main import run_simulation_from_config
+from modules.Manager import Manager
+from modules.Messages import CPPDrawerObjectsMessage
+from modules.constants import MessageType
 
 
 class PolygonEditor(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.manager = Manager()
+        self.scene_objects = {}  # {obj_id: MapObject}
+
         self.setWindowTitle("Редактор полигона")
         self.setGeometry(100, 100, 1600, 1000)
 
@@ -26,7 +33,8 @@ class PolygonEditor(QMainWindow):
             ObjectType.HELICOPTER: self.load_icon("helicopter.png", "🚁", 60),
             ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
             ObjectType.MISSILE_LAUNCHER: self.load_icon("launcher.png", "🚀", 60),
-            ObjectType.RADAR: self.load_icon("radar.png", "📡", 60)
+            ObjectType.RADAR: self.load_icon("radar.png", "📡", 60),
+            ObjectType.MISSILE: self.load_icon("missile.png", "*", 30)
         }
 
         # Конфигурация по умолчанию
@@ -36,12 +44,12 @@ class PolygonEditor(QMainWindow):
                 "duration": 10
             },
             "air_environment": {
-                "id": 1,
+                "id": 999,
                 "position": [0.0, 0.0, 0.0],
                 "targets": []
             },
             "combat_control_point": {
-                "id": 2,
+                "id": 0,
                 "missile_launcher_ids": [],
                 "radar_ids": []
             },
@@ -59,6 +67,7 @@ class PolygonEditor(QMainWindow):
         }
         self.default_config_path = "simulation_config.yaml"
         self.init_ui()
+
 
     def load_icon(self, filename, fallback, size):
         if os.path.exists(filename):
@@ -99,7 +108,6 @@ class PolygonEditor(QMainWindow):
 
         self.object_type_combo.currentIndexChanged.connect(self.set_object_type)
         self.current_object_type = ObjectType.AIR_PLANE
-
 
         left_layout.addWidget(QLabel("Тип объекта:"))
         left_layout.addWidget(self.object_type_combo)
@@ -153,7 +161,7 @@ class PolygonEditor(QMainWindow):
         self.scene = QGraphicsScene()
         self.scene.setSceneRect(-15000, -15000, 30000, 30000)
 
-        self.view = MapGraphicsView(self.scene, self)  # Передаем self как parent
+        self.view = MapGraphicsView(self.scene, self)
         self.view.setMinimumSize(800, 800)
         self.view.zoomChanged.connect(self.update_zoom_slider)
         right_layout.addWidget(self.view)
@@ -178,7 +186,17 @@ class PolygonEditor(QMainWindow):
         dialog = ObjectDialog(self.current_object_type, position, default_id, self)
         if dialog.exec_() == QDialog.Accepted:
             obj_data = dialog.get_object_data()
-            self.next_ids[self.current_object_type] += 1
+
+            # Проверяем уникальность ID
+            if not self.is_id_unique(obj_data["id"]):
+                QMessageBox.warning(self, "Ошибка",
+                                    f"Объект с ID {obj_data['id']} уже существует. Пожалуйста, выберите другой ID.")
+                return  # Не добавляем объект
+
+            # Увеличиваем счетчик только если ID уникален
+            self.next_ids[self.current_object_type] = max(
+                self.next_ids[self.current_object_type],
+                int(obj_data["id"]) + 1)
 
             # Добавляем объект в конфиг
             if self.current_object_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.ANOTHER]:
@@ -207,39 +225,45 @@ class PolygonEditor(QMainWindow):
                 self.scene.addLine(-15000, i, 15000, i, pen)
 
     def update_scene(self):
-        # Очищаем только объекты
-        for item in self.scene.items():
-            if isinstance(item, (MapObject, QGraphicsTextItem)):
-                self.scene.removeItem(item)
+        # Очищаем все объекты
+        for obj_id, obj in list(self.scene_objects.items()):
+            self.scene.removeItem(obj)
+        self.scene_objects.clear()
 
-        # Рисуем объекты
+        # Рисуем объекты заново
         for target in self.config["air_environment"]["targets"]:
             self.draw_map_object(target["position"], target["type"], target.get("id", ""))
 
         for launcher in self.config["missile_launchers"]:
             self.draw_map_object(launcher["position"], "MISSILE_LAUNCHER", launcher.get("id", ""))
 
+            # Рисуем ракеты этой установки
+            for missile in launcher.get("missiles", []):
+                missile_id = f"missile_{launcher['id']}_{missile.get('id', '')}"
+                self.draw_map_object(launcher["position"], "MISSILE", missile_id)
+
         for radar in self.config["radars"]:
             self.draw_map_object(radar["position"], "RADAR", radar.get("id", ""))
 
     def draw_map_object(self, position, obj_type, obj_id):
-        enum_type = ObjectType(obj_type) if isinstance(obj_type, str) else obj_type
+        enum_type = ObjectType[obj_type] if isinstance(obj_type, str) else obj_type
         icon = self.icons.get(enum_type, self.icons[ObjectType.AIR_PLANE])
+
+        # Создаем графический объект
         obj = MapObject(icon, enum_type, obj_id)
-        obj.setPos(position[0] - icon.width() / 2, position[1] - icon.height() / 2)
+        x = position[0] - icon.width() / 2
+        y = position[1] - icon.height() / 2
+        obj.setPos(x, y)
         self.scene.addItem(obj)
 
-        # Подпись
-        label = QGraphicsTextItem(f"{ObjectType.get_display_name(enum_type)} {obj_id}")
-        label.setPos(position[0] - label.boundingRect().width() / 2,
-                     position[1] - icon.height() / 2 - 30)
-        self.scene.addItem(label)
+        # Сохраняем в словарь объектов
+        self.scene_objects[str(obj_id)] = obj
 
     def update_objects_list(self):
         self.objects_list.clear()
 
         for target in self.config["air_environment"]["targets"]:
-            display_name = ObjectType.get_display_name(ObjectType(target["type"]))
+            display_name = ObjectType.get_display_name(ObjectType[target["type"]])
             self.objects_list.addItem(f"{display_name} {target.get('id', '')}")
 
         for launcher in self.config["missile_launchers"]:
@@ -272,7 +296,7 @@ class PolygonEditor(QMainWindow):
 
         # Удаляем из конфига
         for target in self.config["air_environment"]["targets"]:
-            display_name = ObjectType.get_display_name(ObjectType(target["type"]))
+            display_name = ObjectType.get_display_name(ObjectType[target["type"]])
             if f"{display_name} {target.get('id', '')}" == item_text:
                 self.config["air_environment"]["targets"].remove(target)
                 self.update_scene()
@@ -331,36 +355,50 @@ class PolygonEditor(QMainWindow):
                 "air_environment": {
                     "id": self.config["air_environment"]["id"],
                     "position": self.config["air_environment"]["position"],
-                    "targets": self.config["air_environment"]["targets"]
+                    "targets": [
+                        {
+                            "id": target["id"],
+                            "type": target["type"],
+                            "position": target["position"],
+                            "velocity": target["velocity"]
+                        }
+                        for target in self.config["air_environment"]["targets"]
+                    ]
                 },
                 "combat_control_point": {
                     "id": self.config["combat_control_point"]["id"],
                     "missile_launcher_ids": self.config["combat_control_point"]["missile_launcher_ids"],
                     "radar_ids": self.config["combat_control_point"]["radar_ids"]
                 },
-                "missile_launchers": self.config["missile_launchers"],
-                "radars": self.config["radars"]
+                "missile_launchers": [
+                    {
+                        "id": launcher["id"],
+                        "position": launcher["position"],
+                        "max_missiles": launcher["max_missiles"],
+                        "missiles": launcher.get("missiles", [])
+                    }
+                    for launcher in self.config["missile_launchers"]
+                ],
+                "radars": [
+                    {
+                        "id": radar["id"],
+                        "position": radar["position"],
+                        "azimuth_start": radar["azimuth_start"],
+                        "elevation_start": radar["elevation_start"],
+                        "max_distance": radar["max_distance"],
+                        "azimuth_range": radar["azimuth_range"],
+                        "elevation_range": radar["elevation_range"],
+                        "azimuth_speed": radar["azimuth_speed"],
+                        "elevation_speed": radar["elevation_speed"],
+                        "scan_mode": radar["scan_mode"]
+                    }
+                    for radar in self.config["radars"]
+                ]
             }
 
-            # Сохраняем в файл с комментариями
+            # Сохраняем в файл
             with open(self.default_config_path, 'w', encoding='utf-8') as file:
-                file.write("# Конфигурация моделирования\n")
-                yaml.dump({"simulation": output_config["simulation"]}, file, allow_unicode=True, sort_keys=False)
-
-                file.write("\n# Конфигурация воздушной обстановки\n")
-                yaml.dump({"air_environment": output_config["air_environment"]}, file, allow_unicode=True,
-                          sort_keys=False)
-
-                file.write("\n# Пункт боевого управления\n")
-                yaml.dump({"combat_control_point": output_config["combat_control_point"]}, file, allow_unicode=True,
-                          sort_keys=False)
-
-                file.write("\n# Пусковые установки\n")
-                yaml.dump({"missile_launchers": output_config["missile_launchers"]}, file, allow_unicode=True,
-                          sort_keys=False)
-
-                file.write("\n# Радары\n")
-                yaml.dump({"radars": output_config["radars"]}, file, allow_unicode=True, sort_keys=False)
+                yaml.dump(output_config, file, allow_unicode=True, sort_keys=False)
 
             QMessageBox.information(self, "Успех",
                                     f"Конфигурация сохранена в файл:\n{os.path.abspath(self.default_config_path)}")
@@ -368,4 +406,147 @@ class PolygonEditor(QMainWindow):
             QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить конфигурацию:\n{str(e)}")
 
     def run_simulation(self):
-        QMessageBox.information(self, "Моделирование", "Моделирование запущено с текущей конфигурацией")
+        # Сохраняем конфиг перед запуском
+        self.save_config()
+
+        # Запускаем моделирование
+        self.manager = run_simulation_from_config('simulation_config.yaml')
+        # self.manager = run_simulation_from_config('../config.yaml')
+
+        # self.manager.run_simulation(self.config["simulation"]["duration"])
+
+        # Тестовые сообщения для демонстрации
+        # test_messages = {
+        #     0: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([100, 100, 0]),
+        #         time=0
+        #     )],
+        #     1: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([150, 120, 0]),
+        #         time=1
+        #     )],
+        #     2: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([200, 140, 0]),
+        #         time=2
+        #     )],
+        #     3: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([250, 160, 0]),
+        #         time=3
+        #     )],
+        #     4: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([300, 180, 0]),
+        #         time=4
+        #     )]
+        # }
+
+        # self.manager.messages = test_messages
+        # r = self.manager.give_messages_by_type(MessageType.DRAW_OBJECTS,step_time = 1)
+        # Получаем все временные метки
+        time_steps = sorted(self.manager.messages.keys())
+
+        # Инициализация таймера
+        self.simulation_timer = QTimer()
+        self.current_step = 0
+        self.max_step = len(time_steps)
+
+        def update_simulation():
+            if self.current_step >= self.max_step:
+                self.simulation_timer.stop()
+                QMessageBox.information(self, "Моделирование", "Моделирование завершено")
+                return
+
+            current_time = time_steps[self.current_step]
+            messages = self.manager.give_messages_by_type(
+                msg_type=MessageType.DRAW_OBJECTS,
+                step_time=current_time
+            )
+
+            # Обрабатываем все сообщения для текущего времени
+            for msg in messages:
+                if not isinstance(msg, CPPDrawerObjectsMessage):
+                    continue
+
+                obj_id = str(msg.obj_id)
+                x, y, _ = msg.coordinates
+
+                # Если объект существует - обновляем его позицию
+                if obj_id in self.scene_objects:
+                    obj = self.scene_objects[obj_id]
+                    obj.setPos(x - obj.pixmap().width() / 2, y - obj.pixmap().height() / 2)
+
+            self.status_bar.showMessage(
+                f"Шаг: {self.current_step + 1}/{self.max_step} Время: {current_time}"
+            )
+            self.current_step += 1
+        # Настраиваем таймер (обновление каждые 500 мс)
+        self.simulation_timer.timeout.connect(update_simulation)
+        self.simulation_timer.start(500)
+
+        QMessageBox.information(self, "Моделирование", "Моделирование запущено")
+
+    def initialize_scene_objects(self):
+        """Инициализирует словарь scene_objects на основе текущей сцены"""
+        self.scene_objects.clear()
+        label_positions = {}
+
+        for item in self.scene.items():
+            if isinstance(item, QGraphicsTextItem):
+                label_positions[(item.x(), item.y())] = item
+
+        for item in self.scene.items():
+            if isinstance(item, MapObject):
+                obj_center_x = item.x() + item.pixmap().width() / 2
+                expected_label_y = item.y() - 30
+                expected_label_x = obj_center_x
+
+                label = None
+                for (x, y), lbl in label_positions.items():
+                    if (abs(x - expected_label_x) < 50 and
+                            abs(y - expected_label_y) < 50 and
+                            str(item.obj_id) in lbl.toPlainText()):
+                        label = lbl
+                        break
+
+                self.scene_objects[item.obj_id] = {
+                    'object': item,
+                    'label': label
+                }
+
+                if label is not None:
+                    label.setParentItem(item)
+
+    def is_id_unique(self, obj_id, obj_type=None):
+        # Проверяем ID во всех типах объектов
+        for target in self.config["air_environment"]["targets"]:
+            if str(target.get("id", "")) == str(obj_id):
+                return False
+
+        for launcher in self.config["missile_launchers"]:
+            if str(launcher.get("id", "")) == str(obj_id):
+                return False
+
+        for radar in self.config["radars"]:
+            if str(radar.get("id", "")) == str(obj_id):
+                return False
+
+        return True

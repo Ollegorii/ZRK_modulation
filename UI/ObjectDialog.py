@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import (QComboBox, QDialog, QDialogButtonBox, QFormLayout, QLineEdit)
+from PyQt5.QtGui import QIntValidator
+from PyQt5.QtWidgets import (QComboBox, QDialog, QDialogButtonBox, QFormLayout, QLineEdit, QMessageBox)
 
 from UI.Enums import ObjectType
 
@@ -22,6 +23,7 @@ class ObjectDialog(QDialog):
         layout.addRow("X координата:", self.x_edit)
         layout.addRow("Y координата:", self.y_edit)
         layout.addRow("Высота (Z):", self.z_edit)
+        self.id_edit.setValidator(QIntValidator(1, 999999, self))
 
         # Параметры для разных типов объектов
         if obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.ANOTHER]:
@@ -68,42 +70,55 @@ class ObjectDialog(QDialog):
         layout.addRow(buttons)
 
     def get_object_data(self):
-        data = {
-            "type": self.obj_type.value,
-            "position": [
-                float(self.x_edit.text()),
-                float(self.y_edit.text()),
-                float(self.z_edit.text())
-            ],
-            "id": self.id_edit.text()
-        }
+        try:
+            obj_id = int(self.id_edit.text())
+            if obj_id <= 0:
+                raise ValueError("ID должен быть положительным числом")
 
-        if self.obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.ANOTHER]:
-            data["velocity"] = [
-                float(self.velocity_x.text()),
-                float(self.velocity_y.text()),
-                float(self.velocity_z.text())
-            ]
-        elif self.obj_type == ObjectType.MISSILE_LAUNCHER:
-            data["max_missiles"] = int(self.max_missiles.text())
-            data["missiles"] = [{
-                "id": 1,
-                "velocity": int(self.missile_velocity.text()),
-                "life_time": int(self.missile_life_time.text()),
-                "explosion_radius": int(self.missile_radius.text())
-            }]
-        elif self.obj_type == ObjectType.RADAR:
-            data.update({
-                "max_distance": float(self.max_distance.text()),
-                "azimuth_range": float(self.azimuth_range.text()),
-                "elevation_range": float(self.elevation_range.text()),
-                "azimuth_speed": float(self.azimuth_speed.text()),
-                "elevation_speed": float(self.elevation_speed.text()),
-                "scan_mode": self.scan_mode.currentText(),
-                "azimuth_start": 0.0 if self.id_edit.text() == "5" else 45.0,
-                "elevation_start": 0.0 if self.id_edit.text() == "5" else 5.0
-            })
+            data = {
+                "type": self.obj_type.value,
+                "id": obj_id,
+                "position": [
+                    float(self.x_edit.text()),
+                    float(self.y_edit.text()),
+                    float(self.z_edit.text())
+                ]
+            }
 
-        return data
+            if self.obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.ANOTHER]:
+                data["velocity"] = [
+                    float(self.velocity_x.text()),
+                    float(self.velocity_y.text()),
+                    float(self.velocity_z.text())
+                ]
+            elif self.obj_type == ObjectType.MISSILE_LAUNCHER:
+                data["max_missiles"] = int(self.max_missiles.text())
+                data["missiles"] = [{
+                    "id": 1111,
+                    "velocity": int(self.missile_velocity.text()),
+                    "explosion_radius": int(self.missile_radius.text()),
+                    "life_time": int(self.missile_life_time.text())
+                },{
+                    "id": 1112,
+                    "velocity": int(self.missile_velocity.text()),
+                    "explosion_radius": int(self.missile_radius.text()),
+                    "life_time": int(self.missile_life_time.text())
+                }]
+            elif self.obj_type == ObjectType.RADAR:
+                data.update({
+                    "azimuth_start": 0.0,
+                    "elevation_start": 0.0,
+                    "max_distance": float(self.max_distance.text()),
+                    "azimuth_range": float(self.azimuth_range.text()),
+                    "elevation_range": float(self.elevation_range.text()),
+                    "azimuth_speed": float(self.azimuth_speed.text()),
+                    "elevation_speed": float(self.elevation_speed.text()),
+                    "scan_mode": self.scan_mode.currentText()
+                })
 
+            return data
+
+        except ValueError as e:
+            QMessageBox.warning(self, "Ошибка", f"Некорректный ID: {str(e)}")
+            return None
 
