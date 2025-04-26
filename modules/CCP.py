@@ -271,6 +271,7 @@ class CombatControlPoint(BaseModel):
                     curr_ml_id = ml_id
                     min_dist = dist
 
+        # TODO даже если нет ЗУР надо внести в список целей
         if curr_ml_id is not None:
             self.missile_launcher_launched[curr_ml_id] = self.missile_launcher_launched[curr_ml_id] + 1
             self.add_target(TargetCCP(obj, self._manager.time.get_time()))
