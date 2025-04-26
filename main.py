@@ -148,7 +148,6 @@ def run_simulation_from_config(config_path: str):
     """Запуск симуляции из конфиг-файла"""
     config = load_config(config_path)
     manager, objects = create_objects_from_config(config)
-    
     print("Созданные объекты:")
     for obj_id, obj in objects.items():
         if isinstance(obj, MissileLauncher):

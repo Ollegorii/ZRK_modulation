@@ -29,6 +29,7 @@ class Target(AirObject):
         """
         super().__init__(manager, id, pos, trajectory)  # Вызываем инициализатор родительского класса
         self.__type = type
+        self.speed_mod = np.linalg.norm(trajectory.velocity)
 
     @property
     def type(self) -> TargetType:
