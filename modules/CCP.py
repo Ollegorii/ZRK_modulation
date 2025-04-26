@@ -233,7 +233,7 @@ class CombatControlPoint(BaseModel):
                 sender_id=self.id,
                 receiver_id=MANAGER_ID,
                 obj_id=obj_id,
-                type=obj_type,
+                target_type=obj_type,
                 coordinates=self._missile_dict[key].missile.pos
             )
             self._manager.add_message(msg2drawer)
@@ -247,7 +247,7 @@ class CombatControlPoint(BaseModel):
                 sender_id=self.id,
                 receiver_id=MANAGER_ID,
                 obj_id=obj_id,
-                type=obj_type,
+                target_type=obj_type,
                 coordinates=self._target_dict[key].target.pos
             )
             self._manager.add_message(msg2drawer)
