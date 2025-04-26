@@ -108,7 +108,9 @@ class CombatControlPoint(BaseModel):
         """
         :param missile_id: id ракеты
         """
+        target_id = self._missile_dict[missile_id].missile.target.id
         self._missile_dict.pop(missile_id, None)
+        self.delete_target(target_id)
         print(f"[INFO] В ПБУ удалена ракета с id: {missile_id}")
 
     def send_request_msg_to_ML_capacity(self):
@@ -350,7 +352,6 @@ class CombatControlPoint(BaseModel):
 
         if len(msg_from_radar) != 0:
             for msg in msg_from_radar:
-
                 radar_id = msg.sender_id
 
                 objects = msg.visible_objects
