@@ -1,7 +1,7 @@
 # Конфигурация моделирования
 simulation:
   time_step: 1  # шаг моделирования в секундах
-  duration: 7    # общая продолжительность моделирования в секундах
+  duration: 100    # общая продолжительность моделирования в секундах
 
 # Конфигурация воздушной обстановки
 air_environment:
@@ -12,14 +12,14 @@ air_environment:
       position: [5000.0, 5000.0, 2000.0]
       velocity: [100.0, 0.0, 0.0]
       id: 100
-#    - type: "HELICOPTER"
-#      position: [3000.0, 4000.0, 500.0]
-#      velocity: [50.0, -20.0, 0.0]
-#      id: 101
-#    - type: "ANOTHER"
-#      position: [8000.0, 2000.0, 1500.0]
-#      velocity: [80.0, 30.0, -10.0]
-#      id: 102
+    - type: "HELICOPTER"
+      position: [3000.0, 4000.0, 500.0]
+      velocity: [50.0, -20.0, 0.0]
+      id: 101
+    - type: "ANOTHER"
+      position: [8000.0, 2000.0, 1500.0]
+      velocity: [80.0, 30.0, -10.0]
+      id: 102
 
 # Пункт боевого управления
 combat_control_point:
