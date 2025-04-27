@@ -6,6 +6,7 @@ class ObjectType(Enum):
     ANOTHER = "ANOTHER"
     MISSILE_LAUNCHER = "MISSILE_LAUNCHER"
     RADAR = "RADAR"
+    MISSILE = "MISSILE"
 
     @classmethod
     def get_display_name(cls, obj_type):

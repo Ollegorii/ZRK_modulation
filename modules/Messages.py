@@ -174,15 +174,15 @@ class CPPDrawerObjectsMessage(BaseMessage):
     CCP -> GUI
     Сообщение на обновление координат цели
     """
-    def __init__(self, sender_id: int, obj_id: int, type, coordinates: np.ndarray, time: int = None, receiver_id: int = None):
+    def __init__(self, sender_id: int, obj_id: int, target_type, coordinates: np.ndarray, time: int = None, receiver_id: int = None):
         super().__init__(type=MessageType.DRAW_OBJECTS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.obj_id = obj_id
-        self.type = type
+        self.target_type = target_type
         self.coordinates = coordinates
     
     def __repr__(self) -> str:
         base_info = super().__repr__()
-        return f"{base_info}, obj_id={self.obj_id}, type={self.type}, coordinates={self.coordinates}"
+        return f"{base_info}, obj_id={self.obj_id}, target_type={self.target_type}, coordinates={self.coordinates}"
 
 class MissileToAirEnvMessage(BaseMessage):
     """

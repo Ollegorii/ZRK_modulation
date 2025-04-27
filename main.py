@@ -162,9 +162,13 @@ def run_simulation_from_config(config_path: str):
     simulation_time = config['simulation']['duration']
     print(f"\nЗапуск симуляции на {simulation_time} секунд...")
     manager.run_simulation(simulation_time)
-    
+
+
     total_messages = sum(len(messages) for messages in manager.messages.values())
     print(f"\nИтого сообщений: {total_messages}")
 
+    return manager
+
+
 if __name__ == "__main__":
-    run_simulation_from_config('simulation_config.yaml')
+    run_simulation_from_config('UI/simulation_config.yaml')
