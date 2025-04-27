@@ -5,6 +5,9 @@ from .constants import *
 from .BaseModel import BaseModel
 from .Messages import * 
 from typing import List, Tuple
+import logging
+
+logger = logging.getLogger(__name__)
 
 class SectorRadar(BaseModel):
     def __init__(
@@ -23,16 +26,6 @@ class SectorRadar(BaseModel):
     ):
         """
         Класс радара с секторным обзором.
-
-        :param pos: Позиция радара в глобальной системе координат (x, y, z).
-        :param azimuth_start: Начальный угол азимута (в градусах).
-        :param elevation_start: Начальный угол наклона (в градусах).
-        :param max_distance: Максимальная дальность обнаружения.
-        :param azimuth_range: Угол раскрыва сектора по азимуту (в градусах).
-        :param elevation_range: Угол раскрыва сектора по углу наклона (в градусах).
-        :param azimuth_speed: Скорость сканирования по азимуту (градусов в секунду).
-        :param elevation_speed: Скорость сканирования по углу наклона (градусов в секунду).
-        :param scan_mode: Режим сканирования ("horizontal" или "vertical").
         """
         super().__init__(manager, id, pos)
         self.azimuth_start = azimuth_start
@@ -51,9 +44,6 @@ class SectorRadar(BaseModel):
     def find_visible_objects(self, objects: List[AirObject]) -> List[AirObject]:
         """
         Поиск объектов, видимых радаром в текущем секторе.
-
-        :param objects: Список объектов, каждый из которых представлен классом Target.
-        :return: Список видимых объектов и их расстояний до радара.
         """
         visible_objects = []
 
@@ -125,11 +115,6 @@ class SectorRadar(BaseModel):
     ):
         """
         Обновление параметров сканирования.
-
-        :param new_azimuth_range: Новый угол раскрыва по азимуту.
-        :param new_elevation_range: Новый угол раскрыва по углу наклона.
-        :param new_azimuth_speed: Новая скорость сканирования по азимуту.
-        :param new_elevation_speed: Новая скорость сканирования по углу наклона.
         """
         if new_azimuth_range is not None:
             self.azimuth_range = new_azimuth_range
@@ -148,15 +133,12 @@ class SectorRadar(BaseModel):
         dt = self._manager.time.get_dt()
 
         objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)[0].active_objects
-        # FIXME: Првоерка не того
-        # if not isinstance(objects, ActiveObjectsMessage):
-        #     raise "ОШИБКА РАДАРА: Сообщение от ВО не принадлежит ожидаемому классу"
         if len(objects) == 0:
             raise "ОШИБКА РАДАРА: ВО отправило пустое сообщение"
         visible_objects = self.find_visible_objects(objects)
-        print(f"Видимые объекты:")
+        logger.info(f"Видимые объекты:")
         for obj in visible_objects:
-            print(obj)
+            logger.info(obj)
         visible_objects_msg = FoundObjectsMessage(
             time=current_time, 
             sender_id=self.id, 
@@ -193,43 +175,15 @@ class SectorRadar(BaseModel):
                  
         self.move_to_next_sector()
 
-
-
     def start(self, objects):
         """
         Симуляция работы радара для тестирования
         """
         num_steps = int(self.azimuth_range / self.azimuth_speed * self.elevation_range / self.elevation_speed)
         for step in range(num_steps):
-            print(f"Шаг {step + 1}:")
+            logger.info(f"Шаг {step + 1}:")
             ### tbd ! ПОЛУЧЕНИЕ ИНФОРМАЦИИ ОБ ОБЪЕКТАХ !
             visible_objects = self.find_visible_objects(objects)
-            print(f"Видимые объекты: {visible_objects}")
+            logger.info(f"Видимые объекты: {visible_objects}")
             ### tbd ! ПЕРЕДАЧА ИНФОРМАЦИИ О НАЙДЕННЫХ ОБЪЕКТАХ !
             self.move_to_next_sector()
-
-
-# ### Пример использования
-
-# # Создаем радар с горизонтальным сканированием
-# radar = SectorRadar(
-#     pos=np.array([0, 0, 0]),
-#     id = 0,
-#     azimuth_start=0,
-#     elevation_start=0,
-#     max_distance=1000,
-#     azimuth_range=90,
-#     elevation_range=45,
-#     azimuth_speed=10,
-#     elevation_speed=5,
-#     scan_mode="horizontal"
-# )
-
-# # Список объектов в пространстве
-# objects = [
-#     np.array([100, 200, 50]),
-#     np.array([300, 400, 100]),
-#     np.array([500, 600, 150])
-# ]
-
-# radar.start(objects)

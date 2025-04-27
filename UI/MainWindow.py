@@ -1,10 +1,19 @@
 import sys
 from PyQt5.QtWidgets import QApplication
+import logging
 
+from .PolygonEditor import PolygonEditor
 
-from UI.PolygonEditor import PolygonEditor
+def setup_logging():
+    logging.basicConfig(
+        filename='logs/app.log',
+        filemode='w',       
+        level=logging.INFO, 
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 
 if __name__ == "__main__":
+    setup_logging()
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
 
