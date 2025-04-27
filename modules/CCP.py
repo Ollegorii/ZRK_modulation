@@ -11,12 +11,12 @@ OLD_TARGET = "старая цель"
 NEW_TARGET = "новая цель"
 OLD_ROCKET = "старая ЗУР"
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename='my_log.log',
-    encoding='utf-8',
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# logging.basicConfig(
+#     level=logging.DEBUG,
+#     filename='my_log.log',
+#     encoding='utf-8',
+#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# )
 
 logger = logging.getLogger(__name__)
 
