@@ -5,12 +5,12 @@ import logging
 
 from modules.Manager import Manager
 from modules.AirEnv import AirEnv
+from modules.Radar import SectorRadar
 from modules.utils import Target, TargetType
 from modules.AirObject import Trajectory
 from modules.CCP import CombatControlPoint
 from modules.MissileLauncher import MissileLauncher
 from modules.Missile import Missile
-from modules.Radar import SectorRadar
 from modules.Timer import Timer
 from modules.BaseModel import BaseModel
 from modules.constants import MessageType
