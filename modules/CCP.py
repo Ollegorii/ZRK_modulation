@@ -11,6 +11,13 @@ OLD_TARGET = "старая цель"
 NEW_TARGET = "новая цель"
 OLD_ROCKET = "старая ЗУР"
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename='my_log.log',
+    encoding='utf-8',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
 logger = logging.getLogger(__name__)
 
 class TargetCCP:
@@ -170,10 +177,15 @@ class CombatControlPoint(BaseModel):
 
         def calc_range(detected_obj, obj_to_link_pos, obj_to_link_upd_time):
             """ Метода расчета min/max расстояния до возможного объекта"""
+
+
             velocity = detected_obj.speed_mod
+            if detected_obj.id == 10:
+                velocity = 1600
             cur_time = self._manager.time.get_time()
             coord_diff = np.linalg.norm(obj_to_link_pos - detected_obj.pos)
             d_t = cur_time - obj_to_link_upd_time
+            print(f'{[cur_time]}, {velocity}, {d_t}, {obj_to_link_pos}, {detected_obj.pos}, {coord_diff}')
 
             return max(0, velocity * (d_t - POSSIBLE_TARGET_RADIUS * SIMULATION_STEP)), max(0, velocity * (
                     d_t + POSSIBLE_TARGET_RADIUS * SIMULATION_STEP)), coord_diff
@@ -181,9 +193,11 @@ class CombatControlPoint(BaseModel):
         curr_diff = float('inf')
         matched_object_id = None
         classification = NEW_TARGET
+        print(f'PBU see {detected_object.pos}')
 
         # Проверка на старую цель
         for target_id, target_ccp in self._target_dict.items():
+            print(f'{[self._manager.time.get_time()]}, {target_id}, {target_ccp.upd_time}, {target_ccp.target}')
             if target_ccp.upd_time == self._manager.time.get_time():
                 continue
 
@@ -195,12 +209,15 @@ class CombatControlPoint(BaseModel):
                 matched_object_id = target_id
 
         # Проверка на старую ЗУР
+        print([self._manager.time.get_time()], len(self._missile_dict))
         for missile_id, missile_ccp in self._missile_dict.items():
+            print(f'{[self._manager.time.get_time()]}, {missile_id}, {missile_ccp.upd_time}')
             if missile_ccp.upd_time == self._manager.time.get_time():
                 continue
+
             min_range, max_range, pos_diff = calc_range(detected_object, missile_ccp.missile.target.pos,
                                                         missile_ccp.upd_time)
-
+            print(min_range, max_range, pos_diff, curr_diff)
             if pos_diff < curr_diff and min_range <= pos_diff <= max_range:
                 curr_diff = pos_diff
                 classification = OLD_ROCKET
