@@ -167,4 +167,4 @@ def run_simulation_from_config(config_path: str):
     print(f"\nИтого сообщений: {total_messages}")
 
 if __name__ == "__main__":
-    run_simulation_from_config('config.yaml')
+    run_simulation_from_config('simulation_config.yaml')

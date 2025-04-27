@@ -15,15 +15,17 @@ OLD_ROCKET = "старая ЗУР"
 class TargetCCP:
     """ Класс для хранения основных параметров сопровождаемых целей	"""
 
-    def __init__(self, target: Target, time: int) -> None:
+    def __init__(self, target: Target, time: int, following) -> None:
         """
         :param target: цель
         :param time: время, в которое произошло посл изменение класса
         """
         self.target = copy.deepcopy(target)
         self.upd_time = time
+        self.following = following
+        self.missile_id = None
 
-    def upd_target_ccp(self, target: Target, time: int) -> None:
+    def upd_target_ccp(self, target: Target, time: int, upd_follow) -> None:
         """
         Функция для обновления координаты цели
         :param target: updated target
@@ -31,6 +33,10 @@ class TargetCCP:
         """
         self.target = copy.deepcopy(target)
         self.upd_time = time
+        self.following = upd_follow
+
+    def upd_missile_id(self, missile_id: int) -> None:
+        self.missile_id = missile_id
 
 
 class MissileCCP:
@@ -43,7 +49,7 @@ class MissileCCP:
         """
         self.missile = copy.deepcopy(missile)
         self.upd_time = time
-        self.target = self.missile.target
+        # self.target = self.missile.target
 
     def upd_missile_ccp(self, missile: Missile, time: int) -> None:
         """
@@ -52,7 +58,7 @@ class MissileCCP:
         :param time: время, когда вызвали функцию
         """
         self.missile = copy.deepcopy(missile)
-        self.target = self.missile.target
+        # self.target = self.missile.target
         self.upd_time = time
 
 
@@ -62,16 +68,14 @@ class CombatControlPoint(BaseModel):
     def __init__(self, manager: Manager, id: int, missile_launcher_coords: dict, radars_coords: dict,
                  position: np.ndarray):
         """
-        :param manager: менеджер моделей
-        :param id: id объекта моделирования
-        :param missile_launcher_coords координаты пусковых установок
-        :param radars_coords: словарь с координатами всех МФР
+        :param manager: менеджер моделей.
+        :param id: id объекта моделирования.
+        :param missile_launcher_coords координаты пусковых установок.
+        :param radars_coords: словарь с координатами всех МФР.
         """
         super().__init__(manager, id, position)
-        self._target_dict = {}  # Отслеживаемые цели
-        # self._next_target_id = 0
+        self._target_dict = {}  # Отслеживаемые цели за которыми летит ЗУР
         self._missile_dict = {}  # Отслеживаемые ЗУР
-        # self._next_missile_id = 0
         self.radars_coords = radars_coords  # координаты МФР
         self.missile_launcher_coords = missile_launcher_coords  # координаты ПУ
         self.missile_launcher_launched = {}
@@ -100,6 +104,7 @@ class CombatControlPoint(BaseModel):
         Добавление новой ЗУР в список ракет ПБУ
         """
         self._missile_dict[missile_ccp.missile.id] = missile_ccp
+        self._target_dict[missile_ccp.missile.target.id].upd_missile_id(missile_ccp.missile.id)
         # self._missile_dict[self._next_missile_id] = missile_ccp.missile
         print(f"[INFO] В ПБУ добавлена ракета с id: {missile_ccp.missile.id}")
         # self._next_missile_id += 1
@@ -139,7 +144,8 @@ class CombatControlPoint(BaseModel):
 
             for msg in msg_missile_capacity:
                 self.missile_launcher_capacity[msg.sender_id] = msg.count
-                print(f"[MSG <<] ПБУ получил от ПУ {msg.sender_id} сообщение о том, что у него в наличии {msg.count} ЗУР")
+                print(
+                    f"[MSG <<] ПБУ получил от ПУ {msg.sender_id} сообщение о том, что у него в наличии {msg.count} ЗУР")
 
     def check_if_missile_get_hit(self):
         """
@@ -162,7 +168,6 @@ class CombatControlPoint(BaseModel):
             for msg in msg_launched_missiles:
                 print(f"[MSG <<] ПБУ получил от ПУ запуске ЗУР c id:{msg.missile.id}")
                 self.add_missile(MissileCCP(msg.missile, self._manager.time.get_time()))
-
 
     def link_object(self, detected_object):
         """
@@ -199,13 +204,13 @@ class CombatControlPoint(BaseModel):
         for missile_id, missile_ccp in self._missile_dict.items():
             if missile_ccp.upd_time == self._manager.time.get_time():
                 continue
-            min_range, max_range, pos_diff = calc_range(detected_object, missile_ccp.target.pos, missile_ccp.upd_time)
+            min_range, max_range, pos_diff = calc_range(detected_object, missile_ccp.missile.target.pos,
+                                                        missile_ccp.upd_time)
 
             if pos_diff < curr_diff and min_range <= pos_diff <= max_range:
                 curr_diff = pos_diff
                 classification = OLD_ROCKET
                 matched_object_id = missile_id
-
         return classification, matched_object_id
 
     def send_update_msg_to_radar(self, target, missile_id, radar_id):
@@ -221,7 +226,8 @@ class CombatControlPoint(BaseModel):
             missile_id=missile_id
         )
         self._manager.add_message(msg2radar)
-        print(f"[MSG >>] ПБУ сообщает МФР {radar_id}, что у ЗУР с id:{missile_id}, новые координаты ее цели:{target.pos()}")
+        print(
+            f"[MSG >>] ПБУ сообщает МФР {radar_id}, что у ЗУР с id:{missile_id}, новые координаты ее цели:{target.pos()}")
 
     def send_objects_to_GUI(self):
         """
@@ -229,17 +235,18 @@ class CombatControlPoint(BaseModel):
         """
         for key, missile in self._missile_dict.items():
             obj_id = self._missile_dict[key].missile.id
-            obj_type = self._missile_dict[key].missile.target.type
+            # obj_type = self._missile_dict[key].missile.type
             msg2drawer = CPPDrawerObjectsMessage(
                 time=self._manager.time.get_time(),
                 sender_id=self.id,
                 receiver_id=MANAGER_ID,
                 obj_id=obj_id,
-                type=obj_type,
+                # type=obj_type,
+                type='ЗУР',
                 coordinates=self._missile_dict[key].missile.pos
             )
             self._manager.add_message(msg2drawer)
-            print(f"[MSG >>] ПБУ отправил {obj_type, obj_id} на отрисовку GUI")
+            print(f"[MSG >>] ПБУ отправил {'ЗУР', obj_id} на отрисовку GUI")
 
         for key, target in self._target_dict.items():
             obj_id = self._target_dict[key].target.id
@@ -255,11 +262,10 @@ class CombatControlPoint(BaseModel):
             self._manager.add_message(msg2drawer)
             print(f"[MSG >>] ПБУ отправил {obj_type, obj_id} на отрисовку GUI")
 
-    def new_target(self, obj, radar_id):
+    def try_to_launch_missile(self, obj, radar_id):
         """
-        Обработка случая, когда видимый объект является новой целью
+        Проверка есть ли ЗУР для цели, и запуск, если есть
         """
-        print("[INFO] ПБУ определил этот объект как новую цель")
         min_dist = float('inf')
         curr_ml_id = None
         # ищем ближайший ПУ со свободными ЗУР
@@ -271,12 +277,10 @@ class CombatControlPoint(BaseModel):
                     curr_ml_id = ml_id
                     min_dist = dist
 
-        # TODO даже если нет ЗУР надо внести в список целей
         if curr_ml_id is not None:
             self.missile_launcher_launched[curr_ml_id] = self.missile_launcher_launched[curr_ml_id] + 1
-            self.add_target(TargetCCP(obj, self._manager.time.get_time()))
 
-            # Говорим пбу запустить ЗУР по цели с координатами
+            # Говорим пу запустить ЗУР по цели с координатами
             launch_msg = CPPLaunchMissileRequestMessage(
                 time=self._manager.time.get_time(),
                 sender_id=self.id,
@@ -288,42 +292,58 @@ class CombatControlPoint(BaseModel):
             self._manager.add_message(launch_msg)
             print(
                 f"[MSG >>] ПБУ отправляет сообщение ПУ с id {curr_ml_id} на запуск ЗУР по цели с координатами:{obj.pos}")
+            return True
         else:
-            print(f"[INFO] У ПУ нет свободных ЗУР")
+            print(f"[INFO] У ПУ для неё нет свободных ЗУР")
+            return False
+
+    def new_target(self, obj, radar_id):
+        """
+        Обработка случая, когда видимый объект является новой целью
+        """
+        print("[INFO] ПБУ определил этот объект как новую цель")
+        if self.try_to_launch_missile(obj, radar_id):
+            self.add_target(TargetCCP(obj, self._manager.time.get_time(), True))
+        else:
+            self.add_target(TargetCCP(obj, self._manager.time.get_time(), False))
 
     def old_target(self, obj, old_obj_id, radar_id):
         """
         Обработка случая, когда видимый объект является старой целью
         """
         print("[INFO] ПБУ определил этот объект как старую цель")
-        old_target_coord = self._target_dict[old_obj_id].target.pos
+        is_following = self._target_dict[old_obj_id].following
 
-        self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time())
+        if not is_following:
+            # Если за целью не закреплена ЗУР, то пробуем найти свободную и запустить в цель
+            print("[INFO] Цель не преследуется ЗУР, пробуем запустить ЗУР по ней")
+            if self.try_to_launch_missile(obj, radar_id):
+                self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time(), True)
+            else:
+                self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time(), False)
 
-        for key in self._missile_dict.keys():
-            missile_ccp = self._missile_dict[key]
-            # если этот старый таргет был таргетом у этого ЗУР, то ЗУР надо перенаправить
-            if (missile_ccp.missile.target.pos == old_target_coord).all():
-                radar_missile_dist = np.linalg.norm(self.radars_coords[radar_id] - missile_ccp.missile.pos)
-                if radar_missile_dist < MAX_DIST_DETECTION:
-                    msg2radar = CPPUpdateTargetRadarMessage(
-                        time=self._manager.time.get_time(),
-                        sender_id=self.id,
-                        receiver_id=radar_id,
-                        target=obj,
-                        missile_id=missile_ccp.missile.id
-                    )
-                    self._manager.add_message(msg2radar)
-                    print(
-                        f"[MSG >>] ПБУ сообщает МФР {radar_id}, что у ЗУР с id:{missile_ccp.missile.id}, новые координаты ее цели:{obj.pos}")
-                break
+        else:
+            # Если за целью закреплена ЗУР, то просто обновляем цель и перенаправляем ЗУР
+            print("[INFO] Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР")
+            self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time(), is_following)
+            curr_missile_id = self._target_dict[old_obj_id].missile_id
+            msg2radar = CPPUpdateTargetRadarMessage(
+                time=self._manager.time.get_time(),
+                sender_id=self.id,
+                receiver_id=radar_id,
+                target=obj,
+                missile_id=curr_missile_id,
+            )
+            self._manager.add_message(msg2radar)
+            print(
+                f"[MSG >>] ПБУ сообщает МФР {radar_id}, что у ЗУР с id:{curr_missile_id}, новые координаты ее цели:{obj.pos}")
 
     def old_rocket(self, obj, old_obj_id):
         """
         Обработка случая, когда видимый объект является старой ЗУР
         """
-        self._missile_dict[old_obj_id].upd_missile_ccp(obj, self._manager.time.get_time())
         print(f"[INFO] ПБУ определил этот объект как старую ЗУР с id:{self._missile_dict[old_obj_id].missile.id}")
+        self._missile_dict[old_obj_id].upd_missile_ccp(obj, self._manager.time.get_time())
 
     def step(self) -> None:
         """
