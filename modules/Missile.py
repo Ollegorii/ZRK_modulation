@@ -90,12 +90,14 @@ class Missile(AirObject):
 
     def step(self) -> None:
         current_time = self._manager.time.get_time()
+        dt = self._manager.time.get_dt()
         from .Messages import MissileDetonateMessage, MissilePosMessage
         if self.status == 'ready':
             # Проверка сообщений на запуск
             messages = self._manager.give_messages_by_type(
                 MessageType.LAUNCH_MISSILE,
-                self.id
+                self.id,
+                step_time=current_time-dt
             )
             if messages:
                 self._launch()
@@ -105,11 +107,12 @@ class Missile(AirObject):
             update_messages = self._manager.give_messages_by_type(
                 MessageType.UPDATE_TARGET,
                 self.id,
-                current_time
+                step_time=current_time-dt
             )
             for msg in update_messages:
                 self.target = msg.upd_object
                 self._calculate_trajectory(self.target)
+                print(f"Upd target: {self.target}")
 
             # Обновление позиции
             super().step()
@@ -125,11 +128,28 @@ class Missile(AirObject):
                 self._detonate(target_id=self.target.id)
 
             # Расчет времени относительно оригинального запуска
-            dt = current_time - self.launch_time
+            flight_time = current_time - self.launch_time
 
             # Проверка таймера (время с момента запуска)
-            if dt >= self.detonate_period:
+            if flight_time >= self.detonate_period:
                 self._detonate()
 
         elif self.status == 'detonated':
             pass
+    
+    def __repr__(self) -> str:
+        """
+        Строковое представление объекта цели
+        
+        :return: строка, содержащая информацию о цели
+        """
+        position_str = f"[{', '.join(f'{coord:.2f}' for coord in self.pos)}]"
+        
+        # Получаем скорость из траектории, если она существует
+        if hasattr(self, 'trajectory') and self.trajectory is not None:
+            velocity = self.trajectory.velocity
+            velocity_str = f"[{', '.join(f'{vel:.2f}' for vel in velocity)}]"
+        else:
+            velocity_str = "[unknown]"
+            
+        return f"Missile(id={self.id}, pos={position_str}, vel={velocity_str}, prev_pos={self.prev_pos})"

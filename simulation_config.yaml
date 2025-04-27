@@ -11,18 +11,8 @@ air_environment:
   - id: 1
     type: AIR_PLANE
     position:
-    - -214.0
-    - -18.0
-    - 0.0
-    velocity:
-    - 100.0
-    - 0.0
-    - 0.0
-  - id: 2
-    type: AIR_PLANE
-    position:
-    - 26.0
-    - -21.0
+    - -2910.0
+    - -4070.0
     - 0.0
     velocity:
     - 100.0
@@ -37,8 +27,8 @@ combat_control_point:
 missile_launchers:
 - id: 3
   position:
-  - 2.0
-  - 0.0
+  - 3390.0
+  - 1780.0
   - 0.0
   max_missiles: 5
   missiles:
@@ -46,11 +36,15 @@ missile_launchers:
     velocity: 1000
     explosion_radius: 50
     life_time: 60
+  - id: 1112
+    velocity: 1000
+    explosion_radius: 50
+    life_time: 60
 radars:
 - id: 5
   position:
-  - -17.0
-  - 10.0
+  - -2680.0
+  - 2800.0
   - 0.0
   azimuth_start: 0.0
   elevation_start: 0.0

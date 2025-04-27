@@ -29,7 +29,9 @@ class AirObject(BaseModel):
     def __init__(self, manager, id: int, pos: np.ndarray, trajectory: Trajectory):
         super().__init__(manager, id, pos)
         self.trajectory = trajectory
+        self.speed_mod = np.linalg.norm(trajectory.velocity)
 
     def step(self):
         current_time = self._manager.time.get_time()
+        self.prev_pos = self.pos if self.trajectory.start_time != current_time else None
         self.pos = self.trajectory.get_pos(current_time)

@@ -7,6 +7,9 @@ from .AirEnv import AirEnv
 from .utils import Target
 from .constants import *
 from .BaseModel import BaseModel
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MissileLauncher(BaseModel):
     """
@@ -28,7 +31,7 @@ class MissileLauncher(BaseModel):
         self.missiles: List[Missile] = []  # Список доступных ракет
         self.launched_missiles: List[Missile] = []  # Список запущенных ракет
         self.air_env = air_env
-        print(f"Пусковая установка (ID: {self.id}) инициализирована на позиции {self.pos}")
+        logger.info(f"Пусковая установка (ID: {self.id}) инициализирована на позиции {self.pos}")
 
     def add_missile(self, missile: Missile) -> bool:
         """
@@ -39,9 +42,9 @@ class MissileLauncher(BaseModel):
         """
         if len(self.missiles) < self.max_missiles:
             self.missiles.append(missile)
-            print(f"Ракета ID: {missile.id} добавлена в пусковую установку (ID: {self.id})")
+            logger.info(f"Ракета ID: {missile.id} добавлена в пусковую установку (ID: {self.id})")
             return True
-        print(f"Невозможно добавить ракету ID: {missile.id}. Пусковая установка заполнена или ракета уже запущена.")
+        logger.info(f"Невозможно добавить ракету ID: {missile.id}. Пусковая установка заполнена или ракета уже запущена.")
         return False
 
     def count_missiles(self) -> int:
@@ -61,7 +64,7 @@ class MissileLauncher(BaseModel):
         :return: Запущенная ракета или None, если запуск невозможен
         """
         if not self.missiles:
-            print(f"Пусковая установка (ID: {self.id}) не имеет доступных ракет для запуска")
+            logger.info(f"Пусковая установка (ID: {self.id}) не имеет доступных ракет для запуска")
             return None
 
         missile = self.missiles.pop(0)
@@ -76,7 +79,7 @@ class MissileLauncher(BaseModel):
         self._manager.add_message(launch_msg)
 
         self.launched_missiles.append(missile)
-        print(f"Ракета ID: {missile.id} успешно запущена с пусковой установки (ID: {self.id})")
+        logger.info(f"Ракета ID: {missile.id} успешно запущена с пусковой установки (ID: {self.id})")
 
         # Отправляем сообщение о запуске ракеты
         launched_msg = LaunchedMissileMessage(
@@ -104,14 +107,14 @@ class MissileLauncher(BaseModel):
         """
         current_time = self._manager.time.get_time()
         dt = self._manager.time.get_dt()
-        print(f"Шаг симуляции пусковой установки (ID: {self.id}) в t={current_time}. Доступно ракет: {self.count_missiles()}")
+        logger.info(f"Шаг симуляции пусковой установки (ID: {self.id}) в t={current_time}. Доступно ракет: {self.count_missiles()}")
 
         # Обработка сообщений
         messages = self._manager.give_messages_by_id(self.id, step_time=current_time-dt)
-        print(f"ПУ сообщения {messages}")
+        logger.info(f"ПУ сообщения {messages}")
         for msg in messages:
             if isinstance(msg, CPPLaunchMissileRequestMessage):
-                print(f"Получена команда на запуск ракеты к цели ID: {msg.target}")
+                logger.info(f"Получена команда на запуск ракеты к цели ID: {msg.target}")
                 self.launch_missile(
                     target=msg.target,
                     # target_id=msg.target_id,
@@ -126,7 +129,7 @@ class MissileLauncher(BaseModel):
                     count=self.count_missiles()
                 )
                 self._manager.add_message(count_msg)
-                print(f"Отправлен ответ с количеством ракет: {self.count_missiles()}")
+                logger.info(f"Отправлен ответ с количеством ракет: {self.count_missiles()}")
 
     def update_launched_missiles(self, dt: float) -> None:
         """
@@ -139,7 +142,7 @@ class MissileLauncher(BaseModel):
             if missile.is_active:
                 hit, active = missile.update(dt, current_time)
                 if hit:
-                    print(f"Ракета ID: {missile.id} поразила цель!")
+                    logger.info(f"Ракета ID: {missile.id} поразила цель!")
                 if not active:
                     self.launched_missiles.remove(missile)
 
