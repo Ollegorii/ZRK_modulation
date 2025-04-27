@@ -1,7 +1,10 @@
+import logging
 from typing import List, Optional, Dict
 from .Timer import Timer
 from .BaseMessage import BaseMessage
 from .constants import MessageType
+
+logger = logging.getLogger(__name__)
 
 class Manager:
     """Класс для управления обменом сообщениями между модулями и запуском симуляции"""
@@ -14,18 +17,18 @@ class Manager:
         """Добавление модуля в систему"""
         if module not in self.modules:
             self.modules.append(module)
-            print(f"Модуль с ID {module.id if hasattr(module, 'id') else 'unknown'} добавлен в систему")
+            logger.info(f"Модуль с ID {module.id if hasattr(module, 'id') else 'unknown'} добавлен в систему")
         else:
-            print(f"Модуль с ID {module.id if hasattr(module, 'id') else 'unknown'} уже существует в системе")
+            logger.warning(f"Модуль с ID {module.id if hasattr(module, 'id') else 'unknown'} уже существует в системе")
 
     def remove_module(self, module_id: int) -> bool:
         """Удаление модуля из системы по ID"""
         for i, module in enumerate(self.modules):
             if hasattr(module, 'id') and module.id == module_id:
                 self.modules.pop(i)
-                print(f"Модуль с ID {module_id} удален из системы")
+                logger.info(f"Модуль с ID {module_id} удален из системы")
                 return True
-        print(f"Модуль с ID {module_id} не найден в системе")
+        logger.warning(f"Модуль с ID {module_id} не найден в системе")
         return False
 
     def get_module_by_id(self, module_id: int):
@@ -112,7 +115,7 @@ class Manager:
         """
         while self.time.get_time() < end_time:
             current_time = self.time.get_time()
-            print(f"Текущее время: {current_time}")
+            logger.info(f"Текущее время: {current_time}")
             
             # Обработка сообщений для текущего шага (если есть)
             
@@ -129,8 +132,9 @@ class Manager:
             
             current_messages = self.give_messages(current_time)
             if len(current_messages) > 0:
-                print(f"Обработка {len(current_messages)} сообщений на шаге {current_time}")
+                logger.info(f"Обработка {len(current_messages)} сообщений на шаге {current_time}")
                 for msg in current_messages:
-                    print(f"  - {msg}")  # __repr__ будет вызван автоматически
+                    logger.info(f"  - {msg}")  # __repr__ будет вызван автоматически
+            
             # Обновление времени после обработки всех модулей
             self.time.update_time()

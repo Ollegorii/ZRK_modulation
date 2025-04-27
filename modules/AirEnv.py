@@ -28,6 +28,8 @@ class AirEnv(BaseModel):
         Шаг симуляции ВО
         """
         objects_to_remove = []
+        current_time = self._manager.time.get_time()
+        dt = self._manager.time.get_dt()
         for msg in self._manager.give_messages_by_type(MessageType.MISSILE_DETONATE):
             objects_to_remove.append(msg.missile_id)
             if msg.target_id is not None:
@@ -37,7 +39,7 @@ class AirEnv(BaseModel):
             if objects.id in objects_to_remove:
                 del self.__objects[idx]
 
-        for msg in self._manager.give_messages_by_type(MessageType.NEW_MISSILE):
+        for msg in self._manager.give_messages_by_type(MessageType.NEW_MISSILE, step_time=current_time - dt):
             self.__objects.append(msg.missile)
 
         for object in self.__objects:
