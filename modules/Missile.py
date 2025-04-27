@@ -17,7 +17,7 @@ class Missile(AirObject):
 
         initial_trajectory = Trajectory(start_pos=pos)
         super().__init__(manager, id, pos, initial_trajectory)
-        self.velocity_module = velocity_module
+        self.speed_mod = velocity_module
         self.detonate_radius = detonate_radius
         self.detonate_period = detonate_period
         self.status = 'wait'
@@ -38,7 +38,7 @@ class Missile(AirObject):
         target_vel = target.trajectory.velocity
         D = target.pos - self.pos
 
-        A = np.sum(np.square(target_vel)) - self.velocity_module**2
+        A = np.sum(np.square(target_vel)) - self.speed_mod**2
         B = 2 * np.dot(target_vel, D)
         C = np.sum(np.square(D))
 
@@ -56,7 +56,7 @@ class Missile(AirObject):
             raise ValueError("Нет допустимого времени перехвата")
 
         V_rocket = target_vel + D/delta_t
-        V_norm = V_rocket / np.linalg.norm(V_rocket) * self.velocity_module
+        V_norm = V_rocket / np.linalg.norm(V_rocket) * self.speed_mod
 
         # Сохраняем оригинальное время запуска при обновлении траектории
         new_trajectory = Trajectory(
