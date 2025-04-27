@@ -26,10 +26,11 @@ class AirObject(BaseModel):
     """
     Абстрактный базовый класс для воздушных объектов
     """
-    def __init__(self, manager, id: int, pos: np.ndarray, trajectory: Trajectory):
+    def __init__(self, manager, id: int, pos: np.ndarray, trajectory: Trajectory, prev_pos: np.ndarray = None):
         super().__init__(manager, id, pos)
         self.trajectory = trajectory
         self.speed_mod = np.linalg.norm(trajectory.velocity)
+        self.prev_pos = prev_pos
 
     def step(self):
         current_time = self._manager.time.get_time()
