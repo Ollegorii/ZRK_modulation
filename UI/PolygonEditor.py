@@ -336,19 +336,32 @@ class PolygonEditor(QMainWindow):
                 self.scene.removeItem(old_point)
 
         # Для радара рисуем зону действия (как в предыдущей реализации)
-        elif enum_type == ObjectType.RADAR and str(obj_id) not in self.scene_objects:
-            radar_config = next((r for r in self.config["radars"] if str(r["id"]) == str(obj_id)), None)
+        elif enum_type == ObjectType.RADAR:
+            # Ищем конфигурацию радара
+            radar_config = None
+            for radar in self.config["radars"]:
+                if str(radar["id"]) == str(obj_id):
+                    radar_config = radar
+                    break
+
             if radar_config:
                 radius = radar_config.get("max_distance", 10000)
+
+                # Удаляем старую зону действия если есть
+                if hasattr(obj, 'radar_range'):
+                    self.scene.removeItem(obj.radar_range)
+
+                # Рисуем новую зону действия
+
                 radar_range = self.scene.addEllipse(
                     position[0] - radius,
                     position[1] - radius,
                     radius * 2,
                     radius * 2,
-                    QPen(QColor(0, 200, 0, 80), 1, Qt.DashDotLine)
-                )
-                radar_range.setZValue(-2)
-                radar_range.setParentItem(obj)
+                    QPen(QColor(0, 200, 0, 80)), # Зеленый контур с прозрачностью
+                         QBrush(QColor(0, 200, 0, 30)  # Зеленая полупрозрачная заливка
+                                ))
+                radar_range.setZValue(-2)  # Под основными объектами
                 obj.radar_range = radar_range
 
 
