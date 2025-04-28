@@ -11,6 +11,13 @@ OLD_TARGET = "старая цель"
 NEW_TARGET = "новая цель"
 OLD_ROCKET = "старая ЗУР"
 
+# logging.basicConfig(
+#     level=logging.DEBUG,
+#     filename='my_log.log',
+#     encoding='utf-8',
+#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# )
+
 logger = logging.getLogger(__name__)
 
 class TargetCCP:
@@ -21,7 +28,8 @@ class TargetCCP:
         :param target: цель
         :param time: время, в которое произошло посл изменение класса
         """
-        self.target = copy.deepcopy(target)
+        # self.target = copy.deepcopy(target)
+        self.target = target
         self.upd_time = time
         self.following = following
         self.missile_id = None
@@ -32,7 +40,8 @@ class TargetCCP:
         :param target: updated target
         :param time: время, когда вызвали функцию
         """
-        self.target = copy.deepcopy(target)
+        # self.target = copy.deepcopy(target)
+        self.target = target
         self.upd_time = time
         self.following = upd_follow
 
@@ -48,9 +57,10 @@ class MissileCCP:
         :param missile: ЗУР
         :param time: время, в которое произошло посл изменение класса
         """
-        self.missile = copy.deepcopy(missile)
+        # self.missile = copy.deepcopy(missile)
+        self.missile = missile
         self.upd_time = time
-        # self.target = self.missile.target
+        self.target_id = missile.target.id
 
     def upd_missile_ccp(self, missile: Missile, time: int) -> None:
         """
@@ -58,8 +68,8 @@ class MissileCCP:
         :param missile: updated missile
         :param time: время, когда вызвали функцию
         """
-        self.missile = copy.deepcopy(missile)
-        # self.target = self.missile.target
+        # self.missile = copy.deepcopy(missile)
+        self.missile = missile
         self.upd_time = time
 
 
@@ -149,9 +159,13 @@ class CombatControlPoint(BaseModel):
         msg_hit_missiles = self._manager.give_messages_by_type(MessageType.DESTROYED_MISSILE)
 
         if len(msg_hit_missiles) != 0:
-            logger.info(f"ПБУ получил сообщения от МФР об уничтожении ЗУР")
+            logger.info(f"ПБУ получил {len(msg_hit_missiles)} сообщений от МФР об уничтожении ЗУР")
             for msg in msg_hit_missiles:
-                self.delete_missile(msg.missile_id)
+                # for missile_id, missile_ccp in self._missile_dict.items():
+                #     print(
+                #         f'in check {msg.missile_id}: {[self._manager.time.get_time()]}, {missile_id}, {missile_ccp.upd_time}. {missile_ccp.missile}')
+                if msg.missile_id in self._missile_dict:
+                    self.delete_missile(msg.missile_id)
 
     def check_if_missiles_launched(self):
         """
@@ -170,10 +184,15 @@ class CombatControlPoint(BaseModel):
 
         def calc_range(detected_obj, obj_to_link_pos, obj_to_link_upd_time):
             """ Метода расчета min/max расстояния до возможного объекта"""
+
+
             velocity = detected_obj.speed_mod
+            # if detected_obj.id == 10:
+            #     velocity = 1600
             cur_time = self._manager.time.get_time()
             coord_diff = np.linalg.norm(obj_to_link_pos - detected_obj.pos)
             d_t = cur_time - obj_to_link_upd_time
+            # print(f'{[cur_time]}, {velocity}, {d_t}, {obj_to_link_pos}, {detected_obj.pos}, {coord_diff}')
 
             return max(0, velocity * (d_t - POSSIBLE_TARGET_RADIUS * SIMULATION_STEP)), max(0, velocity * (
                     d_t + POSSIBLE_TARGET_RADIUS * SIMULATION_STEP)), coord_diff
@@ -181,13 +200,16 @@ class CombatControlPoint(BaseModel):
         curr_diff = float('inf')
         matched_object_id = None
         classification = NEW_TARGET
+        # print(f'PBU see {detected_object.pos}')
 
         # Проверка на старую цель
         for target_id, target_ccp in self._target_dict.items():
+            # print(f'{[self._manager.time.get_time()]}, {target_id}, {target_ccp.upd_time}, {target_ccp.target}')
             if target_ccp.upd_time == self._manager.time.get_time():
                 continue
 
-            min_range, max_range, pos_diff = calc_range(detected_object, target_ccp.target.pos, target_ccp.upd_time)
+            min_range, max_range, pos_diff = calc_range(detected_object, target_ccp.target.prev_pos, target_ccp.upd_time)
+            # min_range, max_range, pos_diff = calc_range(detected_object, target_ccp.target.pos, target_ccp.upd_time)
 
             if pos_diff < curr_diff and min_range <= pos_diff <= max_range:
                 curr_diff = pos_diff
@@ -195,12 +217,21 @@ class CombatControlPoint(BaseModel):
                 matched_object_id = target_id
 
         # Проверка на старую ЗУР
+        # print([self._manager.time.get_time()], len(self._missile_dict))
         for missile_id, missile_ccp in self._missile_dict.items():
+            # print(f'{[self._manager.time.get_time()]}, {missile_id}, {missile_ccp.upd_time}. {missile_ccp.missile}')
             if missile_ccp.upd_time == self._manager.time.get_time():
                 continue
-            min_range, max_range, pos_diff = calc_range(detected_object, missile_ccp.missile.target.pos,
-                                                        missile_ccp.upd_time)
 
+            obj_prev_pos = missile_ccp.missile.prev_pos
+            # print("prev_pos", type(obj_prev_pos))
+            if obj_prev_pos is None:
+                obj_prev_pos = missile_ccp.missile.pos
+            # print("prev_pos", obj_prev_pos)
+            min_range, max_range, pos_diff = calc_range(detected_object, obj_prev_pos, missile_ccp.upd_time)
+            # min_range, max_range, pos_diff = calc_range(detected_object, missile_ccp.missile.pos, missile_ccp.upd_time)
+
+            # print(min_range, max_range, pos_diff, curr_diff)
             if pos_diff < curr_diff and min_range <= pos_diff <= max_range:
                 curr_diff = pos_diff
                 classification = OLD_ROCKET
@@ -352,6 +383,9 @@ class CombatControlPoint(BaseModel):
         if not self.initialized:
             self.send_request_msg_to_ML_capacity()
             self.initialized = True
+
+        # for missile_id, missile_ccp in self._missile_dict.items():
+        #     print(f'{[self._manager.time.get_time()]}, {missile_id}, {missile_ccp.upd_time}. {missile_ccp.missile}')
 
         self.get_current_missile_launcher_capacity()
         self.check_if_missile_get_hit()

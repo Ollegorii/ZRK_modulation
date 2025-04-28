@@ -76,7 +76,7 @@ class Missile(AirObject):
     def _set_trajectory(self, new_trajectory: Trajectory) -> None:
         self.trajectory = new_trajectory
 
-    def _detonate(self, target_id: int = None) -> None:
+    def _detonate(self, target_id: int = None, self_detonation: bool = True) -> None:
         """Инициирование подрыва"""
         from .Messages import MissileDetonateMessage, MissilePosMessage
         self.status = 'detonated'
@@ -84,7 +84,8 @@ class Missile(AirObject):
         # Отправка сообщений о подрыве
         detonate_msg = MissileDetonateMessage(
             sender_id=self.id,
-            target_id=target_id
+            target_id=target_id,
+            self_detonation=self_detonation
         )
         self._manager.add_message(detonate_msg)
 
@@ -125,31 +126,31 @@ class Missile(AirObject):
 
             # Проверка дистанции до цели
             if self.target and np.linalg.norm(self.pos - self.target.pos) <= self.detonate_radius:
-                self._detonate(target_id=self.target.id)
+                self._detonate(target_id=self.target.id, self_detonation=False)
 
             # Расчет времени относительно оригинального запуска
             flight_time = current_time - self.launch_time
 
             # Проверка таймера (время с момента запуска)
             if flight_time >= self.detonate_period:
-                self._detonate()
+                self._detonate(self_detonation=True)
 
         elif self.status == 'detonated':
             pass
     
-    def __repr__(self) -> str:
-        """
-        Строковое представление объекта цели
-        
-        :return: строка, содержащая информацию о цели
-        """
-        position_str = f"[{', '.join(f'{coord:.2f}' for coord in self.pos)}]"
-        
-        # Получаем скорость из траектории, если она существует
-        if hasattr(self, 'trajectory') and self.trajectory is not None:
-            velocity = self.trajectory.velocity
-            velocity_str = f"[{', '.join(f'{vel:.2f}' for vel in velocity)}]"
-        else:
-            velocity_str = "[unknown]"
-            
-        return f"Missile(id={self.id}, pos={position_str}, vel={velocity_str}, prev_pos={self.prev_pos})"
+    # def __repr__(self) -> str:
+    #     """
+    #     Строковое представление объекта цели
+    #
+    #     :return: строка, содержащая информацию о цели
+    #     """
+    #     position_str = f"[{', '.join(f'{coord:.2f}' for coord in self.pos)}]"
+    #
+    #     # Получаем скорость из траектории, если она существует
+    #     if hasattr(self, 'trajectory') and self.trajectory is not None:
+    #         velocity = self.trajectory.velocity
+    #         velocity_str = f"[{', '.join(f'{vel:.2f}' for vel in velocity)}]"
+    #     else:
+    #         velocity_str = "[unknown]"
+    #
+    #     return f"Missile(id={self.id}, pos={position_str}, vel={velocity_str}, prev_pos={self.prev_pos})"
