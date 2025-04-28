@@ -169,7 +169,8 @@ class SectorRadar(BaseModel):
                 time=current_time, 
                 sender_id=self.id, 
                 receiver_id=CCP_ID, 
-                missile_id=destroy_missile_id.missile_id #ILya
+                missile_id=destroy_missile_id.missile_id,
+                self_detonation=destroy_missile_id.self_detonation
             )
             self._manager.add_message(destroy_msg)   
                  
