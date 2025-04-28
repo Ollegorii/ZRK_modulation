@@ -116,16 +116,18 @@ class CombatControlPoint(BaseModel):
         self._target_dict[missile_ccp.missile.target.id].upd_missile_id(missile_ccp.missile.id)
         logger.info(f"В ПБУ добавлена ракета с id: {missile_ccp.missile.id}")
 
-    def delete_missile(self, missile_id: int):
+    def delete_missile(self, missile_id: int, self_detonation: bool):
         """
         :param missile_id: id ракеты
+        :param self_detonation: True - ЗУР сам взорвался, False - сбил цель
         """
-        target_id = self._missile_dict[missile_id].missile.target.id
+        if not self_detonation:
+            target_id = self._missile_dict[missile_id].missile.target.id
+            self.delete_target(target_id)
         self._missile_dict.pop(missile_id, None)
-        self.delete_target(target_id)
         logger.info(f"В ПБУ удалена ракета с id: {missile_id}")
 
-    def send_request_msg_to_ML_capacity(self):
+    def send_request_msg_to_ml_capacity(self):
         """
         ПБУ запрашивает у ПУ количество ЗУР
         """
@@ -165,7 +167,7 @@ class CombatControlPoint(BaseModel):
                 #     print(
                 #         f'in check {msg.missile_id}: {[self._manager.time.get_time()]}, {missile_id}, {missile_ccp.upd_time}. {missile_ccp.missile}')
                 if msg.missile_id in self._missile_dict:
-                    self.delete_missile(msg.missile_id)
+                    self.delete_missile(msg.missile_id, msg.self_detonation)
 
     def check_if_missiles_launched(self):
         """
@@ -382,7 +384,7 @@ class CombatControlPoint(BaseModel):
         6. Отправить данные UI на отрисовку
         """
         if not self.initialized:
-            self.send_request_msg_to_ML_capacity()
+            self.send_request_msg_to_ml_capacity()
             self.initialized = True
 
         # for missile_id, missile_ccp in self._missile_dict.items():
@@ -395,20 +397,23 @@ class CombatControlPoint(BaseModel):
         msg_from_radar = self._manager.give_messages_by_type(MessageType.FOUND_OBJECTS)
         logger.info(f"ПБУ получил сообщения от {len(msg_from_radar)} радаров/радара")
 
+        processed_objects = []
         if len(msg_from_radar) != 0:
             for msg in msg_from_radar:
                 radar_id = msg.sender_id
 
                 objects = msg.visible_objects
                 for obj in objects:
-                    logger.info(f"ПБУ получил {obj} от МФР с id {msg.sender_id}")
-                    # Завязываем трассу (определяем что это за объект)
-                    obj_type, old_obj_id = self.link_object(obj)
-                    if obj_type == NEW_TARGET:
-                        self.new_target(obj, radar_id)
-                    elif obj_type == OLD_TARGET:
-                        self.old_target(obj, old_obj_id, radar_id)
-                    elif obj_type == OLD_ROCKET:
-                        self.old_rocket(obj, old_obj_id)
+                    if obj.id not in processed_objects:
+                        processed_objects.append(obj.id)
+                        logger.info(f"ПБУ получил {obj} от МФР с id {msg.sender_id}")
+                        # Завязываем трассу (определяем что это за объект)
+                        obj_type, old_obj_id = self.link_object(obj)
+                        if obj_type == NEW_TARGET:
+                            self.new_target(obj, radar_id)
+                        elif obj_type == OLD_TARGET:
+                            self.old_target(obj, old_obj_id, radar_id)
+                        elif obj_type == OLD_ROCKET:
+                            self.old_rocket(obj, old_obj_id)
 
         self.send_objects_to_GUI()
