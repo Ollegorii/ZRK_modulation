@@ -30,7 +30,7 @@ class AirEnv(BaseModel):
         objects_to_remove = []
         current_time = self._manager.time.get_time()
         dt = self._manager.time.get_dt()
-        for msg in self._manager.give_messages_by_type(MessageType.MISSILE_DETONATE):
+        for msg in self._manager.give_messages_by_type(MessageType.MISSILE_DETONATE, step_time=current_time - dt):
             objects_to_remove.append(msg.missile_id)
             if msg.target_id is not None:
                 objects_to_remove.append(msg.target_id)

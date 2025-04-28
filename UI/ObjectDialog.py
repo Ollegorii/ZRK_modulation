@@ -93,17 +93,10 @@ class ObjectDialog(QDialog):
                 ]
             elif self.obj_type == ObjectType.MISSILE_LAUNCHER:
                 data["max_missiles"] = int(self.max_missiles.text())
-                data["missiles"] = [{
-                    "id": 1111,
-                    "velocity": int(self.missile_velocity.text()),
-                    "explosion_radius": int(self.missile_radius.text()),
-                    "life_time": int(self.missile_life_time.text())
-                },{
-                    "id": 1112,
-                    "velocity": int(self.missile_velocity.text()),
-                    "explosion_radius": int(self.missile_radius.text()),
-                    "life_time": int(self.missile_life_time.text())
-                }]
+                data["missile_velocity"] = int(self.missile_velocity.text())
+                data["missile_radius"] = int(self.missile_radius.text())
+                data["missile_life_time"] = int(self.missile_life_time.text())
+
             elif self.obj_type == ObjectType.RADAR:
                 data.update({
                     "azimuth_start": 0.0,

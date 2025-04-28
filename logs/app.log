@@ -1,144 +1,166 @@
-2025-04-28 00:48:13,590 - modules.Manager - INFO - Модуль с ID 1 добавлен в систему
-2025-04-28 00:48:13,590 - modules.Manager - INFO - Модуль с ID 5 добавлен в систему
-2025-04-28 00:48:13,590 - modules.Manager - INFO - Модуль с ID 6 добавлен в систему
-2025-04-28 00:48:13,590 - modules.MissileLauncher - INFO - Пусковая установка (ID: 3) инициализирована на позиции [500. 500.   0.]
-2025-04-28 00:48:13,590 - modules.MissileLauncher - INFO - Ракета ID: 10 добавлена в пусковую установку (ID: 3)
-2025-04-28 00:48:13,590 - modules.MissileLauncher - INFO - Ракета ID: 11 добавлена в пусковую установку (ID: 3)
-2025-04-28 00:48:13,590 - modules.Manager - INFO - Модуль с ID 3 добавлен в систему
-2025-04-28 00:48:13,590 - modules.MissileLauncher - INFO - Пусковая установка (ID: 4) инициализирована на позиции [-500. -500.    0.]
-2025-04-28 00:48:13,590 - modules.MissileLauncher - INFO - Ракета ID: 12 добавлена в пусковую установку (ID: 4)
-2025-04-28 00:48:13,590 - modules.Manager - INFO - Модуль с ID 4 добавлен в систему
-2025-04-28 00:48:13,590 - modules.Manager - INFO - Модуль с ID 0 добавлен в систему
-2025-04-28 00:48:13,591 - __main__ - INFO - Созданные объекты:
-2025-04-28 00:48:13,591 - __main__ - INFO - Воздушная обстановка (ID: 1)
-2025-04-28 00:48:13,591 - __main__ - INFO - Радар (ID: 5), режим: horizontal
-2025-04-28 00:48:13,591 - __main__ - INFO - Радар (ID: 6), режим: vertical
-2025-04-28 00:48:13,591 - __main__ - INFO - Пусковая установка (ID: 3), ракет: 2
-2025-04-28 00:48:13,591 - __main__ - INFO - Пусковая установка (ID: 4), ракет: 1
-2025-04-28 00:48:13,591 - __main__ - INFO - Пункт боевого управления (ID: 0)
-2025-04-28 00:48:13,591 - __main__ - INFO - Запуск симуляции на 10 секунд...
-2025-04-28 00:48:13,591 - modules.Manager - INFO - Текущее время: 0
-2025-04-28 00:48:13,591 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,591 - modules.Radar - INFO - Target(id=100, type=AIR_PLANE, pos=[5000.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=None)
-2025-04-28 00:48:13,591 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,591 - modules.Radar - INFO - Target(id=100, type=AIR_PLANE, pos=[5000.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=None)
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=0. Доступно ракет: 2
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - ПУ сообщения []
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 4) в t=0. Доступно ракет: 1
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - ПУ сообщения []
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ запрашивает у ПУ с id 3 количество ЗУР
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ запрашивает у ПУ с id 4 количество ЗУР
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ получил сообщения от 2 радаров/радара
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ получил Target(id=100, type=AIR_PLANE, pos=[5000.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=None) от МФР с id 5
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ определил этот объект как новую цель
-2025-04-28 00:48:13,591 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
-2025-04-28 00:48:13,591 - modules.CCP - INFO - В ПБУ добавлена цель с id: 100
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ получил Target(id=100, type=AIR_PLANE, pos=[5000.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=None) от МФР с id 6
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ определил этот объект как новую цель
-2025-04-28 00:48:13,591 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
-2025-04-28 00:48:13,591 - modules.CCP - INFO - В ПБУ добавлена цель с id: 100
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 100) на отрисовку GUI
-2025-04-28 00:48:13,591 - modules.Manager - INFO - Обработка 6 сообщений на шаге 0
-2025-04-28 00:48:13,591 - modules.Manager - INFO -   - MissileCountRequestMessage: send_time=0, type=MessageType.MISSILE_COUNT_REQUEST, sender_id=0, receiver_id=3, relevance=3
-2025-04-28 00:48:13,591 - modules.Manager - INFO -   - MissileCountRequestMessage: send_time=0, type=MessageType.MISSILE_COUNT_REQUEST, sender_id=0, receiver_id=4, relevance=3
-2025-04-28 00:48:13,591 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=0, type=MessageType.ACTIVE_OBJECTS, sender_id=1, receiver_id=None, relevance=1, active_objects.ids=[100], active_objects.count=1
-2025-04-28 00:48:13,591 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=0, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[100], visible_objects.count=1
-2025-04-28 00:48:13,591 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=0, type=MessageType.FOUND_OBJECTS, sender_id=6, receiver_id=0, relevance=1, visible_objects.ids=[100], visible_objects.count=1
-2025-04-28 00:48:13,591 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=0, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=100, target_type=TargetType.AIR_PLANE, coordinates=[5000. 5000. 2000.]
-2025-04-28 00:48:13,591 - modules.Manager - INFO - Текущее время: 1
-2025-04-28 00:48:13,591 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,591 - modules.Radar - INFO - Target(id=100, type=AIR_PLANE, pos=[5100.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5000. 5000. 2000.])
-2025-04-28 00:48:13,591 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=1. Доступно ракет: 2
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - ПУ сообщения [MissileCountRequestMessage: send_time=0, type=MessageType.MISSILE_COUNT_REQUEST, sender_id=0, receiver_id=3, relevance=3]
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - Отправлен ответ с количеством ракет: 2
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 4) в t=1. Доступно ракет: 1
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - ПУ сообщения [MissileCountRequestMessage: send_time=0, type=MessageType.MISSILE_COUNT_REQUEST, sender_id=0, receiver_id=4, relevance=3]
-2025-04-28 00:48:13,591 - modules.MissileLauncher - INFO - Отправлен ответ с количеством ракет: 1
-2025-04-28 00:48:13,591 - modules.CCP - INFO - ПБУ получил от ПУ 3 сообщение о том, что у него в наличии 2 ЗУР
-2025-04-28 00:48:13,592 - modules.CCP - INFO - ПБУ получил от ПУ 4 сообщение о том, что у него в наличии 1 ЗУР
-2025-04-28 00:48:13,592 - modules.CCP - INFO - ПБУ получил сообщения от 2 радаров/радара
-2025-04-28 00:48:13,592 - modules.CCP - INFO - ПБУ получил Target(id=100, type=AIR_PLANE, pos=[5100.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5000. 5000. 2000.]) от МФР с id 5
-2025-04-28 00:48:13,592 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
-2025-04-28 00:48:13,592 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
-2025-04-28 00:48:13,592 - modules.CCP - INFO - ПБУ отправляет сообщение ПУ с id 3 на запуск ЗУР по цели с координатами:[5100. 5000. 2000.]
-2025-04-28 00:48:13,592 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 100) на отрисовку GUI
-2025-04-28 00:48:13,592 - modules.Manager - INFO - Обработка 7 сообщений на шаге 1
-2025-04-28 00:48:13,592 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=1, type=MessageType.ACTIVE_OBJECTS, sender_id=1, receiver_id=None, relevance=1, active_objects.ids=[100], active_objects.count=1
-2025-04-28 00:48:13,592 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=1, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[100], visible_objects.count=1
-2025-04-28 00:48:13,592 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=1, type=MessageType.FOUND_OBJECTS, sender_id=6, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
-2025-04-28 00:48:13,592 - modules.Manager - INFO -   - MissileCountResponseMessage: send_time=1, type=MessageType.MISSILE_COUNT_RESPONSE, sender_id=3, receiver_id=0, relevance=1, count=2
-2025-04-28 00:48:13,592 - modules.Manager - INFO -   - MissileCountResponseMessage: send_time=1, type=MessageType.MISSILE_COUNT_RESPONSE, sender_id=4, receiver_id=0, relevance=1, count=1
-2025-04-28 00:48:13,592 - modules.Manager - INFO -   - CPPLaunchMissileRequestMessage: send_time=1, type=MessageType.LAUNCH_COMMAND, sender_id=0, receiver_id=3, relevance=1, target=Target(id=100, type=AIR_PLANE, pos=[5100.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5000. 5000. 2000.]), target_position=[5100. 5000. 2000.], radar_id=5
-2025-04-28 00:48:13,592 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=1, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=100, target_type=TargetType.AIR_PLANE, coordinates=[5100. 5000. 2000.]
-2025-04-28 00:48:13,592 - modules.Manager - INFO - Текущее время: 2
-2025-04-28 00:48:13,592 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,592 - modules.Radar - INFO - Target(id=100, type=AIR_PLANE, pos=[5200.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5100. 5000. 2000.])
-2025-04-28 00:48:13,592 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,592 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=2. Доступно ракет: 2
-2025-04-28 00:48:13,592 - modules.MissileLauncher - INFO - ПУ сообщения [CPPLaunchMissileRequestMessage: send_time=1, type=MessageType.LAUNCH_COMMAND, sender_id=0, receiver_id=3, relevance=1, target=Target(id=100, type=AIR_PLANE, pos=[5200.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5100. 5000. 2000.]), target_position=[5100. 5000. 2000.], radar_id=5]
-2025-04-28 00:48:13,592 - modules.MissileLauncher - INFO - Получена команда на запуск ракеты к цели ID: Target(id=100, type=AIR_PLANE, pos=[5200.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5100. 5000. 2000.])
-2025-04-28 00:48:13,592 - modules.MissileLauncher - INFO - Ракета ID: 10 успешно запущена с пусковой установки (ID: 3)
-2025-04-28 00:48:13,592 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 4) в t=2. Доступно ракет: 1
-2025-04-28 00:48:13,592 - modules.MissileLauncher - INFO - ПУ сообщения []
-2025-04-28 00:48:13,592 - modules.CCP - INFO - ПБУ получил от ПУ запуске ЗУР c id:10
-2025-04-28 00:48:13,593 - modules.CCP - INFO - В ПБУ добавлена ракета с id: 10
-2025-04-28 00:48:13,593 - modules.CCP - INFO - ПБУ получил сообщения от 2 радаров/радара
-2025-04-28 00:48:13,593 - modules.CCP - INFO - ПБУ получил Target(id=100, type=AIR_PLANE, pos=[5200.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5100. 5000. 2000.]) от МФР с id 5
-2025-04-28 00:48:13,593 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
-2025-04-28 00:48:13,593 - modules.CCP - INFO - Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР
-2025-04-28 00:48:13,594 - modules.CCP - INFO - ПБУ сообщает МФР 5, что у ЗУР с id:10, новые координаты ее цели:[5200. 5000. 2000.]
-2025-04-28 00:48:13,594 - modules.CCP - INFO - ПБУ отправил ('ЗУР', 10) на отрисовку GUI
-2025-04-28 00:48:13,594 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 100) на отрисовку GUI
-2025-04-28 00:48:13,594 - modules.Manager - INFO - Обработка 9 сообщений на шаге 2
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=2, type=MessageType.ACTIVE_OBJECTS, sender_id=1, receiver_id=None, relevance=1, active_objects.ids=[100], active_objects.count=1
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=2, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[100], visible_objects.count=1
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=2, type=MessageType.FOUND_OBJECTS, sender_id=6, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - LaunchMissileMessage: send_time=2, type=MessageType.LAUNCH_MISSILE, sender_id=3, receiver_id=10, relevance=1
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - LaunchedMissileMessage: send_time=2, type=MessageType.LAUNCHED_MISSILE, sender_id=3, receiver_id=0, relevance=1, missile.id=10, target_id=None
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - MissileToAirEnvMessage: send_time=2, type=MessageType.NEW_MISSILE, sender_id=3, receiver_id=None, relevance=1, missile.id=10
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - CPPUpdateTargetRadarMessage: send_time=2, type=MessageType.CCP_UPDATE_TARGET, sender_id=0, receiver_id=5, relevance=1, target.id=100, missile_id=10
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=2, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=10, target_type=ЗУР, coordinates=[500. 500.   0.]
-2025-04-28 00:48:13,594 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=2, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=100, target_type=TargetType.AIR_PLANE, coordinates=[5200. 5000. 2000.]
-2025-04-28 00:48:13,594 - modules.Manager - INFO - Текущее время: 3
-2025-04-28 00:48:13,595 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,595 - modules.Radar - INFO - Target(id=100, type=AIR_PLANE, pos=[5300.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5200. 5000. 2000.])
-2025-04-28 00:48:13,595 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,595 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=3. Доступно ракет: 1
-2025-04-28 00:48:13,595 - modules.MissileLauncher - INFO - ПУ сообщения []
-2025-04-28 00:48:13,595 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 4) в t=3. Доступно ракет: 1
-2025-04-28 00:48:13,595 - modules.MissileLauncher - INFO - ПУ сообщения []
-2025-04-28 00:48:13,595 - modules.CCP - INFO - ПБУ получил сообщения от 2 радаров/радара
-2025-04-28 00:48:13,595 - modules.CCP - INFO - ПБУ получил Target(id=100, type=AIR_PLANE, pos=[5300.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5200. 5000. 2000.]) от МФР с id 5
-2025-04-28 00:48:13,595 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
-2025-04-28 00:48:13,595 - modules.CCP - INFO - Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР
-2025-04-28 00:48:13,597 - modules.CCP - INFO - ПБУ сообщает МФР 5, что у ЗУР с id:10, новые координаты ее цели:[5300. 5000. 2000.]
-2025-04-28 00:48:13,597 - modules.CCP - INFO - ПБУ отправил ('ЗУР', 10) на отрисовку GUI
-2025-04-28 00:48:13,597 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 100) на отрисовку GUI
-2025-04-28 00:48:13,597 - modules.Manager - INFO - Обработка 6 сообщений на шаге 3
-2025-04-28 00:48:13,597 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=3, type=MessageType.ACTIVE_OBJECTS, sender_id=1, receiver_id=None, relevance=1, active_objects.ids=[100, 10], active_objects.count=2
-2025-04-28 00:48:13,597 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=3, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[100], visible_objects.count=1
-2025-04-28 00:48:13,597 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=3, type=MessageType.FOUND_OBJECTS, sender_id=6, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
-2025-04-28 00:48:13,597 - modules.Manager - INFO -   - CPPUpdateTargetRadarMessage: send_time=3, type=MessageType.CCP_UPDATE_TARGET, sender_id=0, receiver_id=5, relevance=1, target.id=100, missile_id=10
-2025-04-28 00:48:13,597 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=3, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=10, target_type=ЗУР, coordinates=[500. 500.   0.]
-2025-04-28 00:48:13,597 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=3, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=100, target_type=TargetType.AIR_PLANE, coordinates=[5300. 5000. 2000.]
-2025-04-28 00:48:13,597 - modules.Manager - INFO - Текущее время: 4
-2025-04-28 00:48:13,597 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,597 - modules.Radar - INFO - Target(id=100, type=AIR_PLANE, pos=[5400.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5300. 5000. 2000.])
-2025-04-28 00:48:13,597 - modules.Radar - INFO - Missile(id=10, pos=[1240.95, 1113.68, 272.75], vel=[740.95, 613.68, 272.75], prev_pos=[500. 500.   0.])
-2025-04-28 00:48:13,597 - modules.Radar - INFO - Видимые объекты:
-2025-04-28 00:48:13,597 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=4. Доступно ракет: 1
-2025-04-28 00:48:13,597 - modules.MissileLauncher - INFO - ПУ сообщения []
-2025-04-28 00:48:13,597 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 4) в t=4. Доступно ракет: 1
-2025-04-28 00:48:13,597 - modules.MissileLauncher - INFO - ПУ сообщения []
-2025-04-28 00:48:13,597 - modules.CCP - INFO - ПБУ получил сообщения от 2 радаров/радара
-2025-04-28 00:48:13,597 - modules.CCP - INFO - ПБУ получил Target(id=100, type=AIR_PLANE, pos=[5400.00, 5000.00, 2000.00], vel=[100.00, 0.00, 0.00], prev_pos=[5300. 5000. 2000.]) от МФР с id 5
-2025-04-28 00:48:13,597 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
-2025-04-28 00:48:13,597 - modules.CCP - INFO - Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР
-2025-04-28 00:48:13,600 - modules.CCP - INFO - ПБУ сообщает МФР 5, что у ЗУР с id:10, новые координаты ее цели:[5400. 5000. 2000.]
-2025-04-28 00:48:13,600 - modules.CCP - INFO - ПБУ получил Missile(id=10, pos=[1240.95, 1113.68, 272.75], vel=[740.95, 613.68, 272.75], prev_pos=[500. 500.   0.]) от МФР с id 5
-2025-04-28 00:48:13,600 - modules.CCP - INFO - ПБУ определил этот объект как новую цель
-2025-04-28 00:48:13,600 - modules.CCP - INFO - ПБУ отправляет сообщение ПУ с id 3 на запуск ЗУР по цели с координатами:[1240.95199993 1113.67744674  272.74553188]
-2025-04-28 00:48:13,603 - modules.CCP - INFO - В ПБУ добавлена цель с id: 10
-2025-04-28 00:48:13,603 - modules.CCP - INFO - ПБУ отправил ('ЗУР', 10) на отрисовку GUI
-2025-04-28 00:48:13,603 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 100) на отрисовку GUI
+2025-04-28 23:20:17,720 - modules.Manager - INFO - Модуль с ID 999 добавлен в систему
+2025-04-28 23:20:17,721 - modules.Manager - INFO - Модуль с ID 5 добавлен в систему
+2025-04-28 23:20:17,723 - modules.MissileLauncher - INFO - Пусковая установка (ID: 3) инициализирована на позиции [-482.   55.    0.]
+2025-04-28 23:20:17,723 - modules.MissileLauncher - INFO - Ракета ID: 3001 добавлена в пусковую установку (ID: 3)
+2025-04-28 23:20:17,723 - modules.MissileLauncher - INFO - Ракета ID: 3002 добавлена в пусковую установку (ID: 3)
+2025-04-28 23:20:17,723 - modules.MissileLauncher - INFO - Ракета ID: 3003 добавлена в пусковую установку (ID: 3)
+2025-04-28 23:20:17,723 - modules.MissileLauncher - INFO - Ракета ID: 3004 добавлена в пусковую установку (ID: 3)
+2025-04-28 23:20:17,723 - modules.MissileLauncher - INFO - Ракета ID: 3005 добавлена в пусковую установку (ID: 3)
+2025-04-28 23:20:17,723 - modules.Manager - INFO - Модуль с ID 3 добавлен в систему
+2025-04-28 23:20:17,724 - modules.Manager - INFO - Модуль с ID 0 добавлен в систему
+2025-04-28 23:20:17,724 - main - INFO - Созданные объекты:
+2025-04-28 23:20:17,724 - main - INFO - Воздушная обстановка (ID: 999)
+2025-04-28 23:20:17,724 - main - INFO - Радар (ID: 5), режим: horizontal
+2025-04-28 23:20:17,724 - main - INFO - Пусковая установка (ID: 3), ракет: 5
+2025-04-28 23:20:17,724 - main - INFO - Пункт боевого управления (ID: 0)
+2025-04-28 23:20:17,724 - main - INFO - Запуск симуляции на 60 секунд...
+2025-04-28 23:20:17,724 - modules.Manager - INFO - Текущее время: 0
+2025-04-28 23:20:17,724 - modules.Radar - INFO - Видимые объекты:
+2025-04-28 23:20:17,724 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-1403.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=None)
+2025-04-28 23:20:17,725 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=0. Доступно ракет: 5
+2025-04-28 23:20:17,725 - modules.MissileLauncher - INFO - ПУ сообщения []
+2025-04-28 23:20:17,725 - modules.CCP - INFO - ПБУ запрашивает у ПУ с id 3 количество ЗУР
+2025-04-28 23:20:17,725 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-04-28 23:20:17,725 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-1403.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=None) от МФР с id 5
+2025-04-28 23:20:17,725 - modules.CCP - INFO - ПБУ определил этот объект как новую цель
+2025-04-28 23:20:17,725 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-04-28 23:20:17,725 - modules.CCP - INFO - В ПБУ добавлена цель с id: 1
+2025-04-28 23:20:17,725 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-04-28 23:20:17,725 - modules.Manager - INFO - Обработка 4 сообщений на шаге 0
+2025-04-28 23:20:17,725 - modules.Manager - INFO -   - MissileCountRequestMessage: send_time=0, type=MessageType.MISSILE_COUNT_REQUEST, sender_id=0, receiver_id=3, relevance=3
+2025-04-28 23:20:17,725 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=0, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1], active_objects.count=1
+2025-04-28 23:20:17,725 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=0, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1], visible_objects.count=1
+2025-04-28 23:20:17,725 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=0, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1403.  -958.     0.]
+2025-04-28 23:20:17,725 - modules.Manager - INFO - Текущее время: 1
+2025-04-28 23:20:17,725 - modules.Radar - INFO - Видимые объекты:
+2025-04-28 23:20:17,725 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-1303.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1403.  -958.     0.])
+2025-04-28 23:20:17,726 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=1. Доступно ракет: 5
+2025-04-28 23:20:17,726 - modules.MissileLauncher - INFO - ПУ сообщения [MissileCountRequestMessage: send_time=0, type=MessageType.MISSILE_COUNT_REQUEST, sender_id=0, receiver_id=3, relevance=3]
+2025-04-28 23:20:17,726 - modules.MissileLauncher - INFO - Отправлен ответ с количеством ракет: 5
+2025-04-28 23:20:17,726 - modules.CCP - INFO - ПБУ получил от ПУ 3 сообщение о том, что у него в наличии 5 ЗУР
+2025-04-28 23:20:17,726 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-04-28 23:20:17,726 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-1303.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1403.  -958.     0.]) от МФР с id 5
+2025-04-28 23:20:17,726 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-04-28 23:20:17,726 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
+2025-04-28 23:20:17,726 - modules.CCP - INFO - ПБУ отправляет сообщение ПУ с id 3 на запуск ЗУР по цели с координатами:[-1303.  -958.     0.]
+2025-04-28 23:20:17,726 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-04-28 23:20:17,726 - modules.Manager - INFO - Обработка 5 сообщений на шаге 1
+2025-04-28 23:20:17,726 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=1, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1], active_objects.count=1
+2025-04-28 23:20:17,726 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=1, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1], visible_objects.count=1
+2025-04-28 23:20:17,726 - modules.Manager - INFO -   - MissileCountResponseMessage: send_time=1, type=MessageType.MISSILE_COUNT_RESPONSE, sender_id=3, receiver_id=0, relevance=1, count=5
+2025-04-28 23:20:17,727 - modules.Manager - INFO -   - CPPLaunchMissileRequestMessage: send_time=1, type=MessageType.LAUNCH_COMMAND, sender_id=0, receiver_id=3, relevance=1, target=Target(id=1, type=AIR_PLANE, pos=[-1303.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1403.  -958.     0.]), target_position=[-1303.  -958.     0.], radar_id=5
+2025-04-28 23:20:17,727 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=1, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1303.  -958.     0.]
+2025-04-28 23:20:17,727 - modules.Manager - INFO - Текущее время: 2
+2025-04-28 23:20:17,727 - modules.Radar - INFO - Видимые объекты:
+2025-04-28 23:20:17,727 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-1203.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1303.  -958.     0.])
+2025-04-28 23:20:17,727 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=2. Доступно ракет: 5
+2025-04-28 23:20:17,727 - modules.MissileLauncher - INFO - ПУ сообщения [CPPLaunchMissileRequestMessage: send_time=1, type=MessageType.LAUNCH_COMMAND, sender_id=0, receiver_id=3, relevance=1, target=Target(id=1, type=AIR_PLANE, pos=[-1203.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1303.  -958.     0.]), target_position=[-1303.  -958.     0.], radar_id=5]
+2025-04-28 23:20:17,727 - modules.MissileLauncher - INFO - Получена команда на запуск ракеты к цели ID: Target(id=1, type=AIR_PLANE, pos=[-1203.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1303.  -958.     0.])
+2025-04-28 23:20:17,727 - modules.MissileLauncher - INFO - Ракета ID: 3001 успешно запущена с пусковой установки (ID: 3)
+2025-04-28 23:20:17,727 - modules.CCP - INFO - ПБУ получил от ПУ запуске ЗУР c id:3001
+2025-04-28 23:20:17,727 - modules.CCP - INFO - В ПБУ добавлена ракета с id: 3001
+2025-04-28 23:20:17,728 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-04-28 23:20:17,728 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-1203.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1303.  -958.     0.]) от МФР с id 5
+2025-04-28 23:20:17,728 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-04-28 23:20:17,728 - modules.CCP - INFO - Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР
+2025-04-28 23:20:17,728 - modules.CCP - INFO - ПБУ сообщает МФР 5, что у ЗУР с id:3001, новые координаты ее цели:[-1203.  -958.     0.]
+2025-04-28 23:20:17,728 - modules.CCP - INFO - ПБУ отправил ('ЗУР', 3001) на отрисовку GUI
+2025-04-28 23:20:17,728 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-04-28 23:20:17,728 - modules.Manager - INFO - Обработка 8 сообщений на шаге 2
+2025-04-28 23:20:17,728 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=2, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1], active_objects.count=1
+2025-04-28 23:20:17,728 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=2, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1], visible_objects.count=1
+2025-04-28 23:20:17,728 - modules.Manager - INFO -   - LaunchMissileMessage: send_time=2, type=MessageType.LAUNCH_MISSILE, sender_id=3, receiver_id=3001, relevance=1
+2025-04-28 23:20:17,728 - modules.Manager - INFO -   - LaunchedMissileMessage: send_time=2, type=MessageType.LAUNCHED_MISSILE, sender_id=3, receiver_id=0, relevance=1, missile.id=3001, target_id=None
+2025-04-28 23:20:17,728 - modules.Manager - INFO -   - MissileToAirEnvMessage: send_time=2, type=MessageType.NEW_MISSILE, sender_id=3, receiver_id=None, relevance=1, missile.id=3001
+2025-04-28 23:20:17,728 - modules.Manager - INFO -   - CPPUpdateTargetRadarMessage: send_time=2, type=MessageType.CCP_UPDATE_TARGET, sender_id=0, receiver_id=5, relevance=1, target.id=1, missile_id=3001
+2025-04-28 23:20:17,728 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=2, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=3001, target_type=ЗУР, coordinates=[-482.   55.    0.]
+2025-04-28 23:20:17,728 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=2, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1203.  -958.     0.]
+2025-04-28 23:20:17,728 - modules.Manager - INFO - Текущее время: 3
+2025-04-28 23:20:17,729 - modules.Radar - INFO - Видимые объекты:
+2025-04-28 23:20:17,729 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-1103.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1203.  -958.     0.])
+2025-04-28 23:20:17,729 - modules.Radar - INFO - Missile(id=3001, pos=[-482.00, 55.00, 0.00], vel=[-101.05, -282.47, 0.00], prev_pos=None)
+2025-04-28 23:20:17,729 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=3. Доступно ракет: 4
+2025-04-28 23:20:17,729 - modules.MissileLauncher - INFO - ПУ сообщения []
+2025-04-28 23:20:17,729 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-04-28 23:20:17,729 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-1103.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1203.  -958.     0.]) от МФР с id 5
+2025-04-28 23:20:17,729 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-04-28 23:20:17,729 - modules.CCP - INFO - Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР
+2025-04-28 23:20:17,729 - modules.CCP - INFO - ПБУ сообщает МФР 5, что у ЗУР с id:3001, новые координаты ее цели:[-1103.  -958.     0.]
+2025-04-28 23:20:17,729 - modules.CCP - INFO - ПБУ получил Missile(id=3001, pos=[-482.00, 55.00, 0.00], vel=[-101.05, -282.47, 0.00], prev_pos=None) от МФР с id 5
+2025-04-28 23:20:17,730 - modules.CCP - INFO - ПБУ определил этот объект как старую ЗУР с id:3001
+2025-04-28 23:20:17,730 - modules.CCP - INFO - ПБУ отправил ('ЗУР', 3001) на отрисовку GUI
+2025-04-28 23:20:17,730 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-04-28 23:20:17,730 - modules.Manager - INFO - Обработка 5 сообщений на шаге 3
+2025-04-28 23:20:17,730 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=3, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 3001], active_objects.count=2
+2025-04-28 23:20:17,730 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=3, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1, 3001], visible_objects.count=2
+2025-04-28 23:20:17,730 - modules.Manager - INFO -   - CPPUpdateTargetRadarMessage: send_time=3, type=MessageType.CCP_UPDATE_TARGET, sender_id=0, receiver_id=5, relevance=1, target.id=1, missile_id=3001
+2025-04-28 23:20:17,730 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=3, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=3001, target_type=ЗУР, coordinates=[-482.   55.    0.]
+2025-04-28 23:20:17,730 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=3, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1103.  -958.     0.]
+2025-04-28 23:20:17,730 - modules.Manager - INFO - Текущее время: 4
+2025-04-28 23:20:17,730 - modules.Radar - INFO - Видимые объекты:
+2025-04-28 23:20:17,730 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-1003.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1103.  -958.     0.])
+2025-04-28 23:20:17,730 - modules.Radar - INFO - Missile(id=3001, pos=[-583.05, -227.47, 0.00], vel=[-101.05, -282.47, 0.00], prev_pos=[-482.   55.    0.])
+2025-04-28 23:20:17,730 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=4. Доступно ракет: 4
+2025-04-28 23:20:17,731 - modules.MissileLauncher - INFO - ПУ сообщения []
+2025-04-28 23:20:17,731 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-04-28 23:20:17,731 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-1003.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1103.  -958.     0.]) от МФР с id 5
+2025-04-28 23:20:17,731 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-04-28 23:20:17,731 - modules.CCP - INFO - Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР
+2025-04-28 23:20:17,731 - modules.CCP - INFO - ПБУ сообщает МФР 5, что у ЗУР с id:3001, новые координаты ее цели:[-1003.  -958.     0.]
+2025-04-28 23:20:17,731 - modules.CCP - INFO - ПБУ получил Missile(id=3001, pos=[-583.05, -227.47, 0.00], vel=[-101.05, -282.47, 0.00], prev_pos=[-482.   55.    0.]) от МФР с id 5
+2025-04-28 23:20:17,731 - modules.CCP - INFO - ПБУ определил этот объект как старую ЗУР с id:3001
+2025-04-28 23:20:17,731 - modules.CCP - INFO - ПБУ отправил ('ЗУР', 3001) на отрисовку GUI
+2025-04-28 23:20:17,731 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-04-28 23:20:17,732 - modules.Manager - INFO - Обработка 6 сообщений на шаге 4
+2025-04-28 23:20:17,732 - modules.Manager - INFO -   - MissilePosMessage: send_time=4, type=MessageType.MISSILE_POS, sender_id=3001, receiver_id=None, relevance=1, missile_id=3001
+2025-04-28 23:20:17,732 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=4, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 3001], active_objects.count=2
+2025-04-28 23:20:17,732 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=4, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1, 3001], visible_objects.count=2
+2025-04-28 23:20:17,732 - modules.Manager - INFO -   - CPPUpdateTargetRadarMessage: send_time=4, type=MessageType.CCP_UPDATE_TARGET, sender_id=0, receiver_id=5, relevance=1, target.id=1, missile_id=3001
+2025-04-28 23:20:17,732 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=4, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=3001, target_type=ЗУР, coordinates=[-583.04740753 -227.47021335    0.        ]
+2025-04-28 23:20:17,732 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=4, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1003.  -958.     0.]
+2025-04-28 23:20:17,732 - modules.Manager - INFO - Текущее время: 5
+2025-04-28 23:20:17,732 - modules.Radar - INFO - Видимые объекты:
+2025-04-28 23:20:17,732 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-903.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1003.  -958.     0.])
+2025-04-28 23:20:17,732 - modules.Radar - INFO - Missile(id=3001, pos=[-684.09, -509.94, 0.00], vel=[-101.05, -282.47, 0.00], prev_pos=[-583.04740753 -227.47021335    0.        ])
+2025-04-28 23:20:17,732 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=5. Доступно ракет: 4
+2025-04-28 23:20:17,732 - modules.MissileLauncher - INFO - ПУ сообщения []
+2025-04-28 23:20:17,732 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-04-28 23:20:17,732 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-903.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-1003.  -958.     0.]) от МФР с id 5
+2025-04-28 23:20:17,733 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-04-28 23:20:17,733 - modules.CCP - INFO - Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР
+2025-04-28 23:20:17,733 - modules.CCP - INFO - ПБУ сообщает МФР 5, что у ЗУР с id:3001, новые координаты ее цели:[-903. -958.    0.]
+2025-04-28 23:20:17,733 - modules.CCP - INFO - ПБУ получил Missile(id=3001, pos=[-684.09, -509.94, 0.00], vel=[-101.05, -282.47, 0.00], prev_pos=[-583.04740753 -227.47021335    0.        ]) от МФР с id 5
+2025-04-28 23:20:17,733 - modules.CCP - INFO - ПБУ определил этот объект как старую ЗУР с id:3001
+2025-04-28 23:20:17,733 - modules.CCP - INFO - ПБУ отправил ('ЗУР', 3001) на отрисовку GUI
+2025-04-28 23:20:17,733 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-04-28 23:20:17,733 - modules.Manager - INFO - Обработка 6 сообщений на шаге 5
+2025-04-28 23:20:17,733 - modules.Manager - INFO -   - MissilePosMessage: send_time=5, type=MessageType.MISSILE_POS, sender_id=3001, receiver_id=None, relevance=1, missile_id=3001
+2025-04-28 23:20:17,733 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=5, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 3001], active_objects.count=2
+2025-04-28 23:20:17,733 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=5, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1, 3001], visible_objects.count=2
+2025-04-28 23:20:17,733 - modules.Manager - INFO -   - CPPUpdateTargetRadarMessage: send_time=5, type=MessageType.CCP_UPDATE_TARGET, sender_id=0, receiver_id=5, relevance=1, target.id=1, missile_id=3001
+2025-04-28 23:20:17,734 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=5, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=3001, target_type=ЗУР, coordinates=[-684.09481506 -509.94042671    0.        ]
+2025-04-28 23:20:17,734 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=5, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-903. -958.    0.]
+2025-04-28 23:20:17,734 - modules.Manager - INFO - Текущее время: 6
+2025-04-28 23:20:17,734 - modules.Radar - INFO - Видимые объекты:
+2025-04-28 23:20:17,734 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-803.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-903. -958.    0.])
+2025-04-28 23:20:17,734 - modules.Radar - INFO - Missile(id=3001, pos=[-785.14, -792.41, 0.00], vel=[-101.05, -282.47, 0.00], prev_pos=[-684.09481506 -509.94042671    0.        ])
+2025-04-28 23:20:17,734 - modules.MissileLauncher - INFO - Шаг симуляции пусковой установки (ID: 3) в t=6. Доступно ракет: 4
+2025-04-28 23:20:17,734 - modules.MissileLauncher - INFO - ПУ сообщения []
+2025-04-28 23:20:17,734 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-04-28 23:20:17,734 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-803.00, -958.00, 0.00], vel=[100.00, 0.00, 0.00], prev_pos=[-903. -958.    0.]) от МФР с id 5
+2025-04-28 23:20:17,734 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-04-28 23:20:17,735 - modules.CCP - INFO - Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР
+2025-04-28 23:20:17,735 - modules.CCP - INFO - ПБУ сообщает МФР 5, что у ЗУР с id:3001, новые координаты ее цели:[-803. -958.    0.]
+2025-04-28 23:20:17,735 - modules.CCP - INFO - ПБУ получил Missile(id=3001, pos=[-785.14, -792.41, 0.00], vel=[-101.05, -282.47, 0.00], prev_pos=[-684.09481506 -509.94042671    0.        ]) от МФР с id 5
+2025-04-28 23:20:17,735 - modules.CCP - INFO - ПБУ определил этот объект как старую ЗУР с id:3001
+2025-04-28 23:20:17,735 - modules.CCP - INFO - ПБУ отправил ('ЗУР', 3001) на отрисовку GUI
+2025-04-28 23:20:17,735 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-04-28 23:20:17,735 - modules.Manager - INFO - Обработка 7 сообщений на шаге 6
+2025-04-28 23:20:17,735 - modules.Manager - INFO -   - MissilePosMessage: send_time=6, type=MessageType.MISSILE_POS, sender_id=3001, receiver_id=None, relevance=1, missile_id=3001
+2025-04-28 23:20:17,735 - modules.Manager - INFO -   - MissileDetonateMessage: send_time=6, type=MessageType.MISSILE_DETONATE, sender_id=3001, receiver_id=None, relevance=1, missile_id=3001, target_id=1
+2025-04-28 23:20:17,735 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=6, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 3001], active_objects.count=2
+2025-04-28 23:20:17,735 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=6, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1, 3001], visible_objects.count=2
+2025-04-28 23:20:17,735 - modules.Manager - INFO -   - CPPUpdateTargetRadarMessage: send_time=6, type=MessageType.CCP_UPDATE_TARGET, sender_id=0, receiver_id=5, relevance=1, target.id=1, missile_id=3001
+2025-04-28 23:20:17,735 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=6, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=3001, target_type=ЗУР, coordinates=[-785.14222259 -792.41064006    0.        ]
+2025-04-28 23:20:17,735 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=6, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-803. -958.    0.]
+2025-04-28 23:20:17,735 - modules.Manager - INFO - Текущее время: 7

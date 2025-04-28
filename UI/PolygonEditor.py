@@ -41,7 +41,7 @@ class PolygonEditor(QMainWindow):
         self.default_config = {
             "simulation": {
                 "time_step": 1,
-                "duration": 10
+                "duration": 60
             },
             "air_environment": {
                 "id": 999,
@@ -211,6 +211,16 @@ class PolygonEditor(QMainWindow):
             elif self.current_object_type == ObjectType.MISSILE_LAUNCHER:
                 self.config["missile_launchers"].append(obj_data)
                 self.config["combat_control_point"]["missile_launcher_ids"].append(obj_data["id"])
+                obj_data["missiles"] = [
+                    {
+                        "id": obj_data["id"]* 1000 + i,
+                        "position": obj_data["position"],  # Позиция ракеты = позиции установки
+                        "velocity": obj_data["missile_velocity"],
+                        "explosion_radius": obj_data["missile_radius"],
+                        "life_time": obj_data["missile_life_time"],
+                    }
+                    for i in range(1, obj_data.get("max_missiles", 1) + 1)
+                ]
             elif self.current_object_type == ObjectType.RADAR:
                 self.config["radars"].append(obj_data)
                 self.config["combat_control_point"]["radar_ids"].append(obj_data["id"])
@@ -289,8 +299,7 @@ class PolygonEditor(QMainWindow):
 
             # Рисуем ракеты этой установки
             for missile in launcher.get("missiles", []):
-                missile_id = f"missile_{launcher['id']}_{missile.get('id', '')}"
-                self.draw_map_object(launcher["position"], "MISSILE", missile_id)
+                self.draw_map_object(launcher["position"], "MISSILE", missile["id"])
 
         for radar in self.config["radars"]:
             self.draw_map_object(radar["position"], "RADAR", radar.get("id", ""))
@@ -495,10 +504,17 @@ class PolygonEditor(QMainWindow):
 
         # Запускаем моделирование
         self.manager = run_simulation_from_config('simulation_config.yaml')
-        # self.manager = run_simulation_from_config('../config.yaml')
 
         # Получаем все временные метки
         time_steps = sorted(self.manager.messages.keys())
+
+        # Собираем все ID ракет из конфигурации
+        missile_ids = set()
+        for launcher in self.config["missile_launchers"]:
+            for missile in launcher.get("missiles", []):
+                missile_ids.add(str(missile["id"]))
+
+        print(f"Known missile IDs: {missile_ids}")  # Отладочный вывод
 
         # Инициализация таймера
         self.simulation_timer = QTimer()
@@ -525,34 +541,75 @@ class PolygonEditor(QMainWindow):
                 obj_id = str(msg.obj_id)
                 x, y, _ = msg.coordinates
 
-                # Обновляем позицию объекта
+                # Если это ракета (по ID) и её нет на сцене - создаем
+                if obj_id in missile_ids and obj_id not in self.scene_objects:
+                    missile_type = ObjectType.MISSILE
+                    icon = self.icons.get(missile_type)
+                    if icon:
+                        obj = MapObject(icon, missile_type, obj_id)
+                        obj.setPos(x - icon.width() / 2, y - icon.height() / 2)
+                        self.scene.addItem(obj)
+                        self.scene_objects[obj_id] = obj
+                        obj.trajectory_points = []
+                        print(f"Created missile {obj_id} at ({x}, {y})")
+
+                # Обновляем позицию для всех объектов (включая ракеты)
                 if obj_id in self.scene_objects:
                     obj = self.scene_objects[obj_id]
-                    obj.setPos(x - obj.pixmap().width() / 2, y - obj.pixmap().height() / 2)
 
-                    # Для движущихся объектов добавляем точку траектории
+                    # Обновляем позицию
+                    current_pos = obj.pos()
+                    new_x = x - obj.pixmap().width() / 2
+                    new_y = y - obj.pixmap().height() / 2
+                    obj.setPos(new_x, new_y)
+
+                    print(f"Object {obj_id} visible: {obj.isVisible()} at ({new_x}, {new_y})")
+
+                    # Для ВСЕХ движущихся объектов (включая ракеты) добавляем траекторию
                     if obj.obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.MISSILE]:
+                        # Создаем новую точку
+                        point_size = 6
                         point = self.scene.addEllipse(
-                            x - 2, y - 2, 4, 4,
+                            x - point_size / 2,
+                            y - point_size / 2,
+                            point_size,
+                            point_size,
                             QPen(Qt.NoPen),
-                            QBrush(QColor(255, 165, 0, 200))
+                            QBrush(QColor(255, 100, 0, 220))
                         )
-                        point.setZValue(-1)
+                        point.setZValue(10)
 
                         if not hasattr(obj, 'trajectory_points'):
                             obj.trajectory_points = []
+                            obj.trajectory_lines = []  # Новый список для линий
 
-                        obj.trajectory_points.append(point)
+                        # Добавляем новую точку
+                        obj.trajectory_points.append((x, y, point))
 
-                        # Ограничиваем количество точек
-                        if len(obj.trajectory_points) > 50:
-                            old_point = obj.trajectory_points.pop(0)
-                            self.scene.removeItem(old_point)
+                        # Если есть предыдущая точка - рисуем линию между ними
+                        if len(obj.trajectory_points) > 1:
+                            prev_x, prev_y, _ = obj.trajectory_points[-2]
+                            line = self.scene.addLine(
+                                prev_x, prev_y, x, y,
+                                QPen(QColor(255, 150, 0, 180), 2)) # Оранжевая линия толщиной 2px
+                            line.setZValue(9)
+                            obj.trajectory_lines.append(line)
+
+                            # Ограничиваем количество элементов траектории
+                            if len(obj.trajectory_points) > 100:
+                                old_point_data = obj.trajectory_points.pop(0)
+                            self.scene.removeItem(old_point_data[2])  # Удаляем точку
+
+                            # Удаляем соответствующую линию
+                            if obj.trajectory_lines:
+                                old_line = obj.trajectory_lines.pop(0)
+                            self.scene.removeItem(old_line)
 
             self.status_bar.showMessage(
                 f"Шаг: {self.current_step + 1}/{self.max_step} Время: {current_time}"
             )
             self.current_step += 1
+
         # Настраиваем таймер (обновление каждые 500 мс)
         self.simulation_timer.timeout.connect(update_simulation)
         self.simulation_timer.start(500)
