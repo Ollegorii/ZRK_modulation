@@ -22,5 +22,5 @@
 
 ## Документация и UML-диаграмма
 
-- [Документация проекта](https://docs.google.com/document/d/1-mUmWovp3hKa2wsMNWdoNG89_8Wjsl5Z6B6dV_JA3Zw/edit?usp=sharing)  
+- [Документация проекта](https://github.com/Ollegorii/ZRK_modulation/blob/main/Documentation.md)  
 - [UML-диаграмма](https://drive.google.com/file/d/1qxQ8uuw7oqwsKHVURqwmP2hphQ5IvCah/view?usp=sharing)
