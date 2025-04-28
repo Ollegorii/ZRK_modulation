@@ -579,29 +579,34 @@ class PolygonEditor(QMainWindow):
                         )
                         point.setZValue(10)
 
+                        # Инициализация структур данных для траектории
                         if not hasattr(obj, 'trajectory_points'):
-                            obj.trajectory_points = []
-                            obj.trajectory_lines = []  # Новый список для линий
+                            obj.trajectory_points = []  # Будет хранить только точки
+                            obj.trajectory_lines = []  # Будет хранить линии
+                            obj.last_position = (x, y)  # Добавляем запись последней позиции
 
-                        # Добавляем новую точку
-                        obj.trajectory_points.append((x, y, point))
+                        # Сохраняем текущую позицию
+                        current_pos = (x, y)
 
-                        # Если есть предыдущая точка - рисуем линию между ними
-                        if len(obj.trajectory_points) > 1:
-                            prev_x, prev_y, _ = obj.trajectory_points[-2]
+                        # Если есть предыдущая точка - рисуем линию
+                        if hasattr(obj, 'last_position'):
+                            prev_x, prev_y = obj.last_position
                             line = self.scene.addLine(
                                 prev_x, prev_y, x, y,
-                                QPen(QColor(255, 150, 0, 180), 2)) # Оранжевая линия толщиной 2px
+                                QPen(QColor(255, 150, 0, 180), 2))
                             line.setZValue(9)
                             obj.trajectory_lines.append(line)
 
+                            # Добавляем точку и обновляем последнюю позицию
+                            obj.trajectory_points.append(point)
+                            obj.last_position = current_pos
+
                             # Ограничиваем количество элементов траектории
                             if len(obj.trajectory_points) > 100:
-                                old_point_data = obj.trajectory_points.pop(0)
-                            self.scene.removeItem(old_point_data[2])  # Удаляем точку
+                                old_point = obj.trajectory_points.pop(0)
+                            self.scene.removeItem(old_point)
 
-                            # Удаляем соответствующую линию
-                            if obj.trajectory_lines:
+                            if len(obj.trajectory_lines) > 0:
                                 old_line = obj.trajectory_lines.pop(0)
                             self.scene.removeItem(old_line)
 
