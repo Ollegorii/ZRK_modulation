@@ -37,12 +37,14 @@ class AirEnv(BaseModel):
 
         for idx, objects in enumerate(self.__objects[:]):
             if objects.id in objects_to_remove:
-                del self.__objects[idx]
+                self.__objects[idx] = None
 
         for msg in self._manager.give_messages_by_type(MessageType.NEW_MISSILE, step_time=current_time - dt):
             self.__objects.append(msg.missile)
 
         for object in self.__objects:
+            if object is None:
+                continue
             object.step()
 
         self._manager.add_message(ActiveObjectsMessage(
