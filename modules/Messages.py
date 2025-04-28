@@ -134,9 +134,10 @@ class DestroyedMissileId(BaseMessage):
     Radar -> CCP
     Сообщение с id уничтноженной ракеты
     """
-    def __init__(self, sender_id: int, missile_id: int, time: int = None, receiver_id: int = None):
+    def __init__(self, sender_id: int, missile_id: int, time: int = None, receiver_id: int = None, self_detonation: bool = False):
         super().__init__(type=MessageType.DESTROYED_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
-        self.missile_id = missile_id
+        self.missile_id = missile_id,
+        self.self_detonation = self_detonation
     
     def __repr__(self) -> str:
         base_info = super().__repr__()
