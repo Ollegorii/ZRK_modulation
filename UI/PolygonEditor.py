@@ -590,25 +590,20 @@ class PolygonEditor(QMainWindow):
 
                         # Если есть предыдущая точка - рисуем линию
                         if hasattr(obj, 'last_position'):
-                            prev_x, prev_y = obj.last_position
-                            line = self.scene.addLine(
-                                prev_x, prev_y, x, y,
-                                QPen(QColor(255, 150, 0, 180), 2))
-                            line.setZValue(9)
-                            obj.trajectory_lines.append(line)
+                            if obj.obj_type == ObjectType.MISSILE:
+                                color = QPen(QColor(0, 0, 255, 180), 2)
+                            else:
+                                color = QPen(QColor(255, 150, 0, 180), 2)
+
+                            if obj.last_position != None:
+                                prev_x, prev_y = obj.last_position
+                                line = self.scene.addLine(
+                                    prev_x, prev_y, x, y,
+                                    color)
+                                line.setZValue(9)
 
                             # Добавляем точку и обновляем последнюю позицию
-                            obj.trajectory_points.append(point)
                             obj.last_position = current_pos
-
-                            # Ограничиваем количество элементов траектории
-                            if len(obj.trajectory_points) > 100:
-                                old_point = obj.trajectory_points.pop(0)
-                            self.scene.removeItem(old_point)
-
-                            if len(obj.trajectory_lines) > 0:
-                                old_line = obj.trajectory_lines.pop(0)
-                            self.scene.removeItem(old_line)
 
             self.status_bar.showMessage(
                 f"Шаг: {self.current_step + 1}/{self.max_step} Время: {current_time}"
