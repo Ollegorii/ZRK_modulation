@@ -147,10 +147,11 @@ class MissileDetonateMessage(BaseMessage):
     ЗУР -> ВО, РЛС
     Сообщение о подрыве ЗУР
     """
-    def __init__(self, sender_id: int, target_id: int = None):
+    def __init__(self, sender_id: int, target_id: int = None, self_detonation: bool = False):
         super().__init__(type=MessageType.MISSILE_DETONATE, sender_id=sender_id)
         self.missile_id = sender_id
         self.target_id = target_id
+        self.self_detonation = self_detonation
     
     def __repr__(self) -> str:
         base_info = super().__repr__()
