@@ -190,12 +190,13 @@ class CombatControlPoint(BaseModel):
             # if detected_obj.id == 10:
             #     velocity = 1600
             cur_time = self._manager.time.get_time()
+            sim_step = self._manager.time.get_dt()
             coord_diff = np.linalg.norm(obj_to_link_pos - detected_obj.pos)
             d_t = cur_time - obj_to_link_upd_time
-            # print(f'{[cur_time]}, {velocity}, {d_t}, {obj_to_link_pos}, {detected_obj.pos}, {coord_diff}')
+            print(f'{[cur_time]}, {velocity}, {d_t}, {obj_to_link_pos}, {detected_obj.pos}, {coord_diff}')
 
-            return max(0, velocity * (d_t - POSSIBLE_TARGET_RADIUS * SIMULATION_STEP)), max(0, velocity * (
-                    d_t + POSSIBLE_TARGET_RADIUS * SIMULATION_STEP)), coord_diff
+            return max(0, velocity * (d_t - POSSIBLE_TARGET_RADIUS * sim_step)), max(0, velocity * (
+                    d_t + POSSIBLE_TARGET_RADIUS * sim_step)), coord_diff
 
         curr_diff = float('inf')
         matched_object_id = None
