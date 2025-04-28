@@ -138,19 +138,19 @@ class Missile(AirObject):
         elif self.status == 'detonated':
             pass
     
-    # def __repr__(self) -> str:
-    #     """
-    #     Строковое представление объекта цели
-    #
-    #     :return: строка, содержащая информацию о цели
-    #     """
-    #     position_str = f"[{', '.join(f'{coord:.2f}' for coord in self.pos)}]"
-    #
-    #     # Получаем скорость из траектории, если она существует
-    #     if hasattr(self, 'trajectory') and self.trajectory is not None:
-    #         velocity = self.trajectory.velocity
-    #         velocity_str = f"[{', '.join(f'{vel:.2f}' for vel in velocity)}]"
-    #     else:
-    #         velocity_str = "[unknown]"
-    #
-    #     return f"Missile(id={self.id}, pos={position_str}, vel={velocity_str}, prev_pos={self.prev_pos})"
+    def __repr__(self) -> str:
+        """
+        Строковое представление объекта цели
+    
+        :return: строка, содержащая информацию о цели
+        """
+        position_str = f"[{', '.join(f'{coord:.2f}' for coord in self.pos)}]"
+    
+        # Получаем скорость из траектории, если она существует
+        if hasattr(self, 'trajectory') and self.trajectory is not None:
+            velocity = self.trajectory.velocity
+            velocity_str = f"[{', '.join(f'{vel:.2f}' for vel in velocity)}]"
+        else:
+            velocity_str = "[unknown]"
+    
+        return f"Missile(id={self.id}, pos={position_str}, vel={velocity_str}, prev_pos={self.prev_pos})"
