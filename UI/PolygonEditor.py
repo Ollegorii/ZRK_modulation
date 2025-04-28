@@ -29,12 +29,12 @@ class PolygonEditor(QMainWindow):
 
         # Иконки объектов
         self.icons = {
-            ObjectType.AIR_PLANE: self.load_icon("images/aircraft_icon.png", "🛩️", 60),
-            ObjectType.HELICOPTER: self.load_icon("images/helicopter.png", "🚁", 60),
-            ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
-            ObjectType.MISSILE_LAUNCHER: self.load_icon("images/missile_launcher_icon.png", "🚀", 60),
-            ObjectType.RADAR: self.load_icon("images/radar_icon.png", "📡", 60),
-            ObjectType.MISSILE: self.load_icon("images/GM.png", "*", 30)
+            ObjectType.AIR_PLANE: self.load_icon("images/aircraft_icon.png", "🛩️", 100),
+            ObjectType.HELICOPTER: self.load_icon("images/helicopter.png", "🚁", 100),
+            # ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
+            ObjectType.MISSILE_LAUNCHER: self.load_icon("images/missile_launcher_icon.png", "🚀", 100),
+            ObjectType.RADAR: self.load_icon("images/radar_icon.png", "📡", 100),
+            ObjectType.MISSILE: self.load_icon("images/GM.png", "*", 50)
         }
 
         # Конфигурация по умолчанию
@@ -61,7 +61,7 @@ class PolygonEditor(QMainWindow):
         self.next_ids = {
             ObjectType.AIR_PLANE: 1,
             ObjectType.HELICOPTER: 1,
-            ObjectType.ANOTHER: 1,
+            # ObjectType.ANOTHER: 1,
             ObjectType.MISSILE_LAUNCHER: 3,
             ObjectType.RADAR: 5
         }
@@ -98,7 +98,8 @@ class PolygonEditor(QMainWindow):
         # Выбор типа объекта
         self.object_type_combo = QComboBox()
         self.object_type_combo.setIconSize(QSize(48, 48))
-        for obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.ANOTHER,
+        for obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER,
+                         # ObjectType.ANOTHER,
                          ObjectType.MISSILE_LAUNCHER, ObjectType.RADAR]:
             self.object_type_combo.addItem(
                 QIcon(self.icons[obj_type]),
@@ -206,7 +207,7 @@ class PolygonEditor(QMainWindow):
                 int(obj_data["id"]) + 1)
 
             # Добавляем объект в конфиг
-            if self.current_object_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.ANOTHER]:
+            if self.current_object_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER]:
                 self.config["air_environment"]["targets"].append(obj_data)
             elif self.current_object_type == ObjectType.MISSILE_LAUNCHER:
                 self.config["missile_launchers"].append(obj_data)
@@ -306,7 +307,7 @@ class PolygonEditor(QMainWindow):
 
     def draw_map_object(self, position, obj_type, obj_id):
         enum_type = ObjectType[obj_type] if isinstance(obj_type, str) else obj_type
-        icon = self.icons.get(enum_type, self.icons[ObjectType.ANOTHER])
+        icon = self.icons.get(enum_type, self.icons[ObjectType.AIR_PLANE])
 
         # Создаем или получаем объект
         if str(obj_id) in self.scene_objects:
