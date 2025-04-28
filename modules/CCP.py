@@ -123,6 +123,7 @@ class CombatControlPoint(BaseModel):
         """
         if not self_detonation:
             target_id = self._missile_dict[missile_id].missile.target.id
+            logger.info(f"ЗУР с id: {missile_id}, сбил цель с id {target_id}")
             self.delete_target(target_id)
         self._missile_dict.pop(missile_id, None)
         logger.info(f"В ПБУ удалена ракета с id: {missile_id}")
@@ -195,7 +196,7 @@ class CombatControlPoint(BaseModel):
             sim_step = self._manager.time.get_dt()
             coord_diff = np.linalg.norm(obj_to_link_pos - detected_obj.pos)
             d_t = cur_time - obj_to_link_upd_time
-            print(f'{[cur_time]}, {velocity}, {d_t}, {obj_to_link_pos}, {detected_obj.pos}, {coord_diff}')
+            # print(f'{[cur_time]}, {velocity}, {d_t}, {obj_to_link_pos}, {detected_obj.pos}, {coord_diff}')
 
             return max(0, velocity * (d_t - POSSIBLE_TARGET_RADIUS * sim_step)), max(0, velocity * (
                     d_t + POSSIBLE_TARGET_RADIUS * sim_step)), coord_diff
