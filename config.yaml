@@ -58,19 +58,19 @@ radars:
     position: [0.0, 0.0, 20.0]
     azimuth_start: 0.0
     elevation_start: 0.0
-    max_distance: 20000.0
+    max_distance: 100000.0
     azimuth_range: 360.0
-    elevation_range: 90.0
-    azimuth_speed: 10.0
-    elevation_speed: 5.0
+    elevation_range: 180.0
+    azimuth_speed: 0.0
+    elevation_speed: 0.0
     scan_mode: "horizontal"
   - id: 6
     position: [1000.0, 1000.0, 20.0]
-    azimuth_start: 45.0
-    elevation_start: 5.0
-    max_distance: 15000.0
-    azimuth_range: 180.0
-    elevation_range: 60.0
-    azimuth_speed: 15.0
-    elevation_speed: 7.5
+    azimuth_start: 0.0
+    elevation_start: 0.0
+    max_distance: 100000.0
+    azimuth_range: 360.0
+    elevation_range: 180.0
+    azimuth_speed: 0.0
+    elevation_speed: 0.0
     scan_mode: "vertical"
