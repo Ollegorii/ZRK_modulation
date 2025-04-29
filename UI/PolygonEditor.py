@@ -555,9 +555,6 @@ class PolygonEditor(QMainWindow):
                 obj_id = str(msg.obj_id)
                 x, y, _ = msg.coordinates
 
-<<<<<<< HEAD
-                # Если объект существует - обновляем его позицию
-=======
                 # Если это ракета (по ID) и её нет на сцене - создаем
                 if obj_id in missile_ids and obj_id not in self.scene_objects:
                     missile_type = ObjectType.MISSILE
@@ -571,12 +568,9 @@ class PolygonEditor(QMainWindow):
                         print(f"Created missile {obj_id} at ({x}, {y})")
 
                 # Обновляем позицию для всех объектов (включая ракеты)
->>>>>>> 461cb228d4c04e846541f27e2e74398b254877c1
                 if obj_id in self.scene_objects:
                     obj = self.scene_objects[obj_id]
 
-<<<<<<< HEAD
-=======
                     # Обновляем позицию
                     current_pos = obj.pos()
                     new_x = x - obj.pixmap().width() / 2
@@ -625,7 +619,6 @@ class PolygonEditor(QMainWindow):
                             # Добавляем точку и обновляем последнюю позицию
                             obj.last_position = current_pos
 
->>>>>>> 461cb228d4c04e846541f27e2e74398b254877c1
             self.status_bar.showMessage(
                 f"Шаг: {self.current_step + 1}/{self.max_step} Время: {current_time}"
             )
