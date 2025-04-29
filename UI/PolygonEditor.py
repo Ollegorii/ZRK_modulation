@@ -29,19 +29,19 @@ class PolygonEditor(QMainWindow):
 
         # Иконки объектов
         self.icons = {
-            ObjectType.AIR_PLANE: self.load_icon("images/aircraft_icon.png", "🛩️", 60),
-            ObjectType.HELICOPTER: self.load_icon("images/helicopter.png", "🚁", 60),
-            ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
-            ObjectType.MISSILE_LAUNCHER: self.load_icon("images/missile_launcher_icon.png", "🚀", 60),
-            ObjectType.RADAR: self.load_icon("images/radar_icon.png", "📡", 60),
-            ObjectType.MISSILE: self.load_icon("images/GM.png", "*", 30)
+            ObjectType.AIR_PLANE: self.load_icon("images/aircraft_icon.png", "🛩️", 100),
+            ObjectType.HELICOPTER: self.load_icon("images/helicopter.png", "🚁", 100),
+            # ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
+            ObjectType.MISSILE_LAUNCHER: self.load_icon("images/missile_launcher_icon.png", "🚀", 100),
+            ObjectType.RADAR: self.load_icon("images/radar_icon.png", "📡", 100),
+            ObjectType.MISSILE: self.load_icon("images/GM.png", "*", 50)
         }
 
         # Конфигурация по умолчанию
         self.default_config = {
             "simulation": {
                 "time_step": 1,
-                "duration": 10
+                "duration": 60
             },
             "air_environment": {
                 "id": 999,
@@ -61,7 +61,7 @@ class PolygonEditor(QMainWindow):
         self.next_ids = {
             ObjectType.AIR_PLANE: 1,
             ObjectType.HELICOPTER: 1,
-            ObjectType.ANOTHER: 1,
+            # ObjectType.ANOTHER: 1,
             ObjectType.MISSILE_LAUNCHER: 3,
             ObjectType.RADAR: 5
         }
@@ -98,7 +98,8 @@ class PolygonEditor(QMainWindow):
         # Выбор типа объекта
         self.object_type_combo = QComboBox()
         self.object_type_combo.setIconSize(QSize(48, 48))
-        for obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.ANOTHER,
+        for obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER,
+                         # ObjectType.ANOTHER,
                          ObjectType.MISSILE_LAUNCHER, ObjectType.RADAR]:
             self.object_type_combo.addItem(
                 QIcon(self.icons[obj_type]),
@@ -199,11 +200,21 @@ class PolygonEditor(QMainWindow):
                 int(obj_data["id"]) + 1)
 
             # Добавляем объект в конфиг
-            if self.current_object_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.ANOTHER]:
+            if self.current_object_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER]:
                 self.config["air_environment"]["targets"].append(obj_data)
             elif self.current_object_type == ObjectType.MISSILE_LAUNCHER:
                 self.config["missile_launchers"].append(obj_data)
                 self.config["combat_control_point"]["missile_launcher_ids"].append(obj_data["id"])
+                obj_data["missiles"] = [
+                    {
+                        "id": obj_data["id"]* 1000 + i,
+                        "position": obj_data["position"],  # Позиция ракеты = позиции установки
+                        "velocity": obj_data["missile_velocity"],
+                        "explosion_radius": obj_data["missile_radius"],
+                        "life_time": obj_data["missile_life_time"],
+                    }
+                    for i in range(1, obj_data.get("max_missiles", 1) + 1)
+                ]
             elif self.current_object_type == ObjectType.RADAR:
                 self.config["radars"].append(obj_data)
                 self.config["combat_control_point"]["radar_ids"].append(obj_data["id"])
@@ -239,8 +250,7 @@ class PolygonEditor(QMainWindow):
 
             # Рисуем ракеты этой установки
             for missile in launcher.get("missiles", []):
-                missile_id = f"missile_{launcher['id']}_{missile.get('id', '')}"
-                self.draw_map_object(launcher["position"], "MISSILE", missile_id)
+                self.draw_map_object(launcher["position"], "MISSILE", missile["id"])
 
         for radar in self.config["radars"]:
             self.draw_map_object(radar["position"], "RADAR", radar.get("id", ""))
@@ -249,12 +259,61 @@ class PolygonEditor(QMainWindow):
         enum_type = ObjectType[obj_type] if isinstance(obj_type, str) else obj_type
         icon = self.icons.get(enum_type, self.icons[ObjectType.AIR_PLANE])
 
-        # Создаем графический объект
-        obj = MapObject(icon, enum_type, obj_id)
-        x = position[0] - icon.width() / 2
-        y = position[1] - icon.height() / 2
-        obj.setPos(x, y)
-        self.scene.addItem(obj)
+        # Создаем или получаем объект
+        if str(obj_id) in self.scene_objects:
+            obj = self.scene_objects[str(obj_id)]
+            obj.setPos(position[0] - icon.width() / 2, position[1] - icon.height() / 2)
+        else:
+            obj = MapObject(icon, enum_type, obj_id)
+            obj.setPos(position[0] - icon.width() / 2, position[1] - icon.height() / 2)
+            self.scene.addItem(obj)
+            self.scene_objects[str(obj_id)] = obj
+            obj.trajectory_points = []  # Инициализируем список точек траектории
+
+        # Для движущихся объектов добавляем точку траектории
+        if enum_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.MISSILE]:
+            # Добавляем новую точку
+            point = self.scene.addEllipse(
+                position[0] - 2, position[1] - 2, 4, 4,
+                QPen(Qt.NoPen),
+                QBrush(QColor(255, 165, 0, 200))  # Оранжевый цвет
+            )
+            point.setZValue(-1)
+            obj.trajectory_points.append(point)
+
+            # Ограничиваем количество точек (например, последние 50)
+            if len(obj.trajectory_points) > 50:
+                old_point = obj.trajectory_points.pop(0)
+                self.scene.removeItem(old_point)
+
+        # Для радара рисуем зону действия (как в предыдущей реализации)
+        elif enum_type == ObjectType.RADAR:
+            # Ищем конфигурацию радара
+            radar_config = None
+            for radar in self.config["radars"]:
+                if str(radar["id"]) == str(obj_id):
+                    radar_config = radar
+                    break
+
+            if radar_config:
+                radius = radar_config.get("max_distance", 10000)
+
+                # Удаляем старую зону действия если есть
+                if hasattr(obj, 'radar_range'):
+                    self.scene.removeItem(obj.radar_range)
+
+                # Рисуем новую зону действия
+
+                radar_range = self.scene.addEllipse(
+                    position[0] - radius,
+                    position[1] - radius,
+                    radius * 2,
+                    radius * 2,
+                    QPen(QColor(0, 200, 0, 80)), # Зеленый контур с прозрачностью
+                         QBrush(QColor(0, 200, 0, 30)  # Зеленая полупрозрачная заливка
+                                ))
+                radar_range.setZValue(-2)  # Под основными объектами
+                obj.radar_range = radar_range
 
         # Сохраняем в словарь объектов
         self.scene_objects[str(obj_id)] = obj
@@ -411,7 +470,6 @@ class PolygonEditor(QMainWindow):
 
         # Запускаем моделирование
         self.manager = run_simulation_from_config('simulation_config.yaml')
-        # self.manager = run_simulation_from_config('../config.yaml')
 
         # self.manager.run_simulation(self.config["simulation"]["duration"])
 
@@ -464,6 +522,14 @@ class PolygonEditor(QMainWindow):
         # Получаем все временные метки
         time_steps = sorted(self.manager.messages.keys())
 
+        # Собираем все ID ракет из конфигурации
+        missile_ids = set()
+        for launcher in self.config["missile_launchers"]:
+            for missile in launcher.get("missiles", []):
+                missile_ids.add(str(missile["id"]))
+
+        print(f"Known missile IDs: {missile_ids}")  # Отладочный вывод
+
         # Инициализация таймера
         self.simulation_timer = QTimer()
         self.current_step = 0
@@ -489,15 +555,82 @@ class PolygonEditor(QMainWindow):
                 obj_id = str(msg.obj_id)
                 x, y, _ = msg.coordinates
 
+<<<<<<< HEAD
                 # Если объект существует - обновляем его позицию
+=======
+                # Если это ракета (по ID) и её нет на сцене - создаем
+                if obj_id in missile_ids and obj_id not in self.scene_objects:
+                    missile_type = ObjectType.MISSILE
+                    icon = self.icons.get(missile_type)
+                    if icon:
+                        obj = MapObject(icon, missile_type, obj_id)
+                        obj.setPos(x - icon.width() / 2, y - icon.height() / 2)
+                        self.scene.addItem(obj)
+                        self.scene_objects[obj_id] = obj
+                        obj.trajectory_points = []
+                        print(f"Created missile {obj_id} at ({x}, {y})")
+
+                # Обновляем позицию для всех объектов (включая ракеты)
+>>>>>>> 461cb228d4c04e846541f27e2e74398b254877c1
                 if obj_id in self.scene_objects:
                     obj = self.scene_objects[obj_id]
-                    obj.setPos(x - obj.pixmap().width() / 2, y - obj.pixmap().height() / 2)
 
+<<<<<<< HEAD
+=======
+                    # Обновляем позицию
+                    current_pos = obj.pos()
+                    new_x = x - obj.pixmap().width() / 2
+                    new_y = y - obj.pixmap().height() / 2
+                    obj.setPos(new_x, new_y)
+
+                    print(f"Object {obj_id} visible: {obj.isVisible()} at ({new_x}, {new_y})")
+
+                    # Для ВСЕХ движущихся объектов (включая ракеты) добавляем траекторию
+                    if obj.obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.MISSILE]:
+                        # Создаем новую точку
+                        point_size = 6
+                        point = self.scene.addEllipse(
+                            x - point_size / 2,
+                            y - point_size / 2,
+                            point_size,
+                            point_size,
+                            QPen(Qt.NoPen),
+                            QBrush(QColor(255, 100, 0, 220))
+                        )
+                        point.setZValue(10)
+
+                        # Инициализация структур данных для траектории
+                        if not hasattr(obj, 'trajectory_points'):
+                            obj.trajectory_points = []  # Будет хранить только точки
+                            obj.trajectory_lines = []  # Будет хранить линии
+                            obj.last_position = (x, y)  # Добавляем запись последней позиции
+
+                        # Сохраняем текущую позицию
+                        current_pos = (x, y)
+
+                        # Если есть предыдущая точка - рисуем линию
+                        if hasattr(obj, 'last_position'):
+                            if obj.obj_type == ObjectType.MISSILE:
+                                color = QPen(QColor(0, 0, 255, 180), 2)
+                            else:
+                                color = QPen(QColor(255, 150, 0, 180), 2)
+
+                            if obj.last_position != None:
+                                prev_x, prev_y = obj.last_position
+                                line = self.scene.addLine(
+                                    prev_x, prev_y, x, y,
+                                    color)
+                                line.setZValue(9)
+
+                            # Добавляем точку и обновляем последнюю позицию
+                            obj.last_position = current_pos
+
+>>>>>>> 461cb228d4c04e846541f27e2e74398b254877c1
             self.status_bar.showMessage(
                 f"Шаг: {self.current_step + 1}/{self.max_step} Время: {current_time}"
             )
             self.current_step += 1
+
         # Настраиваем таймер (обновление каждые 500 мс)
         self.simulation_timer.timeout.connect(update_simulation)
         self.simulation_timer.start(500)

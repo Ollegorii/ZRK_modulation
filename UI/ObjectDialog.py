@@ -93,26 +93,19 @@ class ObjectDialog(QDialog):
                 ]
             elif self.obj_type == ObjectType.MISSILE_LAUNCHER:
                 data["max_missiles"] = int(self.max_missiles.text())
-                data["missiles"] = [{
-                    "id": 1111,
-                    "velocity": int(self.missile_velocity.text()),
-                    "explosion_radius": int(self.missile_radius.text()),
-                    "life_time": int(self.missile_life_time.text())
-                },{
-                    "id": 1112,
-                    "velocity": int(self.missile_velocity.text()),
-                    "explosion_radius": int(self.missile_radius.text()),
-                    "life_time": int(self.missile_life_time.text())
-                }]
+                data["missile_velocity"] = int(self.missile_velocity.text())
+                data["missile_radius"] = int(self.missile_radius.text())
+                data["missile_life_time"] = int(self.missile_life_time.text())
+
             elif self.obj_type == ObjectType.RADAR:
                 data.update({
                     "azimuth_start": 0.0,
                     "elevation_start": 0.0,
                     "max_distance": float(self.max_distance.text()),
-                    "azimuth_range": float(self.azimuth_range.text()),
-                    "elevation_range": float(self.elevation_range.text()),
-                    "azimuth_speed": float(self.azimuth_speed.text()),
-                    "elevation_speed": float(self.elevation_speed.text()),
+                    "azimuth_range": 360, #float(self.azimuth_range.text()), - Хардкод Богдана
+                    "elevation_range": 180,#float(self.elevation_range.text()), - Хардкод Богдана
+                    "azimuth_speed": 0,#float(self.azimuth_speed.text()),
+                    "elevation_speed": 0,#float(self.elevation_speed.text()),
                     "scan_mode": self.scan_mode.currentText()
                 })
 

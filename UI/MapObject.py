@@ -10,3 +10,5 @@ class MapObject(QGraphicsPixmapItem):
         self.trajectory = None  # Ссылка на линию траектории
         self.setTransformationMode(Qt.SmoothTransformation)
         self.setCursor(Qt.ArrowCursor)
+        self.last_position = None
+        self.trajectory_lines = []
