@@ -174,7 +174,7 @@ class SectorRadar(BaseModel):
             )
             self._manager.add_message(destroy_msg)   
                  
-        self.move_to_next_sector()
+        self.move_to_next_sector_circular()
 
     def start(self, objects):
         """
