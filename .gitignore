@@ -3,4 +3,4 @@ modules/__pycache__/
 .idea
 __pycache__/
 .tests/__pycache__
-logs
+logs/app.py

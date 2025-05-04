@@ -2,11 +2,11 @@ import os
 import numpy as np
 import yaml
 from PyQt5.QtCore import Qt, QSize, QTimer
-from PyQt5.QtGui import QColor, QPen, QPainter, QPixmap, QIcon, QBrush, QFont
+from PyQt5.QtGui import QColor, QPen, QPainter, QPixmap, QIcon, QBrush
 from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout,
                              QWidget, QLabel, QPushButton, QListWidget, QComboBox,
                              QDialog, QGraphicsScene, QGraphicsTextItem,
-                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem, QGraphicsView)
+                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem)
 
 from UI.Enums import ObjectType
 from UI.MapGraphicsView import MapGraphicsView
@@ -160,14 +160,7 @@ class PolygonEditor(QMainWindow):
 
         # Сцена и вид
         self.scene = QGraphicsScene()
-
-        # Настройка сцены с белым фоном
         self.scene.setSceneRect(-15000, -15000, 30000, 30000)
-        self.scene.setBackgroundBrush(Qt.white)  # Белый фон
-
-
-        # Рисуем сетку сразу при инициализации
-        self.draw_grid()
 
         self.view = MapGraphicsView(self.scene, self)
         self.view.setMinimumSize(800, 800)
@@ -230,60 +223,17 @@ class PolygonEditor(QMainWindow):
             self.update_objects_list()
 
     def draw_grid(self):
-        """Рисует яркую координатную сетку на сцене"""
-        # Яркие оси координат
-        axis_pen = QPen(QColor(180, 180, 180), 2, Qt.SolidLine)
-        self.scene.addLine(-15000, 0, 15000, 0, axis_pen)  # Ось X
-        self.scene.addLine(0, -15000, 0, 15000, axis_pen)  # Ось Y
+        # Оси
+        pen = QPen(QColor(100, 100, 255, 150), 2)
+        self.scene.addLine(-15000, 0, 15000, 0, pen)
+        self.scene.addLine(0, -15000, 0, 15000, pen)
 
-        # Яркая основная сетка
-        main_grid_pen = QPen(QColor(200, 200, 200), 1, Qt.SolidLine)
-
-        # Вспомогательная сетка (более частая)
-        secondary_grid_pen = QPen(QColor(230, 230, 230), 1, Qt.DotLine)
-
-        # Основные линии (каждые 1000 единиц)
-        for x in range(-15000, 15001, 1000):
-            if x != 0:  # Не рисуем поверх осей
-                self.scene.addLine(x, -15000, x, 15000, main_grid_pen)
-
-        for y in range(-15000, 15001, 1000):
-            if y != 0:  # Не рисуем поверх осей
-                self.scene.addLine(-15000, y, 15000, y, main_grid_pen)
-
-        # Вспомогательные линии (каждые 250 единиц)
-        for x in range(-15000, 15001, 250):
-            if x % 1000 != 0:  # Не рисуем поверх основных линий
-                self.scene.addLine(x, -15000, x, 15000, secondary_grid_pen)
-
-        for y in range(-15000, 15001, 250):
-            if y % 1000 != 0:  # Не рисуем поверх основных линий
-                self.scene.addLine(-15000, y, 15000, y, secondary_grid_pen)
-
-        # Яркие подписи осей
-        font = QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-
-        # Подписи оси X
-        for x in range(-14000, 15000, 2000):
-            text = self.scene.addText(str(x // 1000), font)
-            text.setPos(x - 20, 20)
-            text.setDefaultTextColor(QColor(120, 120, 120))
-            text.setZValue(-999)
-
-        # Подписи оси Y
-        for y in range(-14000, 15000, 2000):
-            if y != 0:
-                text = self.scene.addText(str(y // 1000), font)
-                text.setPos(20, y - 10)
-                text.setDefaultTextColor(QColor(120, 120, 120))
-                text.setZValue(-999)
-
-        # Центральный перекресток осей
-        cross_pen = QPen(QColor(150, 150, 150), 3)
-        self.scene.addLine(-50, 0, 50, 0, cross_pen)
-        self.scene.addLine(0, -50, 0, 50, cross_pen)
+        # Сетка
+        pen = QPen(QColor(200, 200, 200, 100), 1)
+        for i in range(-15000, 15001, 1000):
+            if i != 0:
+                self.scene.addLine(i, -15000, i, 15000, pen)
+                self.scene.addLine(-15000, i, 15000, i, pen)
 
     def update_scene(self):
         # Очищаем все объекты
@@ -365,6 +315,8 @@ class PolygonEditor(QMainWindow):
                 radar_range.setZValue(-2)  # Под основными объектами
                 obj.radar_range = radar_range
 
+        # Сохраняем в словарь объектов
+        self.scene_objects[str(obj_id)] = obj
 
     def update_objects_list(self):
         self.objects_list.clear()
@@ -434,7 +386,7 @@ class PolygonEditor(QMainWindow):
         self.view.zoom(1.25)
 
     def zoom_out(self):
-        self.view.zoom(0.9)
+        self.view.zoom(0.8)
 
     def zoom_slider_changed(self, value):
         scale = value / 100.0
@@ -519,6 +471,54 @@ class PolygonEditor(QMainWindow):
         # Запускаем моделирование
         self.manager = run_simulation_from_config('simulation_config.yaml')
 
+        # self.manager.run_simulation(self.config["simulation"]["duration"])
+
+        # Тестовые сообщения для демонстрации
+        # test_messages = {
+        #     0: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([100, 100, 0]),
+        #         time=0
+        #     )],
+        #     1: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([150, 120, 0]),
+        #         time=1
+        #     )],
+        #     2: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([200, 140, 0]),
+        #         time=2
+        #     )],
+        #     3: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([250, 160, 0]),
+        #         time=3
+        #     )],
+        #     4: [CPPDrawerObjectsMessage(
+        #         sender_id=0,
+        #         receiver_id=0,
+        #         obj_id=1,
+        #         type=MessageType.DRAW_OBJECTS,
+        #         coordinates=np.array([300, 180, 0]),
+        #         time=4
+        #     )]
+        # }
+
+        # self.manager.messages = test_messages
+        # r = self.manager.give_messages_by_type(MessageType.DRAW_OBJECTS,step_time = 1)
         # Получаем все временные метки
         time_steps = sorted(self.manager.messages.keys())
 
