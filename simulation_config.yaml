@@ -11,9 +11,9 @@ air_environment:
   - id: 1
     type: AIR_PLANE
     position:
-    - 269.0
-    - 1888.0
-    - 0.0
+    - -4200.0
+    - -3430.0
+    - 1000.0
     velocity:
     - 100.0
     - 0.0
@@ -21,9 +21,9 @@ air_environment:
   - id: 2
     type: AIR_PLANE
     position:
-    - -1881.0
-    - -1656.0
-    - 0.0
+    - -2630.0
+    - 3500.0
+    - 1000.0
     velocity:
     - 100.0
     - 0.0
@@ -37,14 +37,14 @@ missile_launchers: []
 radars:
 - id: 5
   position:
-  - -3.0
-  - 4.0
+  - -30.0
+  - 40.0
   - 0.0
   azimuth_start: 0.0
   elevation_start: 0.0
   max_distance: 20000.0
   azimuth_range: 90.0
   elevation_range: 90.0
-  azimuth_speed: 10.0
-  elevation_speed: 0.0
+  azimuth_speed: 50.0
+  elevation_speed: 20.0
   scan_mode: horizontal
