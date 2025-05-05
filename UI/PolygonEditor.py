@@ -30,6 +30,10 @@ class PolygonEditor(QMainWindow):
         self.setWindowTitle("Редактор полигона")
         self.setGeometry(100, 100, 1600, 1000)
 
+
+        self.scene_size = 30000  # Размер сцены в метрах (радиус от центра)
+        self.grid_step = 2000
+
         # Иконки объектов
         self.icons = {
             ObjectType.AIR_PLANE: self.load_icon("images/aircraft_icon.png", "🛩️", 200),  # Увеличен размер
@@ -195,11 +199,13 @@ class PolygonEditor(QMainWindow):
 
         # Сцена и вид
         self.scene = QGraphicsScene()
-        self.scene.setSceneRect(-15000, -15000, 30000, 30000)
+        scene_rect = -self.scene_size, -self.scene_size, 2 * self.scene_size, 2 * self.scene_size
+        self.scene.setSceneRect(*scene_rect)
 
         self.view = MapGraphicsView(self.scene, self)
         self.view.setMinimumSize(800, 800)
         self.view.zoomChanged.connect(self.update_zoom_slider)
+
         right_layout.addWidget(self.view)
 
         main_layout.addWidget(left_panel)
@@ -262,10 +268,11 @@ class PolygonEditor(QMainWindow):
             self.update_objects_list()
 
     def draw_grid(self):
+        """Рисует сетку с увеличенными размерами"""
         # Оси координат
         pen = QPen(QColor(100, 100, 255, 150), 2)
-        self.scene.addLine(-15000, 0, 15000, 0, pen)  # Ось X (горизонтальная)
-        self.scene.addLine(0, 15000, 0, -15000, pen)  # Ось Y (вертикальная, направлена вверх)
+        self.scene.addLine(-self.scene_size, 0, self.scene_size, 0, pen)  # Ось X
+        self.scene.addLine(0, self.scene_size, 0, -self.scene_size, pen)  # Ось Y
 
         # Подписи осей
         font = self.font()
@@ -274,21 +281,35 @@ class PolygonEditor(QMainWindow):
         # Подпись оси X
         x_label = self.scene.addText("X")
         x_label.setFont(font)
-        x_label.setPos(14000, 50)
+        x_label.setPos(self.scene_size - 2000, 50)
 
         # Подпись оси Y
         y_label = self.scene.addText("Y")
         y_label.setFont(font)
-        y_label.setPos(-300, -14000)
+        y_label.setPos(-300, -self.scene_size + 2000)
 
-        # Сетка
+        # Сетка с увеличенным шагом
         pen = QPen(QColor(200, 200, 200, 100), 1)
-        for i in range(-15000, 15001, 1000):
+        for i in range(-self.scene_size, self.scene_size + 1, self.grid_step):
             if i != 0:
-                # Вертикальные линии (постоянные X)
-                self.scene.addLine(i, -15000, i, 15000, pen)
-                # Горизонтальные линии (постоянные Y)
-                self.scene.addLine(-15000, i, 15000, i, pen)
+                # Вертикальные линии
+                self.scene.addLine(i, -self.scene_size, i, self.scene_size, pen)
+                # Горизонтальные линии
+                self.scene.addLine(-self.scene_size, i, self.scene_size, i, pen)
+
+        # Подписи координат
+        font.setPointSize(100)
+        for i in range(-self.scene_size, self.scene_size + 1, self.grid_step):
+            if i != 0:
+                # Подписи по оси X
+                x_text = self.scene.addText(f"{i / 1000:.0f}км")
+                x_text.setFont(font)
+                x_text.setPos(i - 500, 50)
+
+                # Подписи по оси Y
+                y_text = self.scene.addText(f"{-i / 1000:.0f}км" if self.y_inverted else f"{i / 1000:.0f}км")
+                y_text.setFont(font)
+                y_text.setPos(-2000, i - 100)
 
     def update_scene(self):
         """Обновляет сцену на основе текущей конфигурации"""
