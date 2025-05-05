@@ -29,12 +29,12 @@ class PolygonEditor(QMainWindow):
 
         # Иконки объектов
         self.icons = {
-            ObjectType.AIR_PLANE: self.load_icon("images/aircraft_icon.png", "🛩️", 100),
-            ObjectType.HELICOPTER: self.load_icon("images/helicopter.png", "🚁", 100),
+            ObjectType.AIR_PLANE: self.load_icon("UI/images/aircraft_icon.png", "🛩️", 100),
+            ObjectType.HELICOPTER: self.load_icon("UI/images/helicopter.png", "🚁", 100),
             # ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
-            ObjectType.MISSILE_LAUNCHER: self.load_icon("images/missile_launcher_icon.png", "🚀", 100),
-            ObjectType.RADAR: self.load_icon("images/radar_icon.png", "📡", 100),
-            ObjectType.MISSILE: self.load_icon("images/GM.png", "*", 50)
+            ObjectType.MISSILE_LAUNCHER: self.load_icon("UI/images/missile_launcher_icon.png", "🚀", 100),
+            ObjectType.RADAR: self.load_icon("UI/images/radar_icon.png", "📡", 100),
+            ObjectType.MISSILE: self.load_icon("UI/images/GM.png", "*", 50)
         }
 
         # Конфигурация по умолчанию

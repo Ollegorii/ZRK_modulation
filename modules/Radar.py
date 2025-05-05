@@ -47,6 +47,9 @@ class SectorRadar(BaseModel):
         """
         visible_objects = []
 
+        print('current_elevation = ', self.current_elevation)
+        print('current_azimuth =', self.current_azimuth)
+
         for obj in objects:
             # Вычисляем расстояние до объекта
             coords = obj.pos
@@ -58,6 +61,7 @@ class SectorRadar(BaseModel):
             delta = coords - self.pos
             azimuth = np.degrees(np.arctan2(delta[1], delta[0])) % 360
             elevation = np.degrees(np.arcsin(delta[2] / distance)) % 180
+            print(f'object {obj.id}, elevation = {elevation}, azimuth = {azimuth}')
 
             # Проверяем, попадает ли объект в текущий сектор
             if (
@@ -98,10 +102,13 @@ class SectorRadar(BaseModel):
             self.current_azimuth = (self.current_azimuth + self.azimuth_speed) % 360
             # Если азимут завершил полный круг, увеличиваем угол наклона
             if self.current_azimuth < self.azimuth_speed:
-                self.current_elevation = (self.current_elevation + self.elevation_speed) % 180
+                if self.current_elevation + self.elevation_speed < 90:
+                    self.current_elevation = (self.current_elevation + self.elevation_speed) % 90
+                else:
+                    self.current_elevation = self.elevation_start
         elif self.scan_mode == "vertical":
             # Вертикальное сканирование: круговой обзор по углу наклона
-            self.current_elevation = (self.current_elevation + self.elevation_speed) % 180
+            self.current_elevation = (self.current_elevation + self.elevation_speed) % 90
             # Если угол наклона завершил полный круг, увеличиваем азимут
             if self.current_elevation < self.elevation_speed:
                 self.current_azimuth = (self.current_azimuth + self.azimuth_speed) % 360
@@ -174,7 +181,7 @@ class SectorRadar(BaseModel):
             )
             self._manager.add_message(destroy_msg)   
                  
-        self.move_to_next_sector()
+        self.move_to_next_sector_circular()
 
     def start(self, objects):
         """

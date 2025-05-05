@@ -30,6 +30,8 @@ class ObjectDialog(QDialog):
             default_vx = "100" if obj_type == ObjectType.AIR_PLANE else "50" if obj_type == ObjectType.HELICOPTER else "80"
             default_vy = "0" if obj_type == ObjectType.AIR_PLANE else "-20" if obj_type == ObjectType.HELICOPTER else "30"
             default_vz = "0" if obj_type != ObjectType.ANOTHER else "-10"
+            self.z_edit = QLineEdit("1000")
+            layout.addRow("Высота (Z):", self.z_edit)
 
             self.velocity_x = QLineEdit(default_vx)
             self.velocity_y = QLineEdit(default_vy)
@@ -102,10 +104,10 @@ class ObjectDialog(QDialog):
                     "azimuth_start": 0.0,
                     "elevation_start": 0.0,
                     "max_distance": float(self.max_distance.text()),
-                    "azimuth_range": 360, #float(self.azimuth_range.text()), - Хардкод Богдана
-                    "elevation_range": 180,#float(self.elevation_range.text()), - Хардкод Богдана
-                    "azimuth_speed": 0,#float(self.azimuth_speed.text()),
-                    "elevation_speed": 0,#float(self.elevation_speed.text()),
+                    "azimuth_range": float(self.azimuth_range.text()), # - Хардкод Богдана
+                    "elevation_range": float(self.elevation_range.text()), # - Хардкод Богдана
+                    "azimuth_speed": float(self.azimuth_speed.text()),
+                    "elevation_speed": float(self.elevation_speed.text()),
                     "scan_mode": self.scan_mode.currentText()
                 })
 

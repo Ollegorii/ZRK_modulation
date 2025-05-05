@@ -1,0 +1,527 @@
+2025-05-04 16:01:16,581 - modules.Manager - INFO - Модуль с ID 999 добавлен в систему
+2025-05-04 16:01:16,581 - modules.Manager - INFO - Модуль с ID 5 добавлен в систему
+2025-05-04 16:01:16,581 - modules.Manager - INFO - Модуль с ID 0 добавлен в систему
+2025-05-04 16:01:16,581 - main - INFO - Созданные объекты:
+2025-05-04 16:01:16,581 - main - INFO - Воздушная обстановка (ID: 999)
+2025-05-04 16:01:16,581 - main - INFO - Радар (ID: 5), режим: horizontal
+2025-05-04 16:01:16,581 - main - INFO - Пункт боевого управления (ID: 0)
+2025-05-04 16:01:16,581 - main - INFO - Запуск симуляции на 60 секунд...
+2025-05-04 16:01:16,583 - modules.Manager - INFO - Текущее время: 0
+2025-05-04 16:01:16,584 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,585 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,585 - modules.Manager - INFO - Обработка 2 сообщений на шаге 0
+2025-05-04 16:01:16,585 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=0, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,585 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=0, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,585 - modules.Manager - INFO - Текущее время: 1
+2025-05-04 16:01:16,587 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,587 - modules.Radar - INFO - Target(id=2, type=AIR_PLANE, pos=[-2530.00, 3500.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[-2630.  3500.  1000.])
+2025-05-04 16:01:16,588 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,588 - modules.CCP - INFO - ПБУ получил Target(id=2, type=AIR_PLANE, pos=[-2530.00, 3500.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[-2630.  3500.  1000.]) от МФР с id 5
+2025-05-04 16:01:16,588 - modules.CCP - INFO - ПБУ определил этот объект как новую цель
+2025-05-04 16:01:16,588 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-05-04 16:01:16,588 - modules.CCP - INFO - В ПБУ добавлена цель с id: 2
+2025-05-04 16:01:16,588 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 2) на отрисовку GUI
+2025-05-04 16:01:16,588 - modules.Manager - INFO - Обработка 3 сообщений на шаге 1
+2025-05-04 16:01:16,588 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=1, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,588 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=1, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[2], visible_objects.count=1
+2025-05-04 16:01:16,589 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=1, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=2, target_type=TargetType.AIR_PLANE, coordinates=[-2530.  3500.  1000.]
+2025-05-04 16:01:16,589 - modules.Manager - INFO - Текущее время: 2
+2025-05-04 16:01:16,591 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,591 - modules.Radar - INFO - Target(id=2, type=AIR_PLANE, pos=[-2430.00, 3500.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[-2530.  3500.  1000.])
+2025-05-04 16:01:16,592 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,592 - modules.CCP - INFO - ПБУ получил Target(id=2, type=AIR_PLANE, pos=[-2430.00, 3500.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[-2530.  3500.  1000.]) от МФР с id 5
+2025-05-04 16:01:16,593 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-05-04 16:01:16,593 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
+2025-05-04 16:01:16,593 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-05-04 16:01:16,593 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 2) на отрисовку GUI
+2025-05-04 16:01:16,593 - modules.Manager - INFO - Обработка 3 сообщений на шаге 2
+2025-05-04 16:01:16,593 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=2, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,593 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=2, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[2], visible_objects.count=1
+2025-05-04 16:01:16,593 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=2, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=2, target_type=TargetType.AIR_PLANE, coordinates=[-2430.  3500.  1000.]
+2025-05-04 16:01:16,593 - modules.Manager - INFO - Текущее время: 3
+2025-05-04 16:01:16,595 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,595 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-3900.00, -3430.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[-4000. -3430.  1000.])
+2025-05-04 16:01:16,595 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,596 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-3900.00, -3430.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[-4000. -3430.  1000.]) от МФР с id 5
+2025-05-04 16:01:16,596 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-05-04 16:01:16,596 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
+2025-05-04 16:01:16,596 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-05-04 16:01:16,596 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,597 - modules.Manager - INFO - Обработка 3 сообщений на шаге 3
+2025-05-04 16:01:16,597 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=3, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,597 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=3, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1], visible_objects.count=1
+2025-05-04 16:01:16,598 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=3, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3900. -3430.  1000.]
+2025-05-04 16:01:16,598 - modules.Manager - INFO - Текущее время: 4
+2025-05-04 16:01:16,599 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,599 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-3800.00, -3430.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[-3900. -3430.  1000.])
+2025-05-04 16:01:16,599 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,600 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-3800.00, -3430.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[-3900. -3430.  1000.]) от МФР с id 5
+2025-05-04 16:01:16,600 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-05-04 16:01:16,600 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
+2025-05-04 16:01:16,600 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-05-04 16:01:16,600 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,600 - modules.Manager - INFO - Обработка 3 сообщений на шаге 4
+2025-05-04 16:01:16,600 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=4, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,600 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=4, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1], visible_objects.count=1
+2025-05-04 16:01:16,600 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=4, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3800. -3430.  1000.]
+2025-05-04 16:01:16,600 - modules.Manager - INFO - Текущее время: 5
+2025-05-04 16:01:16,602 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,602 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,602 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,602 - modules.Manager - INFO - Обработка 3 сообщений на шаге 5
+2025-05-04 16:01:16,602 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=5, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,602 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=5, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,602 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=5, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3700. -3430.  1000.]
+2025-05-04 16:01:16,602 - modules.Manager - INFO - Текущее время: 6
+2025-05-04 16:01:16,604 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,604 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,605 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,605 - modules.Manager - INFO - Обработка 3 сообщений на шаге 6
+2025-05-04 16:01:16,605 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=6, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,605 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=6, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,605 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=6, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3600. -3430.  1000.]
+2025-05-04 16:01:16,605 - modules.Manager - INFO - Текущее время: 7
+2025-05-04 16:01:16,607 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,607 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,607 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,607 - modules.Manager - INFO - Обработка 3 сообщений на шаге 7
+2025-05-04 16:01:16,607 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=7, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,607 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=7, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,608 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=7, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3500. -3430.  1000.]
+2025-05-04 16:01:16,608 - modules.Manager - INFO - Текущее время: 8
+2025-05-04 16:01:16,610 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,610 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,610 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,610 - modules.Manager - INFO - Обработка 3 сообщений на шаге 8
+2025-05-04 16:01:16,610 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=8, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,610 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=8, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,611 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=8, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3400. -3430.  1000.]
+2025-05-04 16:01:16,611 - modules.Manager - INFO - Текущее время: 9
+2025-05-04 16:01:16,612 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,612 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,612 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,612 - modules.Manager - INFO - Обработка 3 сообщений на шаге 9
+2025-05-04 16:01:16,612 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=9, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,612 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=9, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,612 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=9, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3300. -3430.  1000.]
+2025-05-04 16:01:16,613 - modules.Manager - INFO - Текущее время: 10
+2025-05-04 16:01:16,614 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,615 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,615 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,615 - modules.Manager - INFO - Обработка 3 сообщений на шаге 10
+2025-05-04 16:01:16,615 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=10, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,615 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=10, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,615 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=10, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3200. -3430.  1000.]
+2025-05-04 16:01:16,615 - modules.Manager - INFO - Текущее время: 11
+2025-05-04 16:01:16,616 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,616 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,616 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,616 - modules.Manager - INFO - Обработка 3 сообщений на шаге 11
+2025-05-04 16:01:16,618 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=11, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,618 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=11, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,618 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=11, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3100. -3430.  1000.]
+2025-05-04 16:01:16,618 - modules.Manager - INFO - Текущее время: 12
+2025-05-04 16:01:16,619 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,619 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,620 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,620 - modules.Manager - INFO - Обработка 3 сообщений на шаге 12
+2025-05-04 16:01:16,620 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=12, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,620 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=12, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,620 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=12, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-3000. -3430.  1000.]
+2025-05-04 16:01:16,620 - modules.Manager - INFO - Текущее время: 13
+2025-05-04 16:01:16,622 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,622 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,622 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,622 - modules.Manager - INFO - Обработка 3 сообщений на шаге 13
+2025-05-04 16:01:16,622 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=13, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,622 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=13, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,623 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=13, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2900. -3430.  1000.]
+2025-05-04 16:01:16,623 - modules.Manager - INFO - Текущее время: 14
+2025-05-04 16:01:16,624 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,625 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,625 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,625 - modules.Manager - INFO - Обработка 3 сообщений на шаге 14
+2025-05-04 16:01:16,625 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=14, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,625 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=14, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,625 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=14, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2800. -3430.  1000.]
+2025-05-04 16:01:16,625 - modules.Manager - INFO - Текущее время: 15
+2025-05-04 16:01:16,627 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,627 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,627 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,627 - modules.Manager - INFO - Обработка 3 сообщений на шаге 15
+2025-05-04 16:01:16,627 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=15, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,627 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=15, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,627 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=15, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2700. -3430.  1000.]
+2025-05-04 16:01:16,627 - modules.Manager - INFO - Текущее время: 16
+2025-05-04 16:01:16,628 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,628 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,630 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,630 - modules.Manager - INFO - Обработка 3 сообщений на шаге 16
+2025-05-04 16:01:16,630 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=16, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,630 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=16, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,630 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=16, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2600. -3430.  1000.]
+2025-05-04 16:01:16,630 - modules.Manager - INFO - Текущее время: 17
+2025-05-04 16:01:16,631 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,631 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,632 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,632 - modules.Manager - INFO - Обработка 3 сообщений на шаге 17
+2025-05-04 16:01:16,632 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=17, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,632 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=17, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,632 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=17, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2500. -3430.  1000.]
+2025-05-04 16:01:16,632 - modules.Manager - INFO - Текущее время: 18
+2025-05-04 16:01:16,633 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,633 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,633 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,634 - modules.Manager - INFO - Обработка 3 сообщений на шаге 18
+2025-05-04 16:01:16,634 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=18, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,634 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=18, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,634 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=18, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2400. -3430.  1000.]
+2025-05-04 16:01:16,634 - modules.Manager - INFO - Текущее время: 19
+2025-05-04 16:01:16,635 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,635 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,635 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,635 - modules.Manager - INFO - Обработка 3 сообщений на шаге 19
+2025-05-04 16:01:16,636 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=19, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,636 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=19, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,636 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=19, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2300. -3430.  1000.]
+2025-05-04 16:01:16,636 - modules.Manager - INFO - Текущее время: 20
+2025-05-04 16:01:16,638 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,638 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,638 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,638 - modules.Manager - INFO - Обработка 3 сообщений на шаге 20
+2025-05-04 16:01:16,638 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=20, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,638 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=20, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,639 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=20, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2200. -3430.  1000.]
+2025-05-04 16:01:16,639 - modules.Manager - INFO - Текущее время: 21
+2025-05-04 16:01:16,640 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,641 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,641 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,641 - modules.Manager - INFO - Обработка 3 сообщений на шаге 21
+2025-05-04 16:01:16,641 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=21, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,641 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=21, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,642 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=21, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2100. -3430.  1000.]
+2025-05-04 16:01:16,642 - modules.Manager - INFO - Текущее время: 22
+2025-05-04 16:01:16,644 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,644 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,644 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,644 - modules.Manager - INFO - Обработка 3 сообщений на шаге 22
+2025-05-04 16:01:16,644 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=22, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,644 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=22, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,644 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=22, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-2000. -3430.  1000.]
+2025-05-04 16:01:16,644 - modules.Manager - INFO - Текущее время: 23
+2025-05-04 16:01:16,645 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,645 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,645 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,646 - modules.Manager - INFO - Обработка 3 сообщений на шаге 23
+2025-05-04 16:01:16,646 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=23, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,646 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=23, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,646 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=23, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1900. -3430.  1000.]
+2025-05-04 16:01:16,646 - modules.Manager - INFO - Текущее время: 24
+2025-05-04 16:01:16,647 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,648 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,648 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,648 - modules.Manager - INFO - Обработка 3 сообщений на шаге 24
+2025-05-04 16:01:16,648 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=24, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,648 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=24, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,648 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=24, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1800. -3430.  1000.]
+2025-05-04 16:01:16,648 - modules.Manager - INFO - Текущее время: 25
+2025-05-04 16:01:16,650 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,650 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,650 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,650 - modules.Manager - INFO - Обработка 3 сообщений на шаге 25
+2025-05-04 16:01:16,650 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=25, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,652 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=25, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,652 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=25, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1700. -3430.  1000.]
+2025-05-04 16:01:16,652 - modules.Manager - INFO - Текущее время: 26
+2025-05-04 16:01:16,652 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,652 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,652 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,654 - modules.Manager - INFO - Обработка 3 сообщений на шаге 26
+2025-05-04 16:01:16,654 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=26, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,654 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=26, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,654 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=26, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1600. -3430.  1000.]
+2025-05-04 16:01:16,654 - modules.Manager - INFO - Текущее время: 27
+2025-05-04 16:01:16,656 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,657 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,657 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,657 - modules.Manager - INFO - Обработка 3 сообщений на шаге 27
+2025-05-04 16:01:16,657 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=27, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,658 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=27, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,658 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=27, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1500. -3430.  1000.]
+2025-05-04 16:01:16,658 - modules.Manager - INFO - Текущее время: 28
+2025-05-04 16:01:16,660 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,660 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,661 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,661 - modules.Manager - INFO - Обработка 3 сообщений на шаге 28
+2025-05-04 16:01:16,661 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=28, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,661 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=28, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,661 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=28, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1400. -3430.  1000.]
+2025-05-04 16:01:16,661 - modules.Manager - INFO - Текущее время: 29
+2025-05-04 16:01:16,663 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,664 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,664 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,665 - modules.Manager - INFO - Обработка 3 сообщений на шаге 29
+2025-05-04 16:01:16,665 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=29, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,665 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=29, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,665 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=29, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1300. -3430.  1000.]
+2025-05-04 16:01:16,666 - modules.Manager - INFO - Текущее время: 30
+2025-05-04 16:01:16,667 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,667 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,667 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,667 - modules.Manager - INFO - Обработка 3 сообщений на шаге 30
+2025-05-04 16:01:16,667 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=30, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,667 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=30, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,667 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=30, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1200. -3430.  1000.]
+2025-05-04 16:01:16,667 - modules.Manager - INFO - Текущее время: 31
+2025-05-04 16:01:16,669 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,669 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,669 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,669 - modules.Manager - INFO - Обработка 3 сообщений на шаге 31
+2025-05-04 16:01:16,669 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=31, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,669 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=31, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,670 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=31, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1100. -3430.  1000.]
+2025-05-04 16:01:16,670 - modules.Manager - INFO - Текущее время: 32
+2025-05-04 16:01:16,671 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,672 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,672 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,672 - modules.Manager - INFO - Обработка 3 сообщений на шаге 32
+2025-05-04 16:01:16,672 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=32, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,672 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=32, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,672 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=32, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[-1000. -3430.  1000.]
+2025-05-04 16:01:16,672 - modules.Manager - INFO - Текущее время: 33
+2025-05-04 16:01:16,674 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,675 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,675 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,675 - modules.Manager - INFO - Обработка 3 сообщений на шаге 33
+2025-05-04 16:01:16,675 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=33, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,676 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=33, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,676 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=33, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ -900. -3430.  1000.]
+2025-05-04 16:01:16,676 - modules.Manager - INFO - Текущее время: 34
+2025-05-04 16:01:16,678 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,678 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,678 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,678 - modules.Manager - INFO - Обработка 3 сообщений на шаге 34
+2025-05-04 16:01:16,678 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=34, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,678 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=34, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,679 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=34, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ -800. -3430.  1000.]
+2025-05-04 16:01:16,679 - modules.Manager - INFO - Текущее время: 35
+2025-05-04 16:01:16,681 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,681 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,681 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,681 - modules.Manager - INFO - Обработка 3 сообщений на шаге 35
+2025-05-04 16:01:16,681 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=35, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,681 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=35, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,681 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=35, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ -700. -3430.  1000.]
+2025-05-04 16:01:16,681 - modules.Manager - INFO - Текущее время: 36
+2025-05-04 16:01:16,683 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,683 - modules.Radar - INFO - Target(id=2, type=AIR_PLANE, pos=[970.00, 3500.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[ 870. 3500. 1000.])
+2025-05-04 16:01:16,683 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,684 - modules.CCP - INFO - ПБУ получил Target(id=2, type=AIR_PLANE, pos=[970.00, 3500.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[ 870. 3500. 1000.]) от МФР с id 5
+2025-05-04 16:01:16,684 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-05-04 16:01:16,684 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
+2025-05-04 16:01:16,684 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-05-04 16:01:16,684 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 2) на отрисовку GUI
+2025-05-04 16:01:16,684 - modules.Manager - INFO - Обработка 3 сообщений на шаге 36
+2025-05-04 16:01:16,684 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=36, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,684 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=36, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[2], visible_objects.count=1
+2025-05-04 16:01:16,684 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=36, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=2, target_type=TargetType.AIR_PLANE, coordinates=[ 970. 3500. 1000.]
+2025-05-04 16:01:16,684 - modules.Manager - INFO - Текущее время: 37
+2025-05-04 16:01:16,685 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,685 - modules.Radar - INFO - Target(id=2, type=AIR_PLANE, pos=[1070.00, 3500.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[ 970. 3500. 1000.])
+2025-05-04 16:01:16,686 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,686 - modules.CCP - INFO - ПБУ получил Target(id=2, type=AIR_PLANE, pos=[1070.00, 3500.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[ 970. 3500. 1000.]) от МФР с id 5
+2025-05-04 16:01:16,686 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-05-04 16:01:16,686 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
+2025-05-04 16:01:16,686 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-05-04 16:01:16,686 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 2) на отрисовку GUI
+2025-05-04 16:01:16,686 - modules.Manager - INFO - Обработка 3 сообщений на шаге 37
+2025-05-04 16:01:16,686 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=37, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,687 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=37, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[2], visible_objects.count=1
+2025-05-04 16:01:16,687 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=37, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=2, target_type=TargetType.AIR_PLANE, coordinates=[1070. 3500. 1000.]
+2025-05-04 16:01:16,687 - modules.Manager - INFO - Текущее время: 38
+2025-05-04 16:01:16,689 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,690 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,690 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 2) на отрисовку GUI
+2025-05-04 16:01:16,690 - modules.Manager - INFO - Обработка 3 сообщений на шаге 38
+2025-05-04 16:01:16,690 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=38, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,690 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=38, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,690 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=38, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=2, target_type=TargetType.AIR_PLANE, coordinates=[1170. 3500. 1000.]
+2025-05-04 16:01:16,691 - modules.Manager - INFO - Текущее время: 39
+2025-05-04 16:01:16,693 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,693 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,693 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 2) на отрисовку GUI
+2025-05-04 16:01:16,693 - modules.Manager - INFO - Обработка 3 сообщений на шаге 39
+2025-05-04 16:01:16,693 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=39, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,693 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=39, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,693 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=39, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=2, target_type=TargetType.AIR_PLANE, coordinates=[1270. 3500. 1000.]
+2025-05-04 16:01:16,693 - modules.Manager - INFO - Текущее время: 40
+2025-05-04 16:01:16,696 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,696 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-200.00, -3430.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[ -300. -3430.  1000.])
+2025-05-04 16:01:16,696 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,696 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-200.00, -3430.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[ -300. -3430.  1000.]) от МФР с id 5
+2025-05-04 16:01:16,697 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-05-04 16:01:16,697 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
+2025-05-04 16:01:16,697 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-05-04 16:01:16,697 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,697 - modules.Manager - INFO - Обработка 3 сообщений на шаге 40
+2025-05-04 16:01:16,697 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=40, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,697 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=40, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1], visible_objects.count=1
+2025-05-04 16:01:16,697 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=40, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ -200. -3430.  1000.]
+2025-05-04 16:01:16,697 - modules.Manager - INFO - Текущее время: 41
+2025-05-04 16:01:16,699 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,699 - modules.Radar - INFO - Target(id=1, type=AIR_PLANE, pos=[-100.00, -3430.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[ -200. -3430.  1000.])
+2025-05-04 16:01:16,699 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,700 - modules.CCP - INFO - ПБУ получил Target(id=1, type=AIR_PLANE, pos=[-100.00, -3430.00, 1000.00], vel=[100.00, 0.00, 0.00], prev_pos=[ -200. -3430.  1000.]) от МФР с id 5
+2025-05-04 16:01:16,700 - modules.CCP - INFO - ПБУ определил этот объект как старую цель
+2025-05-04 16:01:16,700 - modules.CCP - INFO - Цель не преследуется ЗУР, пробуем запустить ЗУР по ней
+2025-05-04 16:01:16,700 - modules.CCP - INFO - У ПУ для неё нет свободных ЗУР
+2025-05-04 16:01:16,700 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,700 - modules.Manager - INFO - Обработка 3 сообщений на шаге 41
+2025-05-04 16:01:16,700 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=41, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,700 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=41, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[1], visible_objects.count=1
+2025-05-04 16:01:16,700 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=41, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ -100. -3430.  1000.]
+2025-05-04 16:01:16,700 - modules.Manager - INFO - Текущее время: 42
+2025-05-04 16:01:16,702 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,702 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,702 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,702 - modules.Manager - INFO - Обработка 3 сообщений на шаге 42
+2025-05-04 16:01:16,702 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=42, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,702 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=42, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,703 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=42, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[    0. -3430.  1000.]
+2025-05-04 16:01:16,703 - modules.Manager - INFO - Текущее время: 43
+2025-05-04 16:01:16,704 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,705 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,705 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,705 - modules.Manager - INFO - Обработка 3 сообщений на шаге 43
+2025-05-04 16:01:16,705 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=43, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,705 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=43, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,705 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=43, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  100. -3430.  1000.]
+2025-05-04 16:01:16,706 - modules.Manager - INFO - Текущее время: 44
+2025-05-04 16:01:16,707 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,707 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,708 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,708 - modules.Manager - INFO - Обработка 3 сообщений на шаге 44
+2025-05-04 16:01:16,708 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=44, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,708 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=44, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,708 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=44, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  200. -3430.  1000.]
+2025-05-04 16:01:16,708 - modules.Manager - INFO - Текущее время: 45
+2025-05-04 16:01:16,710 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,710 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,710 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,710 - modules.Manager - INFO - Обработка 3 сообщений на шаге 45
+2025-05-04 16:01:16,710 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=45, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,710 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=45, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,710 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=45, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  300. -3430.  1000.]
+2025-05-04 16:01:16,711 - modules.Manager - INFO - Текущее время: 46
+2025-05-04 16:01:16,712 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,712 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,712 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,712 - modules.Manager - INFO - Обработка 3 сообщений на шаге 46
+2025-05-04 16:01:16,712 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=46, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,713 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=46, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,713 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=46, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  400. -3430.  1000.]
+2025-05-04 16:01:16,713 - modules.Manager - INFO - Текущее время: 47
+2025-05-04 16:01:16,716 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,716 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,716 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,716 - modules.Manager - INFO - Обработка 3 сообщений на шаге 47
+2025-05-04 16:01:16,716 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=47, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,716 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=47, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,717 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=47, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  500. -3430.  1000.]
+2025-05-04 16:01:16,717 - modules.Manager - INFO - Текущее время: 48
+2025-05-04 16:01:16,719 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,719 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,719 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,719 - modules.Manager - INFO - Обработка 3 сообщений на шаге 48
+2025-05-04 16:01:16,720 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=48, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,720 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=48, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,720 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=48, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  600. -3430.  1000.]
+2025-05-04 16:01:16,720 - modules.Manager - INFO - Текущее время: 49
+2025-05-04 16:01:16,722 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,722 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,722 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,723 - modules.Manager - INFO - Обработка 3 сообщений на шаге 49
+2025-05-04 16:01:16,723 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=49, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,724 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=49, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,724 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=49, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  700. -3430.  1000.]
+2025-05-04 16:01:16,725 - modules.Manager - INFO - Текущее время: 50
+2025-05-04 16:01:16,727 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,727 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,728 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,728 - modules.Manager - INFO - Обработка 3 сообщений на шаге 50
+2025-05-04 16:01:16,728 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=50, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,728 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=50, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,728 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=50, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  800. -3430.  1000.]
+2025-05-04 16:01:16,729 - modules.Manager - INFO - Текущее время: 51
+2025-05-04 16:01:16,731 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,731 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,732 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,732 - modules.Manager - INFO - Обработка 3 сообщений на шаге 51
+2025-05-04 16:01:16,732 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=51, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,732 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=51, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,732 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=51, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[  900. -3430.  1000.]
+2025-05-04 16:01:16,732 - modules.Manager - INFO - Текущее время: 52
+2025-05-04 16:01:16,734 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,734 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,734 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,735 - modules.Manager - INFO - Обработка 3 сообщений на шаге 52
+2025-05-04 16:01:16,735 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=52, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,735 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=52, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,735 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=52, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ 1000. -3430.  1000.]
+2025-05-04 16:01:16,735 - modules.Manager - INFO - Текущее время: 53
+2025-05-04 16:01:16,737 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,738 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,738 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,738 - modules.Manager - INFO - Обработка 3 сообщений на шаге 53
+2025-05-04 16:01:16,739 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=53, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,739 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=53, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,740 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=53, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ 1100. -3430.  1000.]
+2025-05-04 16:01:16,740 - modules.Manager - INFO - Текущее время: 54
+2025-05-04 16:01:16,742 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,743 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,743 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,743 - modules.Manager - INFO - Обработка 3 сообщений на шаге 54
+2025-05-04 16:01:16,743 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=54, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,743 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=54, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,744 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=54, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ 1200. -3430.  1000.]
+2025-05-04 16:01:16,744 - modules.Manager - INFO - Текущее время: 55
+2025-05-04 16:01:16,746 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,746 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,746 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,746 - modules.Manager - INFO - Обработка 3 сообщений на шаге 55
+2025-05-04 16:01:16,746 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=55, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,746 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=55, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,747 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=55, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ 1300. -3430.  1000.]
+2025-05-04 16:01:16,747 - modules.Manager - INFO - Текущее время: 56
+2025-05-04 16:01:16,748 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,750 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,750 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,750 - modules.Manager - INFO - Обработка 3 сообщений на шаге 56
+2025-05-04 16:01:16,750 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=56, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,750 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=56, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,751 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=56, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ 1400. -3430.  1000.]
+2025-05-04 16:01:16,751 - modules.Manager - INFO - Текущее время: 57
+2025-05-04 16:01:16,753 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,753 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,753 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,753 - modules.Manager - INFO - Обработка 3 сообщений на шаге 57
+2025-05-04 16:01:16,754 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=57, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,754 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=57, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,754 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=57, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ 1500. -3430.  1000.]
+2025-05-04 16:01:16,754 - modules.Manager - INFO - Текущее время: 58
+2025-05-04 16:01:16,757 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,758 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,758 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,758 - modules.Manager - INFO - Обработка 3 сообщений на шаге 58
+2025-05-04 16:01:16,758 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=58, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,758 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=58, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,759 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=58, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ 1600. -3430.  1000.]
+2025-05-04 16:01:16,759 - modules.Manager - INFO - Текущее время: 59
+2025-05-04 16:01:16,761 - modules.Radar - INFO - Видимые объекты:
+2025-05-04 16:01:16,761 - modules.CCP - INFO - ПБУ получил сообщения от 1 радаров/радара
+2025-05-04 16:01:16,761 - modules.CCP - INFO - ПБУ отправил (<TargetType.AIR_PLANE: 'самолет'>, 1) на отрисовку GUI
+2025-05-04 16:01:16,761 - modules.Manager - INFO - Обработка 3 сообщений на шаге 59
+2025-05-04 16:01:16,761 - modules.Manager - INFO -   - ActiveObjectsMessage: send_time=59, type=MessageType.ACTIVE_OBJECTS, sender_id=999, receiver_id=None, relevance=1, active_objects.ids=[1, 2], active_objects.count=2
+2025-05-04 16:01:16,761 - modules.Manager - INFO -   - FoundObjectsMessage: send_time=59, type=MessageType.FOUND_OBJECTS, sender_id=5, receiver_id=0, relevance=1, visible_objects.ids=[], visible_objects.count=0
+2025-05-04 16:01:16,762 - modules.Manager - INFO -   - CPPDrawerObjectsMessage: send_time=59, type=MessageType.DRAW_OBJECTS, sender_id=0, receiver_id=2, relevance=1, obj_id=1, target_type=TargetType.AIR_PLANE, coordinates=[ 1700. -3430.  1000.]
+2025-05-04 16:01:16,762 - main - INFO - Итого сообщений: 179
