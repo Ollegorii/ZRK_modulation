@@ -6,7 +6,7 @@ from PyQt5.QtGui import QColor, QPen, QPainter, QPixmap, QIcon, QBrush
 from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout,
                              QWidget, QLabel, QPushButton, QListWidget, QComboBox,
                              QDialog, QGraphicsScene, QGraphicsTextItem,
-                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem)
+                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem, QFileDialog)
 
 from UI.Enums import ObjectType
 from UI.MapGraphicsView import MapGraphicsView
@@ -32,15 +32,14 @@ class PolygonEditor(QMainWindow):
 
         # Иконки объектов
         self.icons = {
-            ObjectType.AIR_PLANE: self.load_icon("images/aircraft_icon.png", "🛩️", 100),
-            ObjectType.HELICOPTER: self.load_icon("images/helicopter.png", "🚁", 100),
-            # ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
-            ObjectType.MISSILE_LAUNCHER: self.load_icon("images/missile_launcher_icon.png", "🚀", 100),
-            ObjectType.RADAR: self.load_icon("images/radar_icon.png", "📡", 100),
-            ObjectType.MISSILE: self.load_icon("images/GM.png", "*", 50)
+            ObjectType.AIR_PLANE: self.load_icon("images/aircraft_icon.png", "🛩️", 200),  # Увеличен размер
+            ObjectType.HELICOPTER: self.load_icon("images/helicopter.png", "🚁", 200),
+            ObjectType.MISSILE_LAUNCHER: self.load_icon("images/missile_launcher_icon.png", "🚀", 200),
+            ObjectType.RADAR: self.load_icon("images/radar_icon.png", "📡", 200),
+            ObjectType.MISSILE: self.load_icon("images/GM.png", "*", 100)
         }
 
-        # Конфигурация по умолчанию
+            # Конфигурация по умолчанию
         self.default_config = {
             "simulation": {
                 "time_step": 1,
@@ -98,14 +97,13 @@ class PolygonEditor(QMainWindow):
 
         # Левая панель - управление
         left_panel = QWidget()
-        left_panel.setMaximumWidth(350)
+        left_panel.setMaximumWidth(400)  # Увеличим ширину панели
         left_layout = QVBoxLayout(left_panel)
 
         # Выбор типа объекта
         self.object_type_combo = QComboBox()
         self.object_type_combo.setIconSize(QSize(48, 48))
         for obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER,
-                         # ObjectType.ANOTHER,
                          ObjectType.MISSILE_LAUNCHER, ObjectType.RADAR]:
             self.object_type_combo.addItem(
                 QIcon(self.icons[obj_type]),
@@ -119,35 +117,66 @@ class PolygonEditor(QMainWindow):
         left_layout.addWidget(QLabel("Тип объекта:"))
         left_layout.addWidget(self.object_type_combo)
 
-        # Кнопки управления
-        btn_layout = QHBoxLayout()
+        # Кнопки управления - теперь в два ряда
+        btn_layout1 = QHBoxLayout()
+        btn_layout2 = QHBoxLayout()
+
+        # Первый ряд кнопок
         self.delete_btn = QPushButton("Удалить")
         self.delete_btn.setIcon(QIcon.fromTheme("edit-delete"))
         self.delete_btn.clicked.connect(self.delete_object)
+        self.delete_btn.setMinimumWidth(120)  # Фиксированная ширина
 
-        self.save_btn = QPushButton("Сохранить конфиг")
+        # Добавляем кнопку загрузки конфига
+        self.load_btn = QPushButton("Загрузить конфиг")
+        self.load_btn.setIcon(QIcon.fromTheme("document-open"))
+        self.load_btn.clicked.connect(self.load_config)
+
+
+        btn_layout1.addWidget(self.delete_btn)
+        btn_layout1.addWidget(self.load_btn)
+
+
+        # Второй ряд кнопок
+        self.save_btn = QPushButton("Сохранить")
         self.save_btn.setIcon(QIcon.fromTheme("document-save"))
         self.save_btn.clicked.connect(self.save_config)
+        self.save_btn.setMinimumWidth(120)
 
-        self.run_btn = QPushButton("Запуск моделирования")
+        self.run_btn = QPushButton("Запуск")
         self.run_btn.setIcon(QIcon.fromTheme("media-playback-start"))
         self.run_btn.clicked.connect(self.run_simulation)
+        self.run_btn.setMinimumWidth(120)
 
-        btn_layout.addWidget(self.delete_btn)
-        btn_layout.addWidget(self.save_btn)
-        btn_layout.addWidget(self.run_btn)
-        left_layout.addLayout(btn_layout)
+        self.reset_btn = QPushButton("Сбросить")
+        self.reset_btn.setIcon(QIcon.fromTheme("edit-clear"))
+        self.reset_btn.clicked.connect(self.reset_experiment)
+        self.reset_btn.setMinimumWidth(120)
+
+
+
+        btn_layout2.addWidget(self.save_btn)
+        btn_layout2.addWidget(self.run_btn)
+        btn_layout2.addWidget(self.reset_btn)
+
+
+        left_layout.addLayout(btn_layout1)
+        left_layout.addLayout(btn_layout2)
 
         # Масштабирование
         zoom_layout = QHBoxLayout()
         self.zoom_out_btn = QPushButton("-")
         self.zoom_out_btn.clicked.connect(self.zoom_out)
+        self.zoom_out_btn.setFixedWidth(30)  # Фиксированный размер кнопок +/-
+
         self.zoom_slider = QSlider(Qt.Horizontal)
-        self.zoom_slider.setRange(10, 300)
-        self.zoom_slider.setValue(20)
+        self.zoom_slider.setRange(5, 500)
+        self.zoom_slider.setValue(50)
         self.zoom_slider.valueChanged.connect(self.zoom_slider_changed)
+
         self.zoom_in_btn = QPushButton("+")
         self.zoom_in_btn.clicked.connect(self.zoom_in)
+        self.zoom_in_btn.setFixedWidth(30)
 
         zoom_layout.addWidget(self.zoom_out_btn)
         zoom_layout.addWidget(self.zoom_slider)
@@ -262,10 +291,10 @@ class PolygonEditor(QMainWindow):
                 self.scene.addLine(-15000, i, 15000, i, pen)
 
     def update_scene(self):
-        # Очищаем все объекты
-        for obj_id, obj in list(self.scene_objects.items()):
-            self.scene.removeItem(obj)
-        self.scene_objects.clear()
+        """Обновляет сцену на основе текущей конфигурации"""
+        # Полностью очищаем сцену перед обновлением
+        self.clear_scene_completely()
+        self.draw_grid()
 
         # Рисуем объекты заново
         for target in self.config["air_environment"]["targets"]:
@@ -273,8 +302,6 @@ class PolygonEditor(QMainWindow):
 
         for launcher in self.config["missile_launchers"]:
             self.draw_map_object(launcher["position"], "MISSILE_LAUNCHER", launcher.get("id", ""))
-
-            # Рисуем ракеты этой установки
             for missile in launcher.get("missiles", []):
                 self.draw_map_object(launcher["position"], "MISSILE", missile["id"])
 
@@ -486,6 +513,10 @@ class PolygonEditor(QMainWindow):
             QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить конфигурацию:\n{str(e)}")
 
     def run_simulation(self):
+        # Перед запуском симуляции полностью очищаем сцену
+        # self.clear_scene_completely()
+        # self.draw_grid()  # Восстанавливаем сетку
+
         # Сохраняем конфиг перед запуском
         self.save_config()
 
@@ -646,3 +677,141 @@ class PolygonEditor(QMainWindow):
                 return False
 
         return True
+
+
+    def clear_scene_completely(self):
+        """Полностью очищает сцену, включая все графические элементы"""
+        # Удаляем все элементы со сцены
+        self.scene.clear()
+
+        # Очищаем словарь объектов
+        self.scene_objects.clear()
+
+        # Восстанавливаем стандартные настройки сцены
+        self.scene.setSceneRect(-15000, -15000, 30000, 30000)
+
+    def reset_experiment(self):
+        reply = QMessageBox.question(
+            self,
+            "Сброс эксперимента",
+            "Вы уверены, что хотите сбросить эксперимент? Все объекты и траектории будут удалены.",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            # Останавливаем таймер симуляции, если он активен
+            if hasattr(self, 'simulation_timer') and self.simulation_timer.isActive():
+                self.simulation_timer.stop()
+
+            # Полностью очищаем сцену
+            self.clear_scene_completely()
+
+            # Сбрасываем конфигурацию
+            self.config = {
+                "simulation": {
+                    "time_step": 1,
+                    "duration": 60
+                },
+                "air_environment": {
+                    "id": 999,
+                    "position": [0.0, 0.0, 0.0],
+                    "targets": []
+                },
+                "combat_control_point": {
+                    "id": 0,
+                    "missile_launcher_ids": [],
+                    "radar_ids": []
+                },
+                "missile_launchers": [],
+                "radars": []
+            }
+            self.save_config()
+
+            # Сбрасываем счетчики ID
+            self.next_ids = {
+                ObjectType.AIR_PLANE: 1,
+                ObjectType.HELICOPTER: 1,
+                ObjectType.MISSILE_LAUNCHER: 3,
+                ObjectType.RADAR: 5
+            }
+
+            # Очищаем список объектов
+            self.objects_list.clear()
+
+            # Восстанавливаем сетку
+            self.draw_grid()
+
+            # Обновляем статус
+            self.update_status()
+
+            QMessageBox.information(self, "Сброс", "Эксперимент полностью сброшен, все объекты и траектории удалены.")
+
+    def load_config(self):
+        # Открываем диалог выбора файла
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Выберите файл конфигурации",
+            "",
+            "YAML Files (*.yaml *.yml);;All Files (*)"
+        )
+
+        if not file_path:
+            return  # Пользователь отменил выбор
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                loaded_config = yaml.safe_load(file)
+
+            # Валидация загруженного конфига
+            if not self.validate_config(loaded_config):
+                QMessageBox.warning(self, "Ошибка", "Некорректный формат конфигурационного файла")
+                return
+
+            # Обновляем текущую конфигурацию
+            self.config = loaded_config
+
+            # Обновляем счетчики ID
+            self.update_id_counters()
+
+            # Обновляем сцену
+            self.update_scene()
+            self.update_objects_list()
+
+            QMessageBox.information(self, "Успех", "Конфигурация успешно загружена")
+
+        except Exception as e:
+            QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить конфигурацию:\n{str(e)}")
+
+    def validate_config(self, config):
+        """Проверяет основные поля конфигурации"""
+        required_sections = [
+            'simulation',
+            'air_environment',
+            'combat_control_point',
+            'missile_launchers',
+            'radars'
+        ]
+
+        for section in required_sections:
+            if section not in config:
+                return False
+
+        return True
+
+    def update_id_counters(self):
+        """Обновляет счетчики ID на основе загруженной конфигурации"""
+        # Для воздушных целей
+        if self.config["air_environment"]["targets"]:
+            max_id = max(t["id"] for t in self.config["air_environment"]["targets"])
+            self.next_ids[ObjectType.AIR_PLANE] = max_id + 1
+            self.next_ids[ObjectType.HELICOPTER] = max_id + 1
+
+        # Для пусковых установок
+        if self.config["missile_launchers"]:
+            max_id = max(m["id"] for m in self.config["missile_launchers"])
+            self.next_ids[ObjectType.MISSILE_LAUNCHER] = max_id + 1
+
+        # Для радаров
+        if self.config["radars"]:
+            max_id = max(r["id"] for r in self.config["radars"])
+            self.next_ids[ObjectType.RADAR] = max_id + 1

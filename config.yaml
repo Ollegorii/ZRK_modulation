@@ -16,10 +16,6 @@ air_environment:
       position: [3000.0, 4000.0, 500.0]
       velocity: [50.0, -20.0, 0.0]
       id: 101
-    - type: "ANOTHER"
-      position: [8000.0, 2000.0, 1500.0]
-      velocity: [80.0, 30.0, -10.0]
-      id: 102
 
 # Пункт боевого управления
 combat_control_point:
