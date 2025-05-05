@@ -39,7 +39,7 @@ def create_objects_from_config(config: Dict[str, Any]) -> Tuple[Manager, Dict[in
 
     # Настройка таймера
     timer = Timer()
-    timer.dt = config['simulation']['time_step']
+    timer.set_dt(config['simulation']['time_step'])
     manager.time = timer
 
     # Создание воздушной обстановки
@@ -175,4 +175,5 @@ def run_simulation_from_config(config_path: str):
 
 if __name__ == "__main__":
     setup_logging()
+    run_simulation_from_config('config.yaml')
     run_simulation_from_config('config.yaml')
