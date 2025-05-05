@@ -30,6 +30,8 @@ class ObjectDialog(QDialog):
             default_vx = "100" if obj_type == ObjectType.AIR_PLANE else "50" if obj_type == ObjectType.HELICOPTER else "80"
             default_vy = "0" if obj_type == ObjectType.AIR_PLANE else "-20" if obj_type == ObjectType.HELICOPTER else "30"
             default_vz = "0" if obj_type != ObjectType.ANOTHER else "-10"
+            self.z_edit = QLineEdit("1000")
+            layout.addRow("Высота (Z):", self.z_edit)
 
             self.velocity_x = QLineEdit(default_vx)
             self.velocity_y = QLineEdit(default_vy)
