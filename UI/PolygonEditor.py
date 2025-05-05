@@ -304,12 +304,12 @@ class PolygonEditor(QMainWindow):
                 # Подписи по оси X
                 x_text = self.scene.addText(f"{i / 1000:.0f}км")
                 x_text.setFont(font)
-                x_text.setPos(i - 500, 50)
+                x_text.setPos(i - 50, 50)
 
                 # Подписи по оси Y
                 y_text = self.scene.addText(f"{-i / 1000:.0f}км" if self.y_inverted else f"{i / 1000:.0f}км")
                 y_text.setFont(font)
-                y_text.setPos(-2000, i - 100)
+                y_text.setPos(-50, i - 100)
 
     def update_scene(self):
         """Обновляет сцену на основе текущей конфигурации"""
