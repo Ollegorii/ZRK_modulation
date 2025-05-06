@@ -1,7 +1,7 @@
 # Конфигурация моделирования
 simulation:
-  time_step: 1  # шаг моделирования в секундах
-  duration: 100    # общая продолжительность моделирования в секундах
+  time_step: 100  # шаг моделирования в микросекундах
+  duration: 10000    # общая продолжительность моделирования в микросекундах
 
 # Конфигурация воздушной обстановки
 air_environment:
@@ -36,21 +36,21 @@ missile_launchers:
     max_missiles: 5
     missiles:
       - id: 10
-        velocity: 1000
+        velocity: 300
         life_time: 60
-        explosion_radius: 50
+        explosion_radius: 300
       - id: 11
-        velocity: 1200
+        velocity: 300
         life_time: 45
-        explosion_radius: 40
+        explosion_radius: 300
   - id: 4
     position: [-500.0, -500.0, 0.0]
     max_missiles: 3
     missiles:
       - id: 12
-        velocity: 1100
+        velocity: 300
         life_time: 50
-        explosion_radius: 45
+        explosion_radius: 300
 
 # Радары
 radars:
@@ -61,7 +61,7 @@ radars:
     max_distance: 100000.0
     azimuth_range: 360.0
     elevation_range: 180.0
-    azimuth_speed: 0.0
+    azimuth_speed: 10.0
     elevation_speed: 0.0
     scan_mode: "horizontal"
   - id: 6
@@ -71,6 +71,6 @@ radars:
     max_distance: 100000.0
     azimuth_range: 360.0
     elevation_range: 180.0
-    azimuth_speed: 0.0
+    azimuth_speed: 10.0
     elevation_speed: 0.0
     scan_mode: "vertical"

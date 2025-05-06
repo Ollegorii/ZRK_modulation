@@ -17,7 +17,7 @@ class MessageType(Enum):
     MISSILE_DETONATE = 'missile_detonate'
     NEW_MISSILE = 'new_missile'
 
-SIMULATION_STEP = 0.1  # d_t в секундах
+SIMULATION_STEP = 1 # в микросекундах (в 1 сек 1000 мс)
 
 MISSILE_VELOCITY_MODULE = 1600  # м/с
 MISSILE_DETONATE_PERIOD = 120  # секунд

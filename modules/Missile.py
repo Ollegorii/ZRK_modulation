@@ -2,7 +2,7 @@ import numpy as np
 from typing import Optional
 from .AirObject import AirObject, Trajectory
 from .constants import MessageType, MISSILE_VELOCITY_MODULE, MISSILE_DETONATE_RADIUS, MISSILE_DETONATE_PERIOD
-
+from .utils import to_seconds
 
 class Missile(AirObject):
     """Класс, моделирующий работу ЗУР с корректировкой траектории"""
@@ -62,14 +62,14 @@ class Missile(AirObject):
         new_trajectory = Trajectory(
             velocity=tuple(V_norm),
             start_pos=tuple(self.pos),
-            start_time=self._manager.time.get_time() if self.status == 'active' else 0
+            start_time=to_seconds(self._manager.time.get_time()) if self.status == 'active' else 0
         )
         self._set_trajectory(new_trajectory)
 
     def _launch(self) -> None:
         """Запуск ракеты"""
         self.status = 'active'
-        self.launch_time = self._manager.time.get_time()
+        self.launch_time = to_seconds(self._manager.time.get_time())
         # Обновляем время старта в траектории
         self.trajectory.start_time = self.launch_time
 
@@ -129,7 +129,7 @@ class Missile(AirObject):
                 self._detonate(target_id=self.target.id, self_detonation=False)
 
             # Расчет времени относительно оригинального запуска
-            flight_time = current_time - self.launch_time
+            flight_time = to_seconds(current_time) - self.launch_time
 
             # Проверка таймера (время с момента запуска)
             if flight_time >= self.detonate_period:

@@ -54,3 +54,7 @@ class Target(AirObject):
             velocity_str = "[unknown]"
             
         return f"Target(id={self.id}, type={self.__type.name}, pos={position_str}, vel={velocity_str}, prev_pos={self.prev_pos})"
+
+def to_seconds(time: int) -> float:
+        """Преобразование времени в секунды"""
+        return time / 1000
