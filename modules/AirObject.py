@@ -2,6 +2,9 @@ from abc import abstractmethod
 import numpy as np
 from .BaseModel import BaseModel
 
+def to_seconds(time: int) -> float:
+        """Преобразование времени в секунды"""
+        return time / 1000
 
 class Trajectory:
     """
@@ -33,6 +36,6 @@ class AirObject(BaseModel):
         self.prev_pos = prev_pos
 
     def step(self):
-        current_time = self._manager.time.get_time()
+        current_time = to_seconds(self._manager.time.get_time())
         self.prev_pos = self.pos if self.trajectory.start_time != current_time else None
         self.pos = self.trajectory.get_pos(current_time)

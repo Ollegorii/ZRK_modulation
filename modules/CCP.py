@@ -2,6 +2,7 @@ from modules.BaseModel import Manager
 from modules.Messages import *
 from modules.Missile import Missile
 from modules.constants import *
+from modules.utils import to_seconds
 import logging
 
 OLD_TARGET = "старая цель"
@@ -165,7 +166,7 @@ class CombatControlPoint(BaseModel):
         if len(msg_launched_missiles) > 0:
             for msg in msg_launched_missiles:
                 logger.info(f"ПБУ получил от ПУ запуске ЗУР c id:{msg.missile.id}")
-                self.add_missile(MissileCCP(msg.missile, self._manager.time.get_time()))
+                self.add_missile(MissileCCP(msg.missile, to_seconds(self._manager.time.get_time())))
 
     def link_object(self, detected_object):
         """
@@ -176,8 +177,8 @@ class CombatControlPoint(BaseModel):
             """ Метода расчета min/max расстояния до возможного объекта"""
 
             velocity = detected_obj.speed_mod
-            cur_time = self._manager.time.get_time()
-            sim_step = self._manager.time.get_dt()
+            cur_time = to_seconds(self._manager.time.get_time())
+            sim_step = to_seconds(self._manager.time.get_dt())
             coord_diff = np.linalg.norm(obj_to_link_pos - detected_obj.pos)
             d_t = cur_time - obj_to_link_upd_time
 
@@ -190,7 +191,7 @@ class CombatControlPoint(BaseModel):
 
         # Проверка на старую цель
         for target_id, target_ccp in self._target_dict.items():
-            if target_ccp.upd_time == self._manager.time.get_time():
+            if target_ccp.upd_time == to_seconds(self._manager.time.get_time()):
                 continue
 
             min_range, max_range, pos_diff = calc_range(detected_object, target_ccp.target.prev_pos,
@@ -203,7 +204,7 @@ class CombatControlPoint(BaseModel):
 
         # Проверка на старую ЗУР
         for missile_id, missile_ccp in self._missile_dict.items():
-            if missile_ccp.upd_time == self._manager.time.get_time():
+            if missile_ccp.upd_time == to_seconds(self._manager.time.get_time()):
                 continue
 
             obj_prev_pos = missile_ccp.missile.prev_pos
@@ -305,9 +306,9 @@ class CombatControlPoint(BaseModel):
         """
         logger.info("ПБУ определил этот объект как новую цель")
         if self.try_to_launch_missile(obj, radar_id):
-            self.add_target(TargetCCP(obj, self._manager.time.get_time(), True))
+            self.add_target(TargetCCP(obj, to_seconds(self._manager.time.get_time()), True))
         else:
-            self.add_target(TargetCCP(obj, self._manager.time.get_time(), False))
+            self.add_target(TargetCCP(obj, to_seconds(self._manager.time.get_time()), False))
 
     def old_target(self, obj, old_obj_id, radar_id):
         """
@@ -319,13 +320,13 @@ class CombatControlPoint(BaseModel):
         if not is_following:
             logger.info("Цель не преследуется ЗУР, пробуем запустить ЗУР по ней")
             if self.try_to_launch_missile(obj, radar_id):
-                self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time(), True)
+                self._target_dict[old_obj_id].upd_target_ccp(obj, to_seconds(self._manager.time.get_time()), True)
             else:
-                self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time(), False)
+                self._target_dict[old_obj_id].upd_target_ccp(obj, to_seconds(self._manager.time.get_time()), False)
 
         else:
             logger.info("Цель уже преследуется ЗУР, обновляем её и перенаправляем ЗУР")
-            self._target_dict[old_obj_id].upd_target_ccp(obj, self._manager.time.get_time(), is_following)
+            self._target_dict[old_obj_id].upd_target_ccp(obj, to_seconds(self._manager.time.get_time()), is_following)
             curr_missile_id = self._target_dict[old_obj_id].missile_id
             msg2radar = CPPUpdateTargetRadarMessage(
                 time=self._manager.time.get_time(),
@@ -343,7 +344,7 @@ class CombatControlPoint(BaseModel):
         Обработка случая, когда видимый объект является старой ЗУР
         """
         logger.info(f"ПБУ определил этот объект как старую ЗУР с id:{self._missile_dict[old_obj_id].missile.id}")
-        self._missile_dict[old_obj_id].upd_missile_ccp(obj, self._manager.time.get_time())
+        self._missile_dict[old_obj_id].upd_missile_ccp(obj, to_seconds(self._manager.time.get_time()))
 
     def step(self) -> None:
         """
