@@ -74,6 +74,12 @@ class MissileCountResponseMessage(BaseMessage):
         base_info = super().__repr__()
         return f"{base_info}, count={self.count}"
 
+class AllObjectsMessage(BaseMessage):
+    def __init__(self, sender_id: int, objects: List[AirObject], time: int = None, receiver_id: int = None):
+        super().__init__(type=MessageType.ALL_OBJECTS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.objects=objects
+
+
 class FoundObjectsMessage(BaseMessage):
     """
     Radar -> CCP

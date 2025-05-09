@@ -6,6 +6,7 @@ class MessageType(Enum):
     LAUNCH_COMMAND = "launch_command"
     MISSILE_COUNT_REQUEST = "missile_count_request"
     MISSILE_COUNT_RESPONSE = "missile_count_response"
+    ALL_OBJECTS = "all_objects"
     FOUND_OBJECTS = "found_objects"
     ACTIVE_OBJECTS = "active_objects"
     CCP_UPDATE_TARGET = 'ccp_upd_target'
