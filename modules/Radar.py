@@ -142,6 +142,15 @@ class SectorRadar(BaseModel):
         objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)[0].active_objects
         # if len(objects) == 0:
         #     raise "ОШИБКА РАДАРА: ВО отправило пустое сообщение"
+
+        all_objects_msg = AllObjectsMessage(
+            time=current_time, 
+            sender_id=self.id, 
+            receiver_id=CCP_ID, 
+            objects=objects
+        )
+        self._manager.add_message(all_objects_msg)
+
         visible_objects = self.find_visible_objects(objects)
         logger.info(f"Видимые объекты:")
         for obj in visible_objects:
@@ -153,6 +162,8 @@ class SectorRadar(BaseModel):
             visible_objects=visible_objects
         )
         self._manager.add_message(visible_objects_msg)
+
+
 
         # ПРИЕМ ТАРГЕТОВ, КОТОРЫЕ НУЖНО ОБНОВИТЬ, ОТ ПБУ
         messages_to_missile = self._manager.give_messages_by_type(MessageType.UPDATE_TARGET, step_time=current_time-dt)
