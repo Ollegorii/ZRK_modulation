@@ -1,5 +1,6 @@
 .venv
 modules/__pycache__/
+UI/__pycache__/
 .idea
 __pycache__/
 .tests/__pycache__
