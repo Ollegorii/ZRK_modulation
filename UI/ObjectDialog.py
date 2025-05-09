@@ -51,10 +51,10 @@ class ObjectDialog(QDialog):
             layout.addRow("Радиус поражения:", self.missile_radius)
         elif obj_type == ObjectType.RADAR:
             self.max_distance = QLineEdit("20000")
-            self.azimuth_range = QLineEdit("360")
+            self.azimuth_range = QLineEdit("180")
             self.elevation_range = QLineEdit("90")
-            self.azimuth_speed = QLineEdit("10")
-            self.elevation_speed = QLineEdit("5")
+            self.azimuth_speed = QLineEdit("180")
+            self.elevation_speed = QLineEdit("0")
             self.scan_mode = QComboBox()
             self.scan_mode.addItems(["horizontal", "vertical"])
 
