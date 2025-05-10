@@ -75,6 +75,10 @@ class MissileCountResponseMessage(BaseMessage):
         return f"{base_info}, count={self.count}"
 
 class AllObjectsMessage(BaseMessage):
+    """
+    Radar -> CCP
+    Сообщение о всех видимых
+    """
     def __init__(self, sender_id: int, objects: List[AirObject], time: int = None, receiver_id: int = None):
         super().__init__(type=MessageType.ALL_OBJECTS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.objects=objects
@@ -182,15 +186,16 @@ class CPPDrawerObjectsMessage(BaseMessage):
     CCP -> GUI
     Сообщение на обновление координат цели
     """
-    def __init__(self, sender_id: int, obj_id: int, target_type, coordinates: np.ndarray, time: int = None, receiver_id: int = None):
+    def __init__(self, sender_id: int, obj_id: int, target_type, coordinates: np.ndarray, is_visible_by_radar: bool, time: int = None, receiver_id: int = None):
         super().__init__(type=MessageType.DRAW_OBJECTS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.obj_id = obj_id
         self.target_type = target_type
         self.coordinates = coordinates
+        self.is_visible_by_radar = is_visible_by_radar
     
     def __repr__(self) -> str:
         base_info = super().__repr__()
-        return f"{base_info}, obj_id={self.obj_id}, target_type={self.target_type}, coordinates={self.coordinates}"
+        return f"{base_info}, obj_id={self.obj_id}, target_type={self.target_type}, coordinates={self.coordinates}, is_visible_by_radar={self.is_visible_by_radar}"
 
 class MissileToAirEnvMessage(BaseMessage):
     """

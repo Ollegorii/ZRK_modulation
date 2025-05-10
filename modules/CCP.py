@@ -234,36 +234,55 @@ class CombatControlPoint(BaseModel):
         logger.info(
             f"ПБУ сообщает МФР {radar_id}, что у ЗУР с id:{missile_id}, новые координаты ее цели:{target.pos()}")
 
-    def send_objects_to_GUI(self):
+    def send_objects_to_GUI(self, all, visible):
         """
         ПБУ отправляет сообщение на отрисовку в GUI
         """
         for key, missile in self._missile_dict.items():
             obj_id = self._missile_dict[key].missile.id
-            msg2drawer = CPPDrawerObjectsMessage(
-                time=self._manager.time.get_time(),
-                sender_id=self.id,
-                receiver_id=MANAGER_ID,
-                obj_id=obj_id,
-                target_type='ЗУР',
-                coordinates=self._missile_dict[key].missile.pos
-            )
-            self._manager.add_message(msg2drawer)
-            logger.info(f"ПБУ отправил {'ЗУР', obj_id} на отрисовку GUI")
+            if obj_id in visible:
+                msg2drawer = CPPDrawerObjectsMessage(
+                    time=self._manager.time.get_time(),
+                    sender_id=self.id,
+                    receiver_id=MANAGER_ID,
+                    obj_id=obj_id,
+                    target_type='ЗУР',
+                    coordinates=self._missile_dict[key].missile.pos,
+                    is_visible_by_radar = True
+                )
+                self._manager.add_message(msg2drawer)
+                logger.info(f"ПБУ отправил {'ЗУР', obj_id} на отрисовку GUI")
 
         for key, target in self._target_dict.items():
             obj_id = self._target_dict[key].target.id
-            obj_type = self._target_dict[key].target.type
-            msg2drawer = CPPDrawerObjectsMessage(
-                time=self._manager.time.get_time(),
-                sender_id=self.id,
-                receiver_id=MANAGER_ID,
-                obj_id=obj_id,
-                target_type=obj_type,
-                coordinates=self._target_dict[key].target.pos
-            )
-            self._manager.add_message(msg2drawer)
-            logger.info(f"ПБУ отправил {obj_type, obj_id} на отрисовку GUI")
+            if obj_id in visible:
+                obj_type = self._target_dict[key].target.type
+                msg2drawer = CPPDrawerObjectsMessage(
+                    time=self._manager.time.get_time(),
+                    sender_id=self.id,
+                    receiver_id=MANAGER_ID,
+                    obj_id=obj_id,
+                    target_type=obj_type,
+                    coordinates=self._target_dict[key].target.pos,
+                    is_visible_by_radar=True
+                )
+                self._manager.add_message(msg2drawer)
+                logger.info(f"ПБУ отправил {obj_type, obj_id} на отрисовку GUI")
+
+        for (id, type, coord) in all:
+            if id not in visible:
+                msg2drawer = CPPDrawerObjectsMessage(
+                    time=self._manager.time.get_time(),
+                    sender_id=self.id,
+                    receiver_id=MANAGER_ID,
+                    obj_id=id,
+                    target_type=type,
+                    coordinates=coord,
+                    is_visible_by_radar = False
+                )
+                self._manager.add_message(msg2drawer)
+                logger.info(f"ПБУ отправил {obj_type, obj_id} на отрисовку GUI")
+
 
     def try_to_launch_missile(self, obj, radar_id):
         """
@@ -368,6 +387,25 @@ class CombatControlPoint(BaseModel):
         self.check_if_missile_get_hit()
         self.check_if_missiles_launched()
 
+        to_visualize = []
+        to_visual_proc_id = []
+        msg_from_radar_all = self._manager.give_messages_by_type(MessageType.ALL_OBJECTS)
+        logger.info(f"ПБУ получил сообщения о всех объектах от {len(msg_from_radar_all)} радаров/радара")
+        if len(msg_from_radar_all) != 0:
+            for msg in msg_from_radar_all:
+                objects = msg.objects
+                for obj in objects:
+                    if obj.id not in to_visual_proc_id:
+                        if isinstance(obj, Target):
+                            type = obj.type
+                        else:
+                            type = 'ЗУР'
+                        to_visualize.append([obj.id, type, obj.pos])
+                        to_visual_proc_id.append(obj.id)
+        print("CCP check", len(to_visualize), to_visualize)
+
+
+
         msg_from_radar = self._manager.give_messages_by_type(MessageType.FOUND_OBJECTS)
         logger.info(f"ПБУ получил сообщения от {len(msg_from_radar)} радаров/радара")
 
@@ -390,4 +428,4 @@ class CombatControlPoint(BaseModel):
                         elif obj_type == OLD_ROCKET:
                             self.old_rocket(obj, old_obj_id)
 
-        self.send_objects_to_GUI()
+        self.send_objects_to_GUI(to_visualize, processed_objects)
