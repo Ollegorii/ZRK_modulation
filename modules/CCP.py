@@ -281,7 +281,7 @@ class CombatControlPoint(BaseModel):
                     is_visible_by_radar = False
                 )
                 self._manager.add_message(msg2drawer)
-                logger.info(f"ПБУ отправил {obj_type, obj_id} на отрисовку GUI")
+                logger.info(f"ПБУ отправил {type, id} на отрисовку GUI")
 
 
     def try_to_launch_missile(self, obj, radar_id):
