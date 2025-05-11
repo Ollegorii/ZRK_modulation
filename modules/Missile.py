@@ -103,6 +103,7 @@ class Missile(AirObject):
         self.status = 'detonated'
 
     def step(self):
+        from .Messages import MissilePosMessage
         current_time = self._manager.time.get_time()
         dt = self._manager.time.get_dt()
 
