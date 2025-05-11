@@ -3,6 +3,15 @@ from typing import Optional
 from .AirObject import AirObject, Trajectory
 from .constants import MessageType, MISSILE_VELOCITY_MODULE, MISSILE_DETONATE_RADIUS, MISSILE_DETONATE_PERIOD
 from .utils import to_seconds
+from .Messages import MissileDetonateMessage, MissilePosMessage, MissileSuccessfulLaunchMessage, MissileLaunchCancelledMessage
+
+
+class InterceptionError(Exception):
+    """
+    Исключение, сигнализирующее о невозможности перехвата цели
+    """
+    pass
+
 
 class Missile(AirObject):
     """Класс, моделирующий работу ЗУР с корректировкой траектории"""
@@ -10,147 +19,132 @@ class Missile(AirObject):
     def __init__(self,
                  manager,
                  id: int,
-                 pos: np.ndarray,
+                 pos: tuple = (0, 0, 0),
                  velocity_module: float = MISSILE_VELOCITY_MODULE,
                  detonate_radius: float = MISSILE_DETONATE_RADIUS,
                  detonate_period: float = MISSILE_DETONATE_PERIOD):
 
         initial_trajectory = Trajectory(start_pos=pos)
-        super().__init__(manager, id, pos, initial_trajectory)
+        super().__init__(manager, id, np.array(pos), initial_trajectory)
         self.speed_mod = velocity_module
         self.detonate_radius = detonate_radius
         self.detonate_period = detonate_period
-        self.status = 'wait'
+        self.status = 'ready'
         self.launch_time: Optional[float] = None
         self.target: Optional[AirObject] = None
 
-    def set(self, target: AirObject) -> None:
-        """Взведение ЗУР в боевое положение"""
-        if self.status != 'wait':
-            return
-
-        self.status = 'ready'
-        self.target = target
-        self._calculate_trajectory(target)
-
-    def _calculate_trajectory(self, target: AirObject) -> None:
-        # Расчет параметров траектории с текущей позиции
-        target_vel = target.trajectory.velocity
+    def _calculate_trajectory_params(self, target: AirObject):
+        """
+        Рассчитывает вектор скорости ракеты для перехвата движущейся цели и время до перехвата.
+        """
         D = target.pos - self.pos
+        A = np.dot(target.speed_mod, target.speed_mod) - self.speed_mod ** 2
+        B = 2 * np.dot(target.speed_mod, D)
+        C = np.dot(D, D)
 
-        A = np.sum(np.square(target_vel)) - self.speed_mod**2
-        B = 2 * np.dot(target_vel, D)
-        C = np.sum(np.square(D))
+        if abs(A) < 1e-8:
+            if abs(B) < 1e-8:
+                raise ValueError("Нет решения: неподвижная цель или совпадающие позиции")
+            delta_t = -C / B
+            if delta_t <= 0:
+                raise InterceptionError("Не существует положительного времени перехвата.")
+        else:
+            discr = B ** 2 - 4 * A * C
+            if discr < 0:
+                raise InterceptionError("Цель недосягаема: отрицательный дискриминант.")
+            t1 = (-B + np.sqrt(discr)) / (2 * A)
+            t2 = (-B - np.sqrt(discr)) / (2 * A)
+            candidates = [t for t in (t1, t2) if t > 0]
+            if not candidates:
+                raise InterceptionError("Нет положительных корней для времени перехвата.")
+            delta_t = min(candidates)
 
-        discriminant = B**2 - 4*A*C
-        if discriminant < 0:
-            raise ValueError("Невозможно рассчитать траекторию")
+        V_req = target.speed_mod + D / delta_t
+        V_norm = V_req / np.linalg.norm(V_req) * self.speed_mod
+        return V_norm, delta_t
 
-        roots = [
-            (-B + np.sqrt(discriminant)) / (2*A),
-            (-B - np.sqrt(discriminant)) / (2*A)
-        ]
+    def _launch(self, target: AirObject):
+        try:
+            V_norm, delta_t = self._calculate_trajectory_params(target)
+            self.target = target
+            new_trajectory = Trajectory(
+                velocity=tuple(V_norm),
+                start_pos=tuple(self.pos),
+                start_time=to_seconds(self._manager.time.get_time())
+            )
+            self._set_trajectory(new_trajectory)
+            self.launch_time = to_seconds(self._manager.time.get_time())
+            msg = MissileSuccessfulLaunchMessage(
+                sender_id=self.id,
+                launch_time=self.launch_time,
+                target=self.target
+            )
+            self._manager.add_message(msg)
+            self.status = 'active'
+        except (InterceptionError, ValueError) as e:
+            msg = MissileLaunchCancelledMessage(
+                sender_id=self.id,
+                reason=str(e)
+            )
+            self._manager.add_message(msg)
 
-        delta_t = min([r for r in roots if r > 0], default=None)
-        if delta_t is None:
-            raise ValueError("Нет допустимого времени перехвата")
-
-        V_rocket = target_vel + D/delta_t
-        V_norm = V_rocket / np.linalg.norm(V_rocket) * self.speed_mod
-
-        # Сохраняем оригинальное время запуска при обновлении траектории
-        new_trajectory = Trajectory(
-            velocity=tuple(V_norm),
-            start_pos=tuple(self.pos),
-            start_time=to_seconds(self._manager.time.get_time()) if self.status == 'active' else 0
-        )
-        self._set_trajectory(new_trajectory)
-
-    def _launch(self) -> None:
-        """Запуск ракеты"""
-        self.status = 'active'
-        self.launch_time = to_seconds(self._manager.time.get_time())
-        # Обновляем время старта в траектории
-        self.trajectory.start_time = self.launch_time
-
-    def _set_trajectory(self, new_trajectory: Trajectory) -> None:
+    def _set_trajectory(self, new_trajectory: Trajectory):
         self.trajectory = new_trajectory
 
-    def _detonate(self, target_id: int = None, self_detonation: bool = True) -> None:
-        """Инициирование подрыва"""
-        from .Messages import MissileDetonateMessage, MissilePosMessage
-        self.status = 'detonated'
-
-        # Отправка сообщений о подрыве
-        detonate_msg = MissileDetonateMessage(
+    def _detonate(self, target_id: int = None, self_detonation: bool = True):
+        msg = MissileDetonateMessage(
             sender_id=self.id,
             target_id=target_id,
             self_detonation=self_detonation
         )
-        self._manager.add_message(detonate_msg)
+        self._manager.add_message(msg)
+        self.status = 'detonated'
 
-    def step(self) -> None:
+    def step(self):
         current_time = self._manager.time.get_time()
         dt = self._manager.time.get_dt()
-        from .Messages import MissileDetonateMessage, MissilePosMessage
+
         if self.status == 'ready':
-            # Проверка сообщений на запуск
             messages = self._manager.give_messages_by_type(
                 MessageType.LAUNCH_MISSILE,
                 self.id,
-                step_time=current_time-dt
+                step_time=current_time - dt
             )
             if messages:
-                self._launch()
+                self._launch(messages[-1].target)
 
         elif self.status == 'active':
-            # Обработка сообщений с обновлением цели
-            update_messages = self._manager.give_messages_by_type(
+            update_msgs = self._manager.give_messages_by_type(
                 MessageType.UPDATE_TARGET,
                 self.id,
-                step_time=current_time-dt
+                step_time=current_time - dt
             )
-            for msg in update_messages:
+            for msg in update_msgs:
                 self.target = msg.upd_object
-                self._calculate_trajectory(self.target)
-                print(f"Upd target: {self.target}")
+                try:
+                    V_norm, delta_t = self._calculate_trajectory_params(self.target)
+                    new_traj = Trajectory(
+                        velocity=tuple(V_norm),
+                        start_pos=tuple(self.pos),
+                        start_time=to_seconds(current_time)
+                    )
+                    self._set_trajectory(new_traj)
+                except (InterceptionError, ValueError):
+                    continue
 
-            # Обновление позиции
             super().step()
 
-            # Отправка позиции
-            pos_msg = MissilePosMessage(
-                sender_id=self.id
-            )
+            pos_msg = MissilePosMessage(sender_id=self.id)
             self._manager.add_message(pos_msg)
 
-            # Проверка дистанции до цели
-            if self.target and np.linalg.norm(self.pos - self.target.pos) <= self.detonate_radius:
+            distance = np.linalg.norm(self.target.pos - self.pos)
+            if distance <= self.detonate_radius:
                 self._detonate(target_id=self.target.id, self_detonation=False)
+                return
 
-            # Расчет времени относительно оригинального запуска
-            flight_time = to_seconds(current_time) - self.launch_time
-
-            # Проверка таймера (время с момента запуска)
-            if flight_time >= self.detonate_period:
-                self._detonate(self_detonation=True)
+            self.detonate_period -= dt
+            if self.detonate_period <= 0:
+                self._detonate()
 
         elif self.status == 'detonated':
             pass
-    
-    def __repr__(self) -> str:
-        """
-        Строковое представление объекта цели
-    
-        :return: строка, содержащая информацию о цели
-        """
-        position_str = f"[{', '.join(f'{coord:.2f}' for coord in self.pos)}]"
-    
-        # Получаем скорость из траектории, если она существует
-        if hasattr(self, 'trajectory') and self.trajectory is not None:
-            velocity = self.trajectory.velocity
-            velocity_str = f"[{', '.join(f'{vel:.2f}' for vel in velocity)}]"
-        else:
-            velocity_str = "[unknown]"
-    
-        return f"Missile(id={self.id}, pos={position_str}, vel={velocity_str}, prev_pos={self.prev_pos})"
