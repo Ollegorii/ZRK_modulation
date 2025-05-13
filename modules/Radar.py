@@ -47,6 +47,9 @@ class SectorRadar(BaseModel):
         """
         visible_objects = []
 
+        print('current_elevation = ', self.current_elevation)
+        print('current_azimuth =', self.current_azimuth)
+
         for obj in objects:
             # Вычисляем расстояние до объекта
             coords = obj.pos
@@ -58,6 +61,7 @@ class SectorRadar(BaseModel):
             delta = coords - self.pos
             azimuth = np.degrees(np.arctan2(delta[1], delta[0])) % 360
             elevation = np.degrees(np.arcsin(delta[2] / distance)) % 180
+            print(f'object {obj.id}, elevation = {elevation}, azimuth = {azimuth}')
 
             # Проверяем, попадает ли объект в текущий сектор
             if (
@@ -98,10 +102,13 @@ class SectorRadar(BaseModel):
             self.current_azimuth = (self.current_azimuth + self.azimuth_speed) % 360
             # Если азимут завершил полный круг, увеличиваем угол наклона
             if self.current_azimuth < self.azimuth_speed:
-                self.current_elevation = (self.current_elevation + self.elevation_speed) % 180
+                if self.current_elevation + self.elevation_speed < 90:
+                    self.current_elevation = (self.current_elevation + self.elevation_speed) % 90
+                else:
+                    self.current_elevation = self.elevation_start
         elif self.scan_mode == "vertical":
             # Вертикальное сканирование: круговой обзор по углу наклона
-            self.current_elevation = (self.current_elevation + self.elevation_speed) % 180
+            self.current_elevation = (self.current_elevation + self.elevation_speed) % 90
             # Если угол наклона завершил полный круг, увеличиваем азимут
             if self.current_elevation < self.elevation_speed:
                 self.current_azimuth = (self.current_azimuth + self.azimuth_speed) % 360
@@ -135,6 +142,15 @@ class SectorRadar(BaseModel):
         objects = self._manager.give_messages_by_type(MessageType.ACTIVE_OBJECTS)[0].active_objects
         # if len(objects) == 0:
         #     raise "ОШИБКА РАДАРА: ВО отправило пустое сообщение"
+
+        all_objects_msg = AllObjectsMessage(
+            time=current_time, 
+            sender_id=self.id, 
+            receiver_id=CCP_ID, 
+            objects=objects
+        )
+        self._manager.add_message(all_objects_msg)
+
         visible_objects = self.find_visible_objects(objects)
         logger.info(f"Видимые объекты:")
         for obj in visible_objects:
@@ -146,6 +162,8 @@ class SectorRadar(BaseModel):
             visible_objects=visible_objects
         )
         self._manager.add_message(visible_objects_msg)
+
+
 
         # ПРИЕМ ТАРГЕТОВ, КОТОРЫЕ НУЖНО ОБНОВИТЬ, ОТ ПБУ
         messages_to_missile = self._manager.give_messages_by_type(MessageType.UPDATE_TARGET, step_time=current_time-dt)
@@ -174,7 +192,7 @@ class SectorRadar(BaseModel):
             )
             self._manager.add_message(destroy_msg)   
                  
-        self.move_to_next_sector()
+        self.move_to_next_sector_circular()
 
     def start(self, objects):
         """
