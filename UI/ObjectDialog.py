@@ -104,8 +104,8 @@ class ObjectDialog(QDialog):
                     "azimuth_start": 0.0,
                     "elevation_start": 0.0,
                     "max_distance": float(self.max_distance.text()),
-                    "azimuth_range": float(self.azimuth_range.text()), # - Хардкод Богдана
-                    "elevation_range": float(self.elevation_range.text()), # - Хардкод Богдана
+                    "azimuth_range": float(self.azimuth_range.text()),
+                    "elevation_range": float(self.elevation_range.text()),
                     "azimuth_speed": float(self.azimuth_speed.text()),
                     "elevation_speed": float(self.elevation_speed.text()),
                     "scan_mode": self.scan_mode.currentText()
