@@ -201,7 +201,7 @@ class MissileSuccessfulLaunchMessage(BaseMessage):
     Сообщение об успешном запуске ракеты
     """
     def __init__(self, sender_id: int, launch_time: float, target: AirObject, missile: Missile):
-        super().__init__(type=MessageType.LAUNCHED_MISSILE, sender_id=sender_id)
+        super().__init__(type=MessageType.LAUNCH_SUCCESSFUL, sender_id=sender_id)
         self.missile = missile
         self.launch_time = launch_time
         self.target_id = target.id

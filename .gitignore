@@ -4,4 +4,4 @@ UI/__pycache__/
 .idea
 __pycache__/
 .tests/__pycache__
-logs/app.py
+logs/app.log

@@ -1,6 +1,6 @@
 simulation:
-  time_step: 1
-  duration: 60
+  time_step: 200
+  duration: 40000
 air_environment:
   id: 999
   position:
@@ -11,79 +11,63 @@ air_environment:
   - id: 1
     type: AIR_PLANE
     position:
-    - -2600.0
-    - -1425.0
-    - 0.0
-    - 0.0
-  - id: 2
-    type: AIR_PLANE
-    position:
-    - -2630.0
-    - 3500.0
+    - -2908.0
+    - 1883.0
     - 1000.0
     velocity:
-    - 200.0
-    - 0.0
-    - 0.0
-  - id: 2
-    type: AIR_PLANE
-    position:
-    - 3112.0
-    - -1475.0
-    - 0.0
-    velocity:
-    - 0.0
     - 100.0
+    - 0.0
     - 0.0
 combat_control_point:
   id: 0
-  missile_launcher_ids: []
+  missile_launcher_ids:
+  - 3
   radar_ids:
   - 5
 missile_launchers:
 - id: 3
   position: &id001
-  - 1806.0
-  - 1769.0
+  - -758.0
+  - 1883.0
   - 0.0
   max_missiles: 5
   missiles:
   - id: 3001
     position: *id001
-    velocity: 500
-    explosion_radius: 50
-    life_time: 60
+    velocity: 400
+    explosion_radius: 200
+    life_time: 60000
   - id: 3002
     position: *id001
-    velocity: 500
-    explosion_radius: 50
-    life_time: 60
+    velocity: 400
+    explosion_radius: 200
+    life_time: 60000
   - id: 3003
     position: *id001
-    velocity: 500
-    explosion_radius: 50
-    life_time: 60
+    velocity: 400
+    explosion_radius: 200
+    life_time: 60000
   - id: 3004
     position: *id001
-    velocity: 500
-    explosion_radius: 50
-    life_time: 60
+    velocity: 400
+    explosion_radius: 200
+    life_time: 60000
   - id: 3005
     position: *id001
-    velocity: 500
-    explosion_radius: 50
-    life_time: 60
+    velocity: 400
+    explosion_radius: 200
+    life_time: 60000
 radars:
 - id: 5
   position:
-  - -6.0
-  - 31.0
+  - -67.0
+  - -50.0
   - 0.0
   azimuth_start: 0.0
   elevation_start: 0.0
   max_distance: 20000.0
-  azimuth_range: 90.0
-  elevation_range: 90.0
-  azimuth_speed: 50.0
-  elevation_speed: 20.0
+  azimuth_range: 360.0
+  elevation_range: 180.0
+  azimuth_speed: 180.0
+  elevation_speed: 0.0
   scan_mode: horizontal

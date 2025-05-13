@@ -89,6 +89,8 @@ class MissileLauncher(BaseModel):
 
         # Обработка сообщений
         messages = self._manager.give_messages_by_id(self.id, step_time=current_time-dt)
+        messages += self._manager.give_messages_by_type(msg_type=MessageType.LAUNCH_SUCCESSFUL, step_time=current_time-dt)
+        messages += self._manager.give_messages_by_type(msg_type=MessageType.LAUNCH_CANCELLED, step_time=current_time-dt)
         logger.info(f"ПУ сообщения {messages}")
         for msg in messages:
             if isinstance(msg, CPPLaunchMissileRequestMessage):
