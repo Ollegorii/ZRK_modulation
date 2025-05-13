@@ -32,6 +32,7 @@ class AirObject(BaseModel):
     def __init__(self, manager, id: int, pos: np.ndarray, trajectory: Trajectory, prev_pos: np.ndarray = None):
         super().__init__(manager, id, pos)
         self.trajectory = trajectory
+        self.velocity = trajectory.velocity
         self.speed_mod = np.linalg.norm(trajectory.velocity)
         self.prev_pos = prev_pos
 

@@ -36,11 +36,12 @@ class Missile(AirObject):
         """
         Рассчитывает вектор скорости ракеты для перехвата движущейся цели и время до перехвата.
         """
-        D = target.pos - self.pos
-        A = np.dot(target.speed_mod, target.speed_mod) - self.speed_mod ** 2
-        B = 2 * np.dot(target.speed_mod, D)
-        C = np.dot(D, D)
+        target_velocity = target.speed_mod * target.velocity
 
+        D = target.pos - self.pos
+        A = np.dot(target_velocity, target_velocity) - self.speed_mod ** 2
+        B = 2 * np.dot(target_velocity, D)
+        C = np.dot(D, D)
         if abs(A) < 1e-8:
             if abs(B) < 1e-8:
                 raise ValueError("Нет решения: неподвижная цель или совпадающие позиции")
@@ -147,7 +148,7 @@ class Missile(AirObject):
                 self._detonate(target_id=self.target.id, self_detonation=False)
                 return
 
-            self.detonate_period -= dt
+            self.detonate_period -= to_seconds(dt)
             if self.detonate_period <= 0:
                 self._detonate()
 
