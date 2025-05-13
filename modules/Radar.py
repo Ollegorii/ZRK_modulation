@@ -47,8 +47,8 @@ class SectorRadar(BaseModel):
         """
         visible_objects = []
 
-        print('current_elevation = ', self.current_elevation)
-        print('current_azimuth =', self.current_azimuth)
+        # print('current_elevation = ', self.current_elevation)
+        # print('current_azimuth =', self.current_azimuth)
 
         for obj in objects:
             # Вычисляем расстояние до объекта
@@ -61,7 +61,7 @@ class SectorRadar(BaseModel):
             delta = coords - self.pos
             azimuth = np.degrees(np.arctan2(delta[1], delta[0])) % 360
             elevation = np.degrees(np.arcsin(delta[2] / distance)) % 180
-            print(f'object {obj.id}, elevation = {elevation}, azimuth = {azimuth}')
+            # print(f'object {obj.id}, elevation = {elevation}, azimuth = {azimuth}')
 
             # Проверяем, попадает ли объект в текущий сектор
             if (

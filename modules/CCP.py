@@ -402,7 +402,7 @@ class CombatControlPoint(BaseModel):
                             type = 'ЗУР'
                         to_visualize.append([obj.id, type, obj.pos])
                         to_visual_proc_id.append(obj.id)
-        print("CCP check", len(to_visualize), to_visualize)
+        # print("CCP check", len(to_visualize), to_visualize)
 
 
 

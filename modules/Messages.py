@@ -223,7 +223,7 @@ class MissileLaunchCancelledMessage(BaseMessage):
 
     def __repr__(self) -> str:
         base = super().__repr__()
-        return f"{base}, missile_id={self.missile_id}, reason=\"{self.reason}\""
+        return f"{base}, missile_id={self.missile.id}, reason=\"{self.reason}\""
 
 
 class CPPDrawerObjectsMessage(BaseMessage):

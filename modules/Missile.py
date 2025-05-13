@@ -113,7 +113,7 @@ class Missile(AirObject):
             messages = self._manager.give_messages_by_type(
                 MessageType.LAUNCH_MISSILE,
                 self.id,
-                step_time=current_time - dt
+                step_time=current_time
             )
             if messages:
                 self._launch(messages[-1].target)
