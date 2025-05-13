@@ -18,6 +18,7 @@ class MessageType(Enum):
     MISSILE_DETONATE = 'missile_detonate'
     NEW_MISSILE = 'new_missile'
     LAUNCH_CANCELLED = 'launch_cancelled'
+    LAUNCH_SUCCESSFUL = 'launch_successful'
 
 SIMULATION_STEP = 1 # в микросекундах (в 1 сек 1000 мс)
 

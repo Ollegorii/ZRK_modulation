@@ -553,7 +553,7 @@ class PolygonEditor(QMainWindow):
             for missile in launcher.get("missiles", []):
                 missile_ids.add(str(missile["id"]))
 
-        print(f"Known missile IDs: {missile_ids}")  # Отладочный вывод
+        #print(f"Known missile IDs: {missile_ids}")  # Отладочный вывод
 
         # Инициализация таймера
         self.simulation_timer = QTimer()
@@ -591,7 +591,7 @@ class PolygonEditor(QMainWindow):
                         self.scene.addItem(obj)
                         self.scene_objects[obj_id] = obj
                         obj.trajectory_points = []
-                        print(f"Created missile {obj_id} at ({x}, {y})")
+                        #print(f"Created missile {obj_id} at ({x}, {y})")
 
                 # Обновляем позицию для всех объектов (включая ракеты)
                 if obj_id in self.scene_objects:
@@ -600,7 +600,7 @@ class PolygonEditor(QMainWindow):
                     new_y = y - obj.pixmap().height() / 2
                     obj.setPos(new_x, new_y)
 
-                    print(f"Object {obj_id} visible: {obj.isVisible()} at ({new_x}, {new_y})")
+                    #print(f"Object {obj_id} visible: {obj.isVisible()} at ({new_x}, {new_y})")
 
                     # Для ВСЕХ движущихся объектов (включая ракеты) добавляем траекторию
                     if obj.obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.MISSILE]:
