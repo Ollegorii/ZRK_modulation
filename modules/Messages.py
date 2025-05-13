@@ -208,7 +208,7 @@ class MissileSuccessfulLaunchMessage(BaseMessage):
 
     def __repr__(self) -> str:
         base = super().__repr__()
-        return f"{base}, missile_id={self.missile_id}, target_id={self.target_id}, launch_time={self.launch_time}"
+        return f"{base}, missile_id={self.missile.id}, target_id={self.target_id}, launch_time={self.launch_time}"
 
 
 class MissileLaunchCancelledMessage(BaseMessage):
