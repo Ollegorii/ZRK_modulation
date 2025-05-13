@@ -78,14 +78,16 @@ class Missile(AirObject):
             msg = MissileSuccessfulLaunchMessage(
                 sender_id=self.id,
                 launch_time=self.launch_time,
-                target=self.target
+                target=self.target,
+                missile=self
             )
             self._manager.add_message(msg)
             self.status = 'active'
         except (InterceptionError, ValueError) as e:
             msg = MissileLaunchCancelledMessage(
                 sender_id=self.id,
-                reason=str(e)
+                reason=str(e),
+                missile=self
             )
             self._manager.add_message(msg)
 
