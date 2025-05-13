@@ -1,6 +1,6 @@
 from .Manager import Manager
 import numpy as np
-from .Messages import LaunchMissileMessage, LaunchedMissileMessage, MissileCountRequestMessage, CPPLaunchMissileRequestMessage, MissileCountResponseMessage, MissileToAirEnvMessage
+from .Messages import LaunchMissileMessage, LaunchedMissileMessage, MissileCountRequestMessage, CPPLaunchMissileRequestMessage, MissileCountResponseMessage, MissileToAirEnvMessage, MissileSuccessfulLaunchMessage, MissileLaunchCancelledMessage
 from .Missile import Missile
 from typing import List, Optional
 from .AirEnv import AirEnv
@@ -98,7 +98,8 @@ class MissileLauncher(BaseModel):
                     # target_id=msg.target_id,
                     radar_id=msg.radar_id
                 )
-            elif isinstance(msg, ):
+            elif isinstance(msg, MissileSuccessfulLaunchMessage):
+                missile = msg.missile
                 self.launched_missiles.append(missile)
                 logger.info(f"Ракета ID: {missile.id} успешно запущена с пусковой установки (ID: {self.id})")
 
@@ -107,7 +108,7 @@ class MissileLauncher(BaseModel):
                     sender_id=self.id,
                     receiver_id=CCP_ID,
                     missile=missile,
-                    target_id=target_id,
+                    target_id=msg.target_id,
                 )
 
                 self._manager.add_message(launched_msg)
@@ -119,6 +120,7 @@ class MissileLauncher(BaseModel):
                 )
 
                 self._manager.add_message(msg_for_air_env)
+                self.missiles.pop()
             elif isinstance(msg, MissileCountRequestMessage):
                 # Отправляем ответ с количеством ракет
                 count_msg = MissileCountResponseMessage(
