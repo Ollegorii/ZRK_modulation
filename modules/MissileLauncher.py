@@ -67,7 +67,7 @@ class MissileLauncher(BaseModel):
             logger.info(f"Пусковая установка (ID: {self.id}) не имеет доступных ракет для запуска")
             return None
 
-        missile = self.missiles[-1]
+        missile = self.missiles.pop()
 
         # Запускаем ракету
         # missile.set(target)
@@ -76,8 +76,8 @@ class MissileLauncher(BaseModel):
             sender_id=self.id,
             target=target,
         )
-
         self._manager.add_message(launch_msg)
+        missile.step()
 
     def step(self) -> None:
         """
@@ -112,7 +112,7 @@ class MissileLauncher(BaseModel):
                 )
 
                 self._manager.add_message(launched_msg)
-                
+
                 # Отправляем сообщение AirEnv с новой ракетой
                 msg_for_air_env = MissileToAirEnvMessage(
                     sender_id=self.id,
@@ -120,7 +120,10 @@ class MissileLauncher(BaseModel):
                 )
 
                 self._manager.add_message(msg_for_air_env)
-                self.missiles.pop()
+            elif isinstance(msg, MissileLaunchCancelledMessage):
+                missile = msg.missile
+                self.missiles.append(missile)
+                logger.info(f"Ракета ID: {missile.id} не запущена с пусковой установки (ID: {self.id}), добавляем в список доступных ракет")
             elif isinstance(msg, MissileCountRequestMessage):
                 # Отправляем ответ с количеством ракет
                 count_msg = MissileCountResponseMessage(
