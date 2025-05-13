@@ -15,8 +15,9 @@ class LaunchMissileMessage(BaseMessage):
     MissileLauncher -> Missile
     Сообщение с командой на запуск ракеты по указанной цели
     """
-    def __init__(self, sender_id: int, receiver_id: int = None, time: int = None):
+    def __init__(self, sender_id: int, receiver_id: int = None, time: int = None, target: Target = None):
         super().__init__(type=MessageType.LAUNCH_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.target = target
     
     def __repr__(self) -> str:
         return super().__repr__()
