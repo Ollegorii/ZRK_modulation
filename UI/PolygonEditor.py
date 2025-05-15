@@ -36,13 +36,13 @@ class PolygonEditor(QMainWindow):
 
         # Иконки объектов
         self.icons = {
-            ObjectType.AIR_PLANE: self.load_icon("UI/images/aircraft_icon.png", "🛩️", 200),
-            ObjectType.HELICOPTER: self.load_icon("UI/images/helicopter.png", "🚁", 200),
-            ObjectType.MISSILE_LAUNCHER: self.load_icon("UI/images/missile_launcher_icon.png", "🚀", 200),
-            ObjectType.MISSILE: self.load_icon("UI/images/GM.png", "*", 100),
-            ObjectType.RADAR: self.load_icon("UI/images/radar_icon.png", "📡", 200),
-            ObjectType.AIR_PLANE_RED: self.load_icon("UI/images/aircraft_icon_red.png", "*", 200),
-            ObjectType.HELICOPTER_RED: self.load_icon("UI/images/helicopter_red.png", "*", 200),
+            ObjectType.AIR_PLANE: self.load_icon("./images/aircraft_icon.png", "🛩️", 200),
+            ObjectType.HELICOPTER: self.load_icon("./images/helicopter.png", "🚁", 200),
+            ObjectType.MISSILE_LAUNCHER: self.load_icon("./images/missile_launcher_icon.png", "🚀", 200),
+            ObjectType.MISSILE: self.load_icon("./images/GM.png", "*", 100),
+            ObjectType.RADAR: self.load_icon("./images/radar_icon.png", "📡", 200),
+            ObjectType.AIR_PLANE_RED: self.load_icon("./images/aircraft_icon_red.png", "*", 200),
+            ObjectType.HELICOPTER_RED: self.load_icon("./images/helicopter_red.png", "*", 200),
         }
 
             # Конфигурация по умолчанию
@@ -482,7 +482,7 @@ class PolygonEditor(QMainWindow):
                  len(self.config["radars"]))
         self.status_bar.showMessage(f"Объектов: {count} | Масштаб: {int(self.view.scale_factor * 100)}%")
 
-    def save_config(self):
+    def save_config(self, source = False):
         try:
             # Формируем конфиг с реальными данными
             output_config = {
@@ -534,12 +534,28 @@ class PolygonEditor(QMainWindow):
                 ]
             }
 
-            # Сохраняем в файл
-            with open(self.default_config_path, 'w', encoding='utf-8') as file:
+            if source == False:
+                # Открываем диалог выбора файла для сохранения
+                file_path, _ = QFileDialog.getSaveFileName(
+                    self,
+                    "Сохранить конфигурацию",
+                    self.default_config_path,  # Начальный путь
+                    "YAML Files (*.yaml *.yml);;All Files (*)"
+                )
+            else:
+                file_path = self.default_config_path
+
+            # Если пользователь отменил выбор
+            if not file_path:
+                return
+
+            # Сохраняем в выбранный файл
+            with open(file_path, 'w', encoding='utf-8') as file:
                 yaml.dump(output_config, file, allow_unicode=True, sort_keys=False)
 
+
             QMessageBox.information(self, "Успех",
-                                    f"Конфигурация сохранена в файл:\n{os.path.abspath(self.default_config_path)}")
+                                    f"Конфигурация сохранена в файл:\n{os.path.abspath(file_path)}")
         except Exception as e:
             QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить конфигурацию:\n{str(e)}")
 
@@ -549,7 +565,7 @@ class PolygonEditor(QMainWindow):
         # self.draw_grid()  # Восстанавливаем сетку
 
         # Сохраняем конфиг перед запуском
-        self.save_config()
+        self.save_config(source = True)
 
         # Запускаем моделирование
         self.manager = run_simulation_from_config('simulation_config.yaml')
@@ -774,7 +790,7 @@ class PolygonEditor(QMainWindow):
                 "missile_launchers": [],
                 "radars": []
             }
-            self.save_config()
+            self.save_config(source=True)
 
             # Сбрасываем счетчики ID
             self.next_ids = {
