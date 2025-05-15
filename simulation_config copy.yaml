@@ -1,0 +1,40 @@
+simulation:
+  time_step: 200
+  duration: 40000
+air_environment:
+  id: 999
+  position:
+  - 0.0
+  - 0.0
+  - 0.0
+  targets:
+  - id: 1
+    type: AIR_PLANE
+    position:
+    - -3120.0
+    - 3340.0
+    - 1000.0
+    velocity:
+    - 100.0
+    - 0.0
+    - 0.0
+combat_control_point:
+  id: 0
+  missile_launcher_ids: []
+  radar_ids:
+  - 5
+missile_launchers: []
+radars:
+- id: 5
+  position:
+  - 0.0
+  - -70.0
+  - 0.0
+  azimuth_start: 0.0
+  elevation_start: 0.0
+  max_distance: 20000.0
+  azimuth_range: 180.0
+  elevation_range: 90.0
+  azimuth_speed: 180.0
+  elevation_speed: 0.0
+  scan_mode: horizontal

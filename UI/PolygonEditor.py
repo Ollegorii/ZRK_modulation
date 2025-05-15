@@ -31,7 +31,7 @@ class PolygonEditor(QMainWindow):
         self.setGeometry(100, 100, 1600, 1000)
 
 
-        self.scene_size = 30000  # Размер сцены в метрах (радиус от центра)
+        self.scene_size = 300000  # Размер сцены в метрах (радиус от центра)
         self.grid_step = 2000
 
         # Иконки объектов
