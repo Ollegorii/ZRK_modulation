@@ -135,6 +135,12 @@ class SectorRadar(BaseModel):
         if new_elevation_speed is not None:
             self.elevation_speed = new_elevation_speed
 
+    def smooth_objects(self, objects):
+        error = 5
+        for object in objects:
+            n_prostr = len(object.pos) 
+            object.pos += np.random.normal(0, error, n_prostr)
+
     def step(self):
         """
         Выполнение одного шага симуляции для МФР
@@ -155,6 +161,7 @@ class SectorRadar(BaseModel):
         self._manager.add_message(all_objects_msg)
 
         visible_objects = self.find_visible_objects(objects)
+        self.smooth_objects(visible_objects)
         logger.info(f"Видимые объекты:")
         for obj in visible_objects:
             logger.info(obj)
