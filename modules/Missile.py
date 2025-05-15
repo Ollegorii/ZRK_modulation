@@ -112,7 +112,7 @@ class Missile(AirObject):
                 launch_time=self.launch_time,
                 target=self.target,
                 missile=self,
-                launcher_id=launcher_id
+                receiver_id=launcher_id
             )
             self._manager.add_message(msg)
             self.status = 'active'
@@ -121,7 +121,7 @@ class Missile(AirObject):
                 sender_id=self.id,
                 reason=str(e),
                 missile=self,
-                launcher_id=launcher_id
+                receiver_id=launcher_id
             )
             self._manager.add_message(msg)
 
