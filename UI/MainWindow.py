@@ -15,6 +15,7 @@ def setup_logging():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
+
 if __name__ == "__main__":
     setup_logging()
     app = QApplication(sys.argv)
