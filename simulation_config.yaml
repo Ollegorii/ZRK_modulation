@@ -11,8 +11,8 @@ air_environment:
   - id: 1
     type: AIR_PLANE
     position:
-    - -4200.0
-    - -3430.0
+    - -6840.0
+    - -4720.0
     - 1000.0
     velocity:
     - 100.0
@@ -21,8 +21,8 @@ air_environment:
   - id: 2
     type: AIR_PLANE
     position:
-    - -2630.0
-    - 3500.0
+    - -6020.0
+    - 2520.0
     - 1000.0
     velocity:
     - 100.0
@@ -30,21 +30,54 @@ air_environment:
     - 0.0
 combat_control_point:
   id: 0
-  missile_launcher_ids: []
+  missile_launcher_ids:
+  - 3
   radar_ids:
   - 5
-missile_launchers: []
+missile_launchers:
+- id: 3
+  position: &id001
+  - -1330.0
+  - 110.0
+  - 0.0
+  max_missiles: 5
+  missiles:
+  - id: 3001
+    position: *id001
+    velocity: 1000
+    explosion_radius: 50
+    life_time: 60
+  - id: 3002
+    position: *id001
+    velocity: 1000
+    explosion_radius: 50
+    life_time: 60
+  - id: 3003
+    position: *id001
+    velocity: 1000
+    explosion_radius: 50
+    life_time: 60
+  - id: 3004
+    position: *id001
+    velocity: 1000
+    explosion_radius: 50
+    life_time: 60
+  - id: 3005
+    position: *id001
+    velocity: 1000
+    explosion_radius: 50
+    life_time: 60
 radars:
 - id: 5
   position:
-  - -30.0
-  - 40.0
+  - 20.0
+  - 50.0
   - 0.0
   azimuth_start: 0.0
   elevation_start: 0.0
   max_distance: 20000.0
-  azimuth_range: 90.0
+  azimuth_range: 60.0
   elevation_range: 90.0
   azimuth_speed: 50.0
-  elevation_speed: 20.0
+  elevation_speed: 0.0
   scan_mode: horizontal
