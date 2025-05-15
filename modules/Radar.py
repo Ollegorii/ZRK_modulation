@@ -99,7 +99,10 @@ class SectorRadar(BaseModel):
         """
         if self.scan_mode == "horizontal":
             # Горизонтальное сканирование: круговой обзор по азимуту
-            self.current_azimuth = (self.current_azimuth + self.azimuth_speed) % 360
+            if self.current_azimuth + self.azimuth_range < 360:
+                 self.current_azimuth = (self.current_azimuth + self.azimuth_speed) % 360
+            else:
+                self.current_azimuth = self.elevation_start
             # Если азимут завершил полный круг, увеличиваем угол наклона
             if self.current_azimuth < self.azimuth_speed:
                 if self.current_elevation + self.elevation_speed < 90:
