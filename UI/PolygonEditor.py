@@ -36,12 +36,13 @@ class PolygonEditor(QMainWindow):
 
         # Иконки объектов
         self.icons = {
-            ObjectType.AIR_PLANE: self.load_icon("UI/images/aircraft_icon.png", "🛩️", 100),
-            ObjectType.HELICOPTER: self.load_icon("UI/images/helicopter.png", "🚁", 100),
-            # ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
-            ObjectType.MISSILE_LAUNCHER: self.load_icon("UI/images/missile_launcher_icon.png", "🚀", 100),
-            ObjectType.RADAR: self.load_icon("UI/images/radar_icon.png", "📡", 100),
-            ObjectType.MISSILE: self.load_icon("UI/images/GM.png", "*", 50)
+            ObjectType.AIR_PLANE: self.load_icon("UI/images/aircraft_icon.png", "🛩️", 200),
+            ObjectType.HELICOPTER: self.load_icon("UI/images/helicopter.png", "🚁", 200),
+            ObjectType.MISSILE_LAUNCHER: self.load_icon("UI/images/missile_launcher_icon.png", "🚀", 200),
+            ObjectType.MISSILE: self.load_icon("UI/images/GM.png", "*", 100),
+            ObjectType.RADAR: self.load_icon("UI/images/radar_icon.png", "📡", 200),
+            ObjectType.AIR_PLANE_RED: self.load_icon("UI/images/aircraft_icon_red.png", "*", 200),
+            ObjectType.HELICOPTER_RED: self.load_icon("UI/images/helicopter_red.png", "*", 200),
         }
 
             # Конфигурация по умолчанию
@@ -79,15 +80,23 @@ class PolygonEditor(QMainWindow):
         """Преобразует координаты с учетом инверсии Y"""
         return x, self.y_coeff * y
 
-    def load_icon(self, filename, fallback, size):
+    def load_icon(self, filename, fallback, size, color=None):
         if os.path.exists(filename):
             pixmap = QPixmap(filename)
+            if color:
+                # Применяем цветовой фильтр, если указан цвет
+                painter = QPainter(pixmap)
+                painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
+                painter.fillRect(pixmap.rect(), color)
+                painter.end()
             return pixmap.scaled(size, size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         else:
             pixmap = QPixmap(size, size)
             pixmap.fill(Qt.transparent)
             painter = QPainter(pixmap)
             painter.setFont(self.font())
+            if color:
+                painter.setPen(color)
             painter.drawText(pixmap.rect(), Qt.AlignCenter, fallback)
             painter.end()
             return pixmap
@@ -593,9 +602,27 @@ class PolygonEditor(QMainWindow):
                         obj.trajectory_points = []
                         #print(f"Created missile {obj_id} at ({x}, {y})")
 
+                obj_type = None
+
                 # Обновляем позицию для всех объектов (включая ракеты)
                 if obj_id in self.scene_objects:
                     obj = self.scene_objects[obj_id]
+                    obj_type = self.scene_objects[obj_id].obj_type
+
+                    # Для самолетов и вертолетов меняем иконку в зависимости от видимости
+                    if obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER]:
+                        if msg.is_visible_by_radar:
+                            # Используем красную иконку
+                            if obj_type == ObjectType.AIR_PLANE:
+                                new_icon = self.icons[ObjectType.AIR_PLANE_RED]
+                            else:
+                                new_icon = self.icons[ObjectType.HELICOPTER_RED]
+                        else:
+                            # Используем обычную иконку
+                            new_icon = self.icons[obj_type]
+
+                        obj.setPixmap(new_icon)
+
                     new_x = x - obj.pixmap().width() / 2
                     new_y = y - obj.pixmap().height() / 2
                     obj.setPos(new_x, new_y)
@@ -731,8 +758,8 @@ class PolygonEditor(QMainWindow):
             # Сбрасываем конфигурацию
             self.config = {
                 "simulation": {
-                    "time_step": 1,
-                    "duration": 60
+                    "time_step": 200,
+                    "duration": 40000
                 },
                 "air_environment": {
                     "id": 999,

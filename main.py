@@ -175,4 +175,4 @@ def run_simulation_from_config(config_path: str):
 
 if __name__ == "__main__":
     setup_logging()
-    run_simulation_from_config('config.yaml')
+    run_simulation_from_config('UI/simulation_config.yaml')
