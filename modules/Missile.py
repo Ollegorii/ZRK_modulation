@@ -86,6 +86,9 @@ class Missile(AirObject):
                 raise ValueError("Interception times are not positive; interception not possible in future.")
             t = min(times)
 
+        if t > self.detonate_period:
+            raise ValueError("Target is too far for this rocket (detonation_period over limited)")
+
         # Compute required interceptor velocity vector
         V = (d / t) + v_t
 
