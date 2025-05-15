@@ -73,6 +73,9 @@ class Missile(AirObject):
                 raise ValueError(
                     "No interception possible: target and interceptor are stationary relative or parallel.")
             t = -c / b
+            # Physically: if b>0 (target moving away along d), t<0 -> intercept would have occurred in the past
+            if t <= 0:
+                raise ValueError("Interception impossible in the future: computed time t <= 0.")
         else:
             disc = b ** 2 - 4 * a * c
             if disc < 0:
@@ -87,6 +90,7 @@ class Missile(AirObject):
             t = min(times)
 
         if t > self.detonate_period:
+            print('wtf')
             raise ValueError("Target is too far for this rocket (detonation_period over limited)")
 
         # Compute required interceptor velocity vector

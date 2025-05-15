@@ -173,6 +173,8 @@ def run_simulation_from_config(config_path: str):
 
     return manager
 
+
 if __name__ == "__main__":
     setup_logging()
     run_simulation_from_config('config.yaml')
+    # run_simulation_from_config('/Users/vs.fedorov/Desktop/configs/simulation_config_wrong_direction.yaml')
