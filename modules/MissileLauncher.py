@@ -1,6 +1,6 @@
 from .Manager import Manager
 import numpy as np
-from .Messages import LaunchMissileMessage, LaunchedMissileMessage, MissileCountRequestMessage, CPPLaunchMissileRequestMessage, MissileCountResponseMessage, MissileToAirEnvMessage
+from .Messages import LaunchMissileMessage, LaunchedMissileMessage, MissileCountRequestMessage, CPPLaunchMissileRequestMessage, MissileCountResponseMessage, MissileToAirEnvMessage, MissileSuccessfulLaunchMessage, MissileLaunchCancelledMessage
 from .Missile import Missile
 from typing import List, Optional
 from .AirEnv import AirEnv
@@ -67,39 +67,17 @@ class MissileLauncher(BaseModel):
             logger.info(f"Пусковая установка (ID: {self.id}) не имеет доступных ракет для запуска")
             return None
 
-        missile = self.missiles.pop(0)
+        missile = self.missiles.pop()
 
         # Запускаем ракету
-        missile.set(target)
+        # missile.set(target)
         launch_msg = LaunchMissileMessage(
             receiver_id=missile.id,
             sender_id=self.id,
+            target=target,
         )
-
         self._manager.add_message(launch_msg)
-
-        self.launched_missiles.append(missile)
-        logger.info(f"Ракета ID: {missile.id} успешно запущена с пусковой установки (ID: {self.id})")
-
-        # Отправляем сообщение о запуске ракеты
-        launched_msg = LaunchedMissileMessage(
-            sender_id=self.id,
-            receiver_id=CCP_ID,
-            missile=missile,
-            target_id=target_id,
-        )
-
-        self._manager.add_message(launched_msg)
-        
-        # Отправляем сообщение AirEnv с новой ракетой
-        msg_for_air_env = MissileToAirEnvMessage(
-            sender_id=self.id,
-            missile=missile,
-        )
-
-        self._manager.add_message(msg_for_air_env)
-
-        return None if missile is None else missile
+        missile.step()
 
     def step(self) -> None:
         """
@@ -111,6 +89,8 @@ class MissileLauncher(BaseModel):
 
         # Обработка сообщений
         messages = self._manager.give_messages_by_id(self.id, step_time=current_time-dt)
+        messages += self._manager.give_messages_by_type(msg_type=MessageType.LAUNCH_SUCCESSFUL, step_time=current_time-dt)
+        messages += self._manager.give_messages_by_type(msg_type=MessageType.LAUNCH_CANCELLED, step_time=current_time-dt)
         logger.info(f"ПУ сообщения {messages}")
         for msg in messages:
             if isinstance(msg, CPPLaunchMissileRequestMessage):
@@ -120,6 +100,32 @@ class MissileLauncher(BaseModel):
                     # target_id=msg.target_id,
                     radar_id=msg.radar_id
                 )
+            elif isinstance(msg, MissileSuccessfulLaunchMessage):
+                missile = msg.missile
+                self.launched_missiles.append(missile)
+                logger.info(f"Ракета ID: {missile.id} успешно запущена с пусковой установки (ID: {self.id})")
+
+                # Отправляем сообщение о запуске ракеты
+                launched_msg = LaunchedMissileMessage(
+                    sender_id=self.id,
+                    receiver_id=CCP_ID,
+                    missile=missile,
+                    target_id=msg.target_id,
+                )
+
+                self._manager.add_message(launched_msg)
+
+                # Отправляем сообщение AirEnv с новой ракетой
+                msg_for_air_env = MissileToAirEnvMessage(
+                    sender_id=self.id,
+                    missile=missile,
+                )
+
+                self._manager.add_message(msg_for_air_env)
+            elif isinstance(msg, MissileLaunchCancelledMessage):
+                missile = msg.missile
+                self.missiles.append(missile)
+                logger.info(f"Ракета ID: {missile.id} не запущена с пусковой установки (ID: {self.id}), добавляем в список доступных ракет")
             elif isinstance(msg, MissileCountRequestMessage):
                 # Отправляем ответ с количеством ракет
                 count_msg = MissileCountResponseMessage(

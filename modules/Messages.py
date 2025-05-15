@@ -10,16 +10,19 @@ from .BaseModel import BaseModel
 from .AirObject import AirObject
 from .utils import Target
 
+
 class LaunchMissileMessage(BaseMessage):
     """
     MissileLauncher -> Missile
     Сообщение с командой на запуск ракеты по указанной цели
     """
-    def __init__(self, sender_id: int, receiver_id: int = None, time: int = None):
+    def __init__(self, sender_id: int, receiver_id: int = None, time: int = None, target: Target = None):
         super().__init__(type=MessageType.LAUNCH_MISSILE, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
+        self.target = target
     
     def __repr__(self) -> str:
         return super().__repr__()
+
 
 class CPPLaunchMissileRequestMessage(BaseMessage):
     """
@@ -36,6 +39,7 @@ class CPPLaunchMissileRequestMessage(BaseMessage):
         base_info = super().__repr__()
         return f"{base_info}, target={self.target}, target_position={self.target_position}, radar_id={self.radar_id}"
 
+
 class LaunchedMissileMessage(BaseMessage):
     """
     MissileLauncher -> CCP
@@ -50,6 +54,7 @@ class LaunchedMissileMessage(BaseMessage):
         base_info = super().__repr__()
         return f"{base_info}, missile.id={self.missile.id if self.missile else None}, target_id={self.target_id}"
 
+
 class MissileCountRequestMessage(BaseMessage):
     """
     CCP -> MissileLauncher
@@ -60,6 +65,7 @@ class MissileCountRequestMessage(BaseMessage):
     
     def __repr__(self) -> str:
         return super().__repr__()
+
 
 class MissileCountResponseMessage(BaseMessage):
     """
@@ -74,7 +80,12 @@ class MissileCountResponseMessage(BaseMessage):
         base_info = super().__repr__()
         return f"{base_info}, count={self.count}"
 
+
 class AllObjectsMessage(BaseMessage):
+    """
+    Radar -> CCP
+    Сообщение о всех видимых
+    """
     def __init__(self, sender_id: int, objects: List[AirObject], time: int = None, receiver_id: int = None):
         super().__init__(type=MessageType.ALL_OBJECTS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.objects=objects
@@ -94,6 +105,7 @@ class FoundObjectsMessage(BaseMessage):
         object_ids = [obj.id for obj in self.visible_objects] if self.visible_objects else []
         return f"{base_info}, visible_objects.ids={object_ids}, visible_objects.count={len(object_ids)}"
 
+
 class CPPUpdateTargetRadarMessage(BaseMessage):
     """
     CCP -> Radar
@@ -107,6 +119,7 @@ class CPPUpdateTargetRadarMessage(BaseMessage):
     def __repr__(self) -> str:
         base_info = super().__repr__()
         return f"{base_info}, target.id={self.target.id if self.target else None}, missile_id={self.missile_id}"
+
 
 class ActiveObjectsMessage(BaseMessage):
     """
@@ -122,6 +135,7 @@ class ActiveObjectsMessage(BaseMessage):
         object_ids = [obj.id for obj in self.active_objects] if self.active_objects else []
         return f"{base_info}, active_objects.ids={object_ids}, active_objects.count={len(object_ids)}"
 
+
 class UpdateTargetPosition(BaseMessage):
     """
     Radar -> Missile
@@ -134,6 +148,7 @@ class UpdateTargetPosition(BaseMessage):
     def __repr__(self) -> str:
         base_info = super().__repr__()
         return f"{base_info}, upd_object.id={self.upd_object.id if self.upd_object else None}, upd_object.pos={self.upd_object.pos if self.upd_object else None}"
+
 
 class DestroyedMissileId(BaseMessage):
     """
@@ -148,6 +163,7 @@ class DestroyedMissileId(BaseMessage):
     def __repr__(self) -> str:
         base_info = super().__repr__()
         return f"{base_info}, missile_id={self.missile_id}"
+
 
 class MissileDetonateMessage(BaseMessage):
     """
@@ -164,6 +180,7 @@ class MissileDetonateMessage(BaseMessage):
         base_info = super().__repr__()
         return f"{base_info}, missile_id={self.missile_id}, target_id={self.target_id}"
 
+
 class MissilePosMessage(BaseMessage):
     """
     ЗУР -> ВО
@@ -177,20 +194,55 @@ class MissilePosMessage(BaseMessage):
         base_info = super().__repr__()
         return f"{base_info}, missile_id={self.missile_id}"
 
+
+class MissileSuccessfulLaunchMessage(BaseMessage):
+    """
+    ЗУР -> ПУ
+    Сообщение об успешном запуске ракеты
+    """
+    def __init__(self, sender_id: int, launch_time: float, target: AirObject, missile: Missile, launcher_id: int):
+        super().__init__(type=MessageType.LAUNCH_SUCCESSFUL, sender_id=sender_id)
+        self.missile = missile
+        self.launch_time = launch_time
+        self.target_id = target.id
+        self.launcher_id = launcher_id
+
+    def __repr__(self) -> str:
+        base = super().__repr__()
+        return f"{base}, missile_id={self.missile.id}, target_id={self.target_id}, launch_time={self.launch_time}"
+
+
+class MissileLaunchCancelledMessage(BaseMessage):
+    """
+    ЗУР -> ПУ
+    Сообщение об отмене запуска ракеты
+    """
+    def __init__(self, sender_id: int, reason: str, missile: Missile, launcher_id: int):
+        super().__init__(type=MessageType.LAUNCH_CANCELLED, sender_id=sender_id)
+        self.missile = missile
+        self.reason = reason
+        self.launcher_id = launcher_id
+
+    def __repr__(self) -> str:
+        base = super().__repr__()
+        return f"{base}, missile_id={self.missile.id}, reason=\"{self.reason}\""
+
+
 class CPPDrawerObjectsMessage(BaseMessage):
     """
     CCP -> GUI
     Сообщение на обновление координат цели
     """
-    def __init__(self, sender_id: int, obj_id: int, target_type, coordinates: np.ndarray, time: int = None, receiver_id: int = None):
+    def __init__(self, sender_id: int, obj_id: int, target_type, coordinates: np.ndarray, is_visible_by_radar: bool, time: int = None, receiver_id: int = None):
         super().__init__(type=MessageType.DRAW_OBJECTS, send_time=time, sender_id=sender_id, receiver_id=receiver_id)
         self.obj_id = obj_id
         self.target_type = target_type
         self.coordinates = coordinates
+        self.is_visible_by_radar = is_visible_by_radar
     
     def __repr__(self) -> str:
         base_info = super().__repr__()
-        return f"{base_info}, obj_id={self.obj_id}, target_type={self.target_type}, coordinates={self.coordinates}"
+        return f"{base_info}, obj_id={self.obj_id}, target_type={self.target_type}, coordinates={self.coordinates}, is_visible_by_radar={self.is_visible_by_radar}"
 
 class MissileToAirEnvMessage(BaseMessage):
     """

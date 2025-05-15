@@ -1,12 +1,12 @@
 import os
 import numpy as np
 import yaml
-from PyQt5.QtCore import Qt, QSize, QTimer
+from PyQt5.QtCore import Qt, QSize, QTimer, QPointF
 from PyQt5.QtGui import QColor, QPen, QPainter, QPixmap, QIcon, QBrush
 from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout,
                              QWidget, QLabel, QPushButton, QListWidget, QComboBox,
                              QDialog, QGraphicsScene, QGraphicsTextItem,
-                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem)
+                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem, QFileDialog)
 
 from UI.Enums import ObjectType
 from UI.MapGraphicsView import MapGraphicsView
@@ -24,24 +24,32 @@ class PolygonEditor(QMainWindow):
         self.manager = Manager()
         self.scene_objects = {}  # {obj_id: MapObject}
 
+        self.y_inverted = True
+        self.y_coeff = -1 if self.y_inverted else 1
+
         self.setWindowTitle("Редактор полигона")
         self.setGeometry(100, 100, 1600, 1000)
 
+
+        self.scene_size = 30000  # Размер сцены в метрах (радиус от центра)
+        self.grid_step = 2000
+
         # Иконки объектов
         self.icons = {
-            ObjectType.AIR_PLANE: self.load_icon("UI/images/aircraft_icon.png", "🛩️", 100),
-            ObjectType.HELICOPTER: self.load_icon("UI/images/helicopter.png", "🚁", 100),
-            # ObjectType.ANOTHER: self.load_icon("unknown.png", "❓", 60),
-            ObjectType.MISSILE_LAUNCHER: self.load_icon("UI/images/missile_launcher_icon.png", "🚀", 100),
-            ObjectType.RADAR: self.load_icon("UI/images/radar_icon.png", "📡", 100),
-            ObjectType.MISSILE: self.load_icon("UI/images/GM.png", "*", 50)
+            ObjectType.AIR_PLANE: self.load_icon("UI/images/aircraft_icon.png", "🛩️", 200),
+            ObjectType.HELICOPTER: self.load_icon("UI/images/helicopter.png", "🚁", 200),
+            ObjectType.MISSILE_LAUNCHER: self.load_icon("UI/images/missile_launcher_icon.png", "🚀", 200),
+            ObjectType.MISSILE: self.load_icon("UI/images/GM.png", "*", 100),
+            ObjectType.RADAR: self.load_icon("UI/images/radar_icon.png", "📡", 200),
+            ObjectType.AIR_PLANE_RED: self.load_icon("UI/images/aircraft_icon_red.png", "*", 200),
+            ObjectType.HELICOPTER_RED: self.load_icon("UI/images/helicopter_red.png", "*", 200),
         }
 
-        # Конфигурация по умолчанию
+            # Конфигурация по умолчанию
         self.default_config = {
             "simulation": {
-                "time_step": 1,
-                "duration": 60
+                "time_step": 200,
+                "duration": 40000
             },
             "air_environment": {
                 "id": 999,
@@ -68,16 +76,27 @@ class PolygonEditor(QMainWindow):
         self.default_config_path = "simulation_config.yaml"
         self.init_ui()
 
+    def convert_coordinates(self, x, y):
+        """Преобразует координаты с учетом инверсии Y"""
+        return x, self.y_coeff * y
 
-    def load_icon(self, filename, fallback, size):
+    def load_icon(self, filename, fallback, size, color=None):
         if os.path.exists(filename):
             pixmap = QPixmap(filename)
+            if color:
+                # Применяем цветовой фильтр, если указан цвет
+                painter = QPainter(pixmap)
+                painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
+                painter.fillRect(pixmap.rect(), color)
+                painter.end()
             return pixmap.scaled(size, size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         else:
             pixmap = QPixmap(size, size)
             pixmap.fill(Qt.transparent)
             painter = QPainter(pixmap)
             painter.setFont(self.font())
+            if color:
+                painter.setPen(color)
             painter.drawText(pixmap.rect(), Qt.AlignCenter, fallback)
             painter.end()
             return pixmap
@@ -92,14 +111,13 @@ class PolygonEditor(QMainWindow):
 
         # Левая панель - управление
         left_panel = QWidget()
-        left_panel.setMaximumWidth(350)
+        left_panel.setMaximumWidth(400)  # Увеличим ширину панели
         left_layout = QVBoxLayout(left_panel)
 
         # Выбор типа объекта
         self.object_type_combo = QComboBox()
         self.object_type_combo.setIconSize(QSize(48, 48))
         for obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER,
-                         # ObjectType.ANOTHER,
                          ObjectType.MISSILE_LAUNCHER, ObjectType.RADAR]:
             self.object_type_combo.addItem(
                 QIcon(self.icons[obj_type]),
@@ -113,35 +131,66 @@ class PolygonEditor(QMainWindow):
         left_layout.addWidget(QLabel("Тип объекта:"))
         left_layout.addWidget(self.object_type_combo)
 
-        # Кнопки управления
-        btn_layout = QHBoxLayout()
+        # Кнопки управления - теперь в два ряда
+        btn_layout1 = QHBoxLayout()
+        btn_layout2 = QHBoxLayout()
+
+        # Первый ряд кнопок
         self.delete_btn = QPushButton("Удалить")
         self.delete_btn.setIcon(QIcon.fromTheme("edit-delete"))
         self.delete_btn.clicked.connect(self.delete_object)
+        self.delete_btn.setMinimumWidth(120)  # Фиксированная ширина
 
-        self.save_btn = QPushButton("Сохранить конфиг")
+        # Добавляем кнопку загрузки конфига
+        self.load_btn = QPushButton("Загрузить конфиг")
+        self.load_btn.setIcon(QIcon.fromTheme("document-open"))
+        self.load_btn.clicked.connect(self.load_config)
+
+
+        btn_layout1.addWidget(self.delete_btn)
+        btn_layout1.addWidget(self.load_btn)
+
+
+        # Второй ряд кнопок
+        self.save_btn = QPushButton("Сохранить")
         self.save_btn.setIcon(QIcon.fromTheme("document-save"))
         self.save_btn.clicked.connect(self.save_config)
+        self.save_btn.setMinimumWidth(120)
 
-        self.run_btn = QPushButton("Запуск моделирования")
+        self.run_btn = QPushButton("Запуск")
         self.run_btn.setIcon(QIcon.fromTheme("media-playback-start"))
         self.run_btn.clicked.connect(self.run_simulation)
+        self.run_btn.setMinimumWidth(120)
 
-        btn_layout.addWidget(self.delete_btn)
-        btn_layout.addWidget(self.save_btn)
-        btn_layout.addWidget(self.run_btn)
-        left_layout.addLayout(btn_layout)
+        self.reset_btn = QPushButton("Сбросить")
+        self.reset_btn.setIcon(QIcon.fromTheme("edit-clear"))
+        self.reset_btn.clicked.connect(self.reset_experiment)
+        self.reset_btn.setMinimumWidth(120)
+
+
+
+        btn_layout2.addWidget(self.save_btn)
+        btn_layout2.addWidget(self.run_btn)
+        btn_layout2.addWidget(self.reset_btn)
+
+
+        left_layout.addLayout(btn_layout1)
+        left_layout.addLayout(btn_layout2)
 
         # Масштабирование
         zoom_layout = QHBoxLayout()
         self.zoom_out_btn = QPushButton("-")
         self.zoom_out_btn.clicked.connect(self.zoom_out)
+        self.zoom_out_btn.setFixedWidth(30)  # Фиксированный размер кнопок +/-
+
         self.zoom_slider = QSlider(Qt.Horizontal)
-        self.zoom_slider.setRange(10, 300)
-        self.zoom_slider.setValue(20)
+        self.zoom_slider.setRange(5, 500)
+        self.zoom_slider.setValue(50)
         self.zoom_slider.valueChanged.connect(self.zoom_slider_changed)
+
         self.zoom_in_btn = QPushButton("+")
         self.zoom_in_btn.clicked.connect(self.zoom_in)
+        self.zoom_in_btn.setFixedWidth(30)
 
         zoom_layout.addWidget(self.zoom_out_btn)
         zoom_layout.addWidget(self.zoom_slider)
@@ -160,11 +209,13 @@ class PolygonEditor(QMainWindow):
 
         # Сцена и вид
         self.scene = QGraphicsScene()
-        self.scene.setSceneRect(-15000, -15000, 30000, 30000)
+        scene_rect = -self.scene_size, -self.scene_size, 2 * self.scene_size, 2 * self.scene_size
+        self.scene.setSceneRect(*scene_rect)
 
         self.view = MapGraphicsView(self.scene, self)
         self.view.setMinimumSize(800, 800)
         self.view.zoomChanged.connect(self.update_zoom_slider)
+
         right_layout.addWidget(self.view)
 
         main_layout.addWidget(left_panel)
@@ -183,8 +234,12 @@ class PolygonEditor(QMainWindow):
         self.status_bar.showMessage(f"Выбран тип: {ObjectType.get_display_name(self.current_object_type)}", 2000)
 
     def add_object(self, position):
+        x, y = self.convert_coordinates(position.x(), position.y())
+        adjusted_position = QPointF(x, y)  # Z-координата остается 0
+
         default_id = self.next_ids[self.current_object_type]
-        dialog = ObjectDialog(self.current_object_type, position, default_id, self)
+        dialog = ObjectDialog(self.current_object_type, adjusted_position, default_id, self)
+
         if dialog.exec_() == QDialog.Accepted:
             obj_data = dialog.get_object_data()
 
@@ -223,23 +278,54 @@ class PolygonEditor(QMainWindow):
             self.update_objects_list()
 
     def draw_grid(self):
-        # Оси
+        """Рисует сетку с увеличенными размерами"""
+        # Оси координат
         pen = QPen(QColor(100, 100, 255, 150), 2)
-        self.scene.addLine(-15000, 0, 15000, 0, pen)
-        self.scene.addLine(0, -15000, 0, 15000, pen)
+        self.scene.addLine(-self.scene_size, 0, self.scene_size, 0, pen)  # Ось X
+        self.scene.addLine(0, self.scene_size, 0, -self.scene_size, pen)  # Ось Y
 
-        # Сетка
+        # Подписи осей
+        font = self.font()
+        font.setPointSize(200)
+
+        # Подпись оси X
+        x_label = self.scene.addText("X")
+        x_label.setFont(font)
+        x_label.setPos(self.scene_size - 2000, 50)
+
+        # Подпись оси Y
+        y_label = self.scene.addText("Y")
+        y_label.setFont(font)
+        y_label.setPos(-300, -self.scene_size + 2000)
+
+        # Сетка с увеличенным шагом
         pen = QPen(QColor(200, 200, 200, 100), 1)
-        for i in range(-15000, 15001, 1000):
+        for i in range(-self.scene_size, self.scene_size + 1, self.grid_step):
             if i != 0:
-                self.scene.addLine(i, -15000, i, 15000, pen)
-                self.scene.addLine(-15000, i, 15000, i, pen)
+                # Вертикальные линии
+                self.scene.addLine(i, -self.scene_size, i, self.scene_size, pen)
+                # Горизонтальные линии
+                self.scene.addLine(-self.scene_size, i, self.scene_size, i, pen)
+
+        # Подписи координат
+        font.setPointSize(100)
+        for i in range(-self.scene_size, self.scene_size + 1, self.grid_step):
+            if i != 0:
+                # Подписи по оси X
+                x_text = self.scene.addText(f"{i / 1000:.0f}км")
+                x_text.setFont(font)
+                x_text.setPos(i - 50, 50)
+
+                # Подписи по оси Y
+                y_text = self.scene.addText(f"{-i / 1000:.0f}км" if self.y_inverted else f"{i / 1000:.0f}км")
+                y_text.setFont(font)
+                y_text.setPos(-50, i - 100)
 
     def update_scene(self):
-        # Очищаем все объекты
-        for obj_id, obj in list(self.scene_objects.items()):
-            self.scene.removeItem(obj)
-        self.scene_objects.clear()
+        """Обновляет сцену на основе текущей конфигурации"""
+        # Полностью очищаем сцену перед обновлением
+        self.clear_scene_completely()
+        self.draw_grid()
 
         # Рисуем объекты заново
         for target in self.config["air_environment"]["targets"]:
@@ -247,8 +333,6 @@ class PolygonEditor(QMainWindow):
 
         for launcher in self.config["missile_launchers"]:
             self.draw_map_object(launcher["position"], "MISSILE_LAUNCHER", launcher.get("id", ""))
-
-            # Рисуем ракеты этой установки
             for missile in launcher.get("missiles", []):
                 self.draw_map_object(launcher["position"], "MISSILE", missile["id"])
 
@@ -259,36 +343,36 @@ class PolygonEditor(QMainWindow):
         enum_type = ObjectType[obj_type] if isinstance(obj_type, str) else obj_type
         icon = self.icons.get(enum_type, self.icons[ObjectType.AIR_PLANE])
 
+        # Преобразуем координаты для отображения
+        x, y = self.convert_coordinates(position[0], position[1])
+
         # Создаем или получаем объект
         if str(obj_id) in self.scene_objects:
             obj = self.scene_objects[str(obj_id)]
-            obj.setPos(position[0] - icon.width() / 2, position[1] - icon.height() / 2)
+            obj.setPos(x - icon.width()/2, y - icon.height()/2)
         else:
             obj = MapObject(icon, enum_type, obj_id)
-            obj.setPos(position[0] - icon.width() / 2, position[1] - icon.height() / 2)
+            obj.setPos(x - icon.width()/2, y - icon.height()/2)
             self.scene.addItem(obj)
             self.scene_objects[str(obj_id)] = obj
-            obj.trajectory_points = []  # Инициализируем список точек траектории
+            obj.trajectory_points = []
 
         # Для движущихся объектов добавляем точку траектории
         if enum_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.MISSILE]:
-            # Добавляем новую точку
             point = self.scene.addEllipse(
-                position[0] - 2, position[1] - 2, 4, 4,
+                x - 2, y - 2, 4, 4,
                 QPen(Qt.NoPen),
-                QBrush(QColor(255, 165, 0, 200))  # Оранжевый цвет
+                QBrush(QColor(255, 165, 0, 200))
             )
             point.setZValue(-1)
             obj.trajectory_points.append(point)
 
-            # Ограничиваем количество точек (например, последние 50)
             if len(obj.trajectory_points) > 50:
                 old_point = obj.trajectory_points.pop(0)
                 self.scene.removeItem(old_point)
 
-        # Для радара рисуем зону действия (как в предыдущей реализации)
+        # Для радара рисуем зону действия
         elif enum_type == ObjectType.RADAR:
-            # Ищем конфигурацию радара
             radar_config = None
             for radar in self.config["radars"]:
                 if str(radar["id"]) == str(obj_id):
@@ -297,25 +381,20 @@ class PolygonEditor(QMainWindow):
 
             if radar_config:
                 radius = radar_config.get("max_distance", 10000)
-
-                # Удаляем старую зону действия если есть
                 if hasattr(obj, 'radar_range'):
                     self.scene.removeItem(obj.radar_range)
 
-                # Рисуем новую зону действия
-
                 radar_range = self.scene.addEllipse(
-                    position[0] - radius,
-                    position[1] - radius,
+                    x - radius,
+                    y - radius,
                     radius * 2,
                     radius * 2,
-                    QPen(QColor(0, 200, 0, 80)), # Зеленый контур с прозрачностью
-                         QBrush(QColor(0, 200, 0, 30)  # Зеленая полупрозрачная заливка
-                                ))
-                radar_range.setZValue(-2)  # Под основными объектами
+                    QPen(QColor(0, 200, 0, 80)),
+                    QBrush(QColor(0, 200, 0, 30))
+                )
+                radar_range.setZValue(-2)
                 obj.radar_range = radar_range
 
-        # Сохраняем в словарь объектов
         self.scene_objects[str(obj_id)] = obj
 
     def update_objects_list(self):
@@ -465,61 +544,16 @@ class PolygonEditor(QMainWindow):
             QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить конфигурацию:\n{str(e)}")
 
     def run_simulation(self):
+        # Перед запуском симуляции полностью очищаем сцену
+        # self.clear_scene_completely()
+        # self.draw_grid()  # Восстанавливаем сетку
+
         # Сохраняем конфиг перед запуском
         self.save_config()
 
         # Запускаем моделирование
         self.manager = run_simulation_from_config('simulation_config.yaml')
 
-        # self.manager.run_simulation(self.config["simulation"]["duration"])
-
-        # Тестовые сообщения для демонстрации
-        # test_messages = {
-        #     0: [CPPDrawerObjectsMessage(
-        #         sender_id=0,
-        #         receiver_id=0,
-        #         obj_id=1,
-        #         type=MessageType.DRAW_OBJECTS,
-        #         coordinates=np.array([100, 100, 0]),
-        #         time=0
-        #     )],
-        #     1: [CPPDrawerObjectsMessage(
-        #         sender_id=0,
-        #         receiver_id=0,
-        #         obj_id=1,
-        #         type=MessageType.DRAW_OBJECTS,
-        #         coordinates=np.array([150, 120, 0]),
-        #         time=1
-        #     )],
-        #     2: [CPPDrawerObjectsMessage(
-        #         sender_id=0,
-        #         receiver_id=0,
-        #         obj_id=1,
-        #         type=MessageType.DRAW_OBJECTS,
-        #         coordinates=np.array([200, 140, 0]),
-        #         time=2
-        #     )],
-        #     3: [CPPDrawerObjectsMessage(
-        #         sender_id=0,
-        #         receiver_id=0,
-        #         obj_id=1,
-        #         type=MessageType.DRAW_OBJECTS,
-        #         coordinates=np.array([250, 160, 0]),
-        #         time=3
-        #     )],
-        #     4: [CPPDrawerObjectsMessage(
-        #         sender_id=0,
-        #         receiver_id=0,
-        #         obj_id=1,
-        #         type=MessageType.DRAW_OBJECTS,
-        #         coordinates=np.array([300, 180, 0]),
-        #         time=4
-        #     )]
-        # }
-
-        # self.manager.messages = test_messages
-        # r = self.manager.give_messages_by_type(MessageType.DRAW_OBJECTS,step_time = 1)
-        # Получаем все временные метки
         time_steps = sorted(self.manager.messages.keys())
 
         # Собираем все ID ракет из конфигурации
@@ -528,7 +562,7 @@ class PolygonEditor(QMainWindow):
             for missile in launcher.get("missiles", []):
                 missile_ids.add(str(missile["id"]))
 
-        print(f"Known missile IDs: {missile_ids}")  # Отладочный вывод
+        #print(f"Known missile IDs: {missile_ids}")  # Отладочный вывод
 
         # Инициализация таймера
         self.simulation_timer = QTimer()
@@ -554,6 +588,7 @@ class PolygonEditor(QMainWindow):
 
                 obj_id = str(msg.obj_id)
                 x, y, _ = msg.coordinates
+                x, y = self.convert_coordinates(x, y)
 
                 # Если это ракета (по ID) и её нет на сцене - создаем
                 if obj_id in missile_ids and obj_id not in self.scene_objects:
@@ -565,19 +600,34 @@ class PolygonEditor(QMainWindow):
                         self.scene.addItem(obj)
                         self.scene_objects[obj_id] = obj
                         obj.trajectory_points = []
-                        print(f"Created missile {obj_id} at ({x}, {y})")
+                        #print(f"Created missile {obj_id} at ({x}, {y})")
+
+                obj_type = None
 
                 # Обновляем позицию для всех объектов (включая ракеты)
                 if obj_id in self.scene_objects:
                     obj = self.scene_objects[obj_id]
+                    obj_type = self.scene_objects[obj_id].obj_type
 
-                    # Обновляем позицию
-                    current_pos = obj.pos()
+                    # Для самолетов и вертолетов меняем иконку в зависимости от видимости
+                    if obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER]:
+                        if msg.is_visible_by_radar:
+                            # Используем красную иконку
+                            if obj_type == ObjectType.AIR_PLANE:
+                                new_icon = self.icons[ObjectType.AIR_PLANE_RED]
+                            else:
+                                new_icon = self.icons[ObjectType.HELICOPTER_RED]
+                        else:
+                            # Используем обычную иконку
+                            new_icon = self.icons[obj_type]
+
+                        obj.setPixmap(new_icon)
+
                     new_x = x - obj.pixmap().width() / 2
                     new_y = y - obj.pixmap().height() / 2
                     obj.setPos(new_x, new_y)
 
-                    print(f"Object {obj_id} visible: {obj.isVisible()} at ({new_x}, {new_y})")
+                    #print(f"Object {obj_id} visible: {obj.isVisible()} at ({new_x}, {new_y})")
 
                     # Для ВСЕХ движущихся объектов (включая ракеты) добавляем траекторию
                     if obj.obj_type in [ObjectType.AIR_PLANE, ObjectType.HELICOPTER, ObjectType.MISSILE]:
@@ -676,3 +726,141 @@ class PolygonEditor(QMainWindow):
                 return False
 
         return True
+
+
+    def clear_scene_completely(self):
+        """Полностью очищает сцену, включая все графические элементы"""
+        # Удаляем все элементы со сцены
+        self.scene.clear()
+
+        # Очищаем словарь объектов
+        self.scene_objects.clear()
+
+        # Восстанавливаем стандартные настройки сцены
+        self.scene.setSceneRect(-15000, -15000, 30000, 30000)
+
+    def reset_experiment(self):
+        reply = QMessageBox.question(
+            self,
+            "Сброс эксперимента",
+            "Вы уверены, что хотите сбросить эксперимент? Все объекты и траектории будут удалены.",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            # Останавливаем таймер симуляции, если он активен
+            if hasattr(self, 'simulation_timer') and self.simulation_timer.isActive():
+                self.simulation_timer.stop()
+
+            # Полностью очищаем сцену
+            self.clear_scene_completely()
+
+            # Сбрасываем конфигурацию
+            self.config = {
+                "simulation": {
+                    "time_step": 200,
+                    "duration": 40000
+                },
+                "air_environment": {
+                    "id": 999,
+                    "position": [0.0, 0.0, 0.0],
+                    "targets": []
+                },
+                "combat_control_point": {
+                    "id": 0,
+                    "missile_launcher_ids": [],
+                    "radar_ids": []
+                },
+                "missile_launchers": [],
+                "radars": []
+            }
+            self.save_config()
+
+            # Сбрасываем счетчики ID
+            self.next_ids = {
+                ObjectType.AIR_PLANE: 1,
+                ObjectType.HELICOPTER: 1,
+                ObjectType.MISSILE_LAUNCHER: 3,
+                ObjectType.RADAR: 5
+            }
+
+            # Очищаем список объектов
+            self.objects_list.clear()
+
+            # Восстанавливаем сетку
+            self.draw_grid()
+
+            # Обновляем статус
+            self.update_status()
+
+            QMessageBox.information(self, "Сброс", "Эксперимент полностью сброшен, все объекты и траектории удалены.")
+
+    def load_config(self):
+        # Открываем диалог выбора файла
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Выберите файл конфигурации",
+            "",
+            "YAML Files (*.yaml *.yml);;All Files (*)"
+        )
+
+        if not file_path:
+            return  # Пользователь отменил выбор
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                loaded_config = yaml.safe_load(file)
+
+            # Валидация загруженного конфига
+            if not self.validate_config(loaded_config):
+                QMessageBox.warning(self, "Ошибка", "Некорректный формат конфигурационного файла")
+                return
+
+            # Обновляем текущую конфигурацию
+            self.config = loaded_config
+
+            # Обновляем счетчики ID
+            self.update_id_counters()
+
+            # Обновляем сцену
+            self.update_scene()
+            self.update_objects_list()
+
+            QMessageBox.information(self, "Успех", "Конфигурация успешно загружена")
+
+        except Exception as e:
+            QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить конфигурацию:\n{str(e)}")
+
+    def validate_config(self, config):
+        """Проверяет основные поля конфигурации"""
+        required_sections = [
+            'simulation',
+            'air_environment',
+            'combat_control_point',
+            'missile_launchers',
+            'radars'
+        ]
+
+        for section in required_sections:
+            if section not in config:
+                return False
+
+        return True
+
+    def update_id_counters(self):
+        """Обновляет счетчики ID на основе загруженной конфигурации"""
+        # Для воздушных целей
+        if self.config["air_environment"]["targets"]:
+            max_id = max(t["id"] for t in self.config["air_environment"]["targets"])
+            self.next_ids[ObjectType.AIR_PLANE] = max_id + 1
+            self.next_ids[ObjectType.HELICOPTER] = max_id + 1
+
+        # Для пусковых установок
+        if self.config["missile_launchers"]:
+            max_id = max(m["id"] for m in self.config["missile_launchers"])
+            self.next_ids[ObjectType.MISSILE_LAUNCHER] = max_id + 1
+
+        # Для радаров
+        if self.config["radars"]:
+            max_id = max(r["id"] for r in self.config["radars"])
+            self.next_ids[ObjectType.RADAR] = max_id + 1

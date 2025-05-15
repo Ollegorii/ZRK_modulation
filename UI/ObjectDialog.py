@@ -22,7 +22,6 @@ class ObjectDialog(QDialog):
         layout.addRow("ID:", self.id_edit)
         layout.addRow("X координата:", self.x_edit)
         layout.addRow("Y координата:", self.y_edit)
-        layout.addRow("Высота (Z):", self.z_edit)
         self.id_edit.setValidator(QIntValidator(1, 999999, self))
 
         # Параметры для разных типов объектов
@@ -49,6 +48,7 @@ class ObjectDialog(QDialog):
             layout.addRow("Скорость ракеты:", self.missile_velocity)
             layout.addRow("Время жизни ракеты:", self.missile_life_time)
             layout.addRow("Радиус поражения:", self.missile_radius)
+            layout.addRow("Высота (Z):", self.z_edit)
         elif obj_type == ObjectType.RADAR:
             self.max_distance = QLineEdit("20000")
             self.azimuth_range = QLineEdit("180")
@@ -64,6 +64,7 @@ class ObjectDialog(QDialog):
             layout.addRow("Скорость азимута:", self.azimuth_speed)
             layout.addRow("Скорость угла места:", self.elevation_speed)
             layout.addRow("Режим сканирования:", self.scan_mode)
+            layout.addRow("Высота (Z):", self.z_edit)
 
         # Кнопки
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -104,8 +105,8 @@ class ObjectDialog(QDialog):
                     "azimuth_start": 0.0,
                     "elevation_start": 0.0,
                     "max_distance": float(self.max_distance.text()),
-                    "azimuth_range": float(self.azimuth_range.text()), # - Хардкод Богдана
-                    "elevation_range": float(self.elevation_range.text()), # - Хардкод Богдана
+                    "azimuth_range": float(self.azimuth_range.text()),
+                    "elevation_range": float(self.elevation_range.text()),
                     "azimuth_speed": float(self.azimuth_speed.text()),
                     "elevation_speed": float(self.elevation_speed.text()),
                     "scan_mode": self.scan_mode.currentText()

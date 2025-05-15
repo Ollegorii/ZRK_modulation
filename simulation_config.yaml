@@ -1,6 +1,6 @@
 simulation:
-  time_step: 1
-  duration: 60
+  time_step: 200
+  duration: 40000
 air_environment:
   id: 999
   position:
