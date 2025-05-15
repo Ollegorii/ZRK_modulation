@@ -8,11 +8,21 @@ air_environment:
   - 0.0
   - 0.0
   targets:
-  - id: 1
+  - id: 39
     type: AIR_PLANE
     position:
-    - -2908.0
-    - 1883.0
+    - -57.0
+    - 1152.0
+    - 1000.0
+    velocity:
+    - 100.0
+    - 0.0
+    - 0.0
+  - id: 40
+    type: AIR_PLANE
+    position:
+    - 919.0
+    - 505.0
     - 1000.0
     velocity:
     - 100.0
@@ -22,52 +32,85 @@ combat_control_point:
   id: 0
   missile_launcher_ids:
   - 3
+  - 4
   radar_ids:
   - 5
 missile_launchers:
 - id: 3
   position: &id001
-  - -758.0
-  - 1883.0
+  - 2238.0
+  - -17.0
   - 0.0
   max_missiles: 5
   missiles:
   - id: 3001
     position: *id001
-    velocity: 400
-    explosion_radius: 200
-    life_time: 60000
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
   - id: 3002
     position: *id001
-    velocity: 400
-    explosion_radius: 200
-    life_time: 60000
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
   - id: 3003
     position: *id001
-    velocity: 400
-    explosion_radius: 200
-    life_time: 60000
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
   - id: 3004
     position: *id001
-    velocity: 400
-    explosion_radius: 200
-    life_time: 60000
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
   - id: 3005
     position: *id001
-    velocity: 400
-    explosion_radius: 200
-    life_time: 60000
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
+- id: 4
+  position: &id002
+  - -1071.0
+  - 0.0
+  - 0.0
+  max_missiles: 5
+  missiles:
+  - id: 4001
+    position: *id002
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
+  - id: 4002
+    position: *id002
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
+  - id: 4003
+    position: *id002
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
+  - id: 4004
+    position: *id002
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
+  - id: 4005
+    position: *id002
+    velocity: 1000
+    explosion_radius: 150
+    life_time: 60
 radars:
 - id: 5
   position:
-  - -67.0
-  - -50.0
+  - 2.0
+  - 1.0
   - 0.0
   azimuth_start: 0.0
   elevation_start: 0.0
   max_distance: 20000.0
-  azimuth_range: 360.0
-  elevation_range: 180.0
+  azimuth_range: 180.0
+  elevation_range: 90.0
   azimuth_speed: 180.0
   elevation_speed: 0.0
   scan_mode: horizontal
