@@ -41,7 +41,7 @@ class ObjectDialog(QDialog):
         elif obj_type == ObjectType.MISSILE_LAUNCHER:
             self.max_missiles = QLineEdit("5")
             self.missile_velocity = QLineEdit("500")
-            self.missile_life_time = QLineEdit("60")
+            self.missile_life_time = QLineEdit("35")
             self.missile_radius = QLineEdit("50")
 
             layout.addRow("Макс. ракет:", self.max_missiles)
