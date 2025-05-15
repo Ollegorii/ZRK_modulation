@@ -200,11 +200,12 @@ class MissileSuccessfulLaunchMessage(BaseMessage):
     ЗУР -> ПУ
     Сообщение об успешном запуске ракеты
     """
-    def __init__(self, sender_id: int, launch_time: float, target: AirObject, missile: Missile):
+    def __init__(self, sender_id: int, launch_time: float, target: AirObject, missile: Missile, launcher_id: int):
         super().__init__(type=MessageType.LAUNCH_SUCCESSFUL, sender_id=sender_id)
         self.missile = missile
         self.launch_time = launch_time
         self.target_id = target.id
+        self.launcher_id = launcher_id
 
     def __repr__(self) -> str:
         base = super().__repr__()
@@ -216,10 +217,11 @@ class MissileLaunchCancelledMessage(BaseMessage):
     ЗУР -> ПУ
     Сообщение об отмене запуска ракеты
     """
-    def __init__(self, sender_id: int, reason: str, missile: Missile):
+    def __init__(self, sender_id: int, reason: str, missile: Missile, launcher_id: int):
         super().__init__(type=MessageType.LAUNCH_CANCELLED, sender_id=sender_id)
         self.missile = missile
         self.reason = reason
+        self.launcher_id = launcher_id
 
     def __repr__(self) -> str:
         base = super().__repr__()

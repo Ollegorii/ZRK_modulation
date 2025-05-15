@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Optional
+from typing import Optional, Tuple
 from .AirObject import AirObject, Trajectory
 from .constants import MessageType, MISSILE_VELOCITY_MODULE, MISSILE_DETONATE_RADIUS, MISSILE_DETONATE_PERIOD
 from .utils import to_seconds
@@ -32,45 +32,76 @@ class Missile(AirObject):
         self.launch_time: Optional[float] = None
         self.target: Optional[AirObject] = None
 
-    def _calculate_trajectory_params(self, target: AirObject):
+    def _calculate_trajectory_params(self, target: "AirObject") -> Tuple[np.ndarray, float]:
         """
-        Рассчитывает вектор скорости ракеты для перехвата движущейся цели и время до перехвата.
-        """
-        target_velocity = target.speed_mod * target.velocity
+        Calculate the velocity vector V (with magnitude self.speed_mod) and
+        interception time delta_t such that the interceptor at self.pos with
+        speed magnitude self.speed_mod will intercept the target.
 
-        D = target.pos - self.pos
-        A = np.dot(target_velocity, target_velocity) - self.speed_mod ** 2
-        B = 2 * np.dot(target_velocity, D)
-        C = np.dot(D, D)
-        if abs(A) < 1e-8:
-            if abs(B) < 1e-8:
-                raise ValueError("Нет решения: неподвижная цель или совпадающие позиции")
-            delta_t = -C / B
-            if delta_t <= 0:
-                raise InterceptionError("Не существует положительного времени перехвата.")
+        Args:
+            self: An object with attributes:
+                - pos: np.ndarray of shape (3,), initial position of interceptor.
+                - speed_mod: float, speed magnitude of interceptor.
+            target: An AirObject with attributes:
+                - pos: np.ndarray of shape (3,), initial position of target.
+                - speed_mod: float, speed magnitude of target.
+                - velocity: np.ndarray of shape (3,), unit direction vector of target's velocity.
+
+        Returns:
+            V: np.ndarray of shape (3,), required velocity vector for interceptor.
+            delta_t: float, time until interception.
+        """
+        # Relative displacement from interceptor to target
+        d = target.pos - self.pos
+
+        # Target velocity vector
+        v_t = target.velocity * target.speed_mod
+
+        # Interceptor speed magnitude
+        v0 = self.speed_mod
+
+        # Quadratic coefficients for interception time
+        # a t^2 + b t + c = 0
+        a = np.dot(v_t, v_t) - v0 ** 2
+        b = 2 * np.dot(d, v_t)
+        c = np.dot(d, d)
+
+        # Solve for t
+        if abs(a) < 1e-6:
+            # Degenerate case: speeds are nearly equal, linear solution
+            if abs(b) < 1e-6:
+                raise ValueError(
+                    "No interception possible: target and interceptor are stationary relative or parallel.")
+            t = -c / b
         else:
-            discr = B ** 2 - 4 * A * C
-            if discr < 0:
-                raise InterceptionError("Цель недосягаема: отрицательный дискриминант.")
-            t1 = (-B + np.sqrt(discr)) / (2 * A)
-            t2 = (-B - np.sqrt(discr)) / (2 * A)
-            candidates = [t for t in (t1, t2) if t > 0]
-            if not candidates:
-                raise InterceptionError("Нет положительных корней для времени перехвата.")
-            delta_t = min(candidates)
+            disc = b ** 2 - 4 * a * c
+            if disc < 0:
+                raise ValueError("No real interception time: target is too fast or out of range.")
+            sqrt_disc = np.sqrt(disc)
+            t1 = (-b + sqrt_disc) / (2 * a)
+            t2 = (-b - sqrt_disc) / (2 * a)
+            # Select smallest positive time
+            times = [t for t in (t1, t2) if t > 0]
+            if not times:
+                raise ValueError("Interception times are not positive; interception not possible in future.")
+            t = min(times)
 
-        V_req = target.speed_mod + D / delta_t
-        V_norm = V_req / np.linalg.norm(V_req) * self.speed_mod
-        return V_norm, delta_t
+        # Compute required interceptor velocity vector
+        V = (d / t) + v_t
 
-    def _launch(self, target: AirObject):
+        # Normalize to exact magnitude self.speed_mod to avoid rounding drift
+        V = V / np.linalg.norm(V) * v0
+
+        return V, t
+
+    def _launch(self, target: AirObject, launcher_id):
         from .Messages import MissileSuccessfulLaunchMessage, MissileLaunchCancelledMessage
 
         try:
-            V_norm, delta_t = self._calculate_trajectory_params(target)
+            V, t = self._calculate_trajectory_params(target)
             self.target = target
             new_trajectory = Trajectory(
-                velocity=tuple(V_norm),
+                velocity=tuple(V),
                 start_pos=tuple(self.pos),
                 start_time=to_seconds(self._manager.time.get_time())
             )
@@ -80,7 +111,8 @@ class Missile(AirObject):
                 sender_id=self.id,
                 launch_time=self.launch_time,
                 target=self.target,
-                missile=self
+                missile=self,
+                launcher_id=launcher_id
             )
             self._manager.add_message(msg)
             self.status = 'active'
@@ -88,7 +120,8 @@ class Missile(AirObject):
             msg = MissileLaunchCancelledMessage(
                 sender_id=self.id,
                 reason=str(e),
-                missile=self
+                missile=self,
+                launcher_id=launcher_id
             )
             self._manager.add_message(msg)
 
@@ -117,7 +150,7 @@ class Missile(AirObject):
                 step_time=current_time
             )
             if messages:
-                self._launch(messages[-1].target)
+                self._launch(messages[-1].target, messages[-1].sender_id)
 
         elif self.status == 'active':
             update_msgs = self._manager.give_messages_by_type(
@@ -128,13 +161,13 @@ class Missile(AirObject):
             for msg in update_msgs:
                 self.target = msg.upd_object
                 try:
-                    V_norm, delta_t = self._calculate_trajectory_params(self.target)
-                    new_traj = Trajectory(
-                        velocity=tuple(V_norm),
+                    V, t = self._calculate_trajectory_params(self.target)
+                    new_trajectory = Trajectory(
+                        velocity=tuple(V),
                         start_pos=tuple(self.pos),
-                        start_time=to_seconds(current_time)
+                        start_time=to_seconds(self._manager.time.get_time())
                     )
-                    self._set_trajectory(new_traj)
+                    self._set_trajectory(new_trajectory)
                 except (InterceptionError, ValueError):
                     continue
 
