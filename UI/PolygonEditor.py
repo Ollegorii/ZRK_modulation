@@ -6,7 +6,8 @@ from PyQt5.QtGui import QColor, QPen, QPainter, QPixmap, QIcon, QBrush
 from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout,
                              QWidget, QLabel, QPushButton, QListWidget, QComboBox,
                              QDialog, QGraphicsScene, QGraphicsTextItem,
-                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem, QFileDialog)
+                             QMessageBox, QSlider, QStatusBar, QGraphicsEllipseItem, QFileDialog, QGroupBox,
+                             QFormLayout, QSpinBox)
 
 from UI.Enums import ObjectType
 from UI.MapGraphicsView import MapGraphicsView
@@ -113,6 +114,9 @@ class PolygonEditor(QMainWindow):
         left_panel = QWidget()
         left_panel.setMaximumWidth(400)  # Увеличим ширину панели
         left_layout = QVBoxLayout(left_panel)
+
+        # Добавляем настройки симуляции в начало
+        left_layout.addWidget(self.init_simulation_settings_ui())
 
         # Выбор типа объекта
         self.object_type_combo = QComboBox()
@@ -484,6 +488,8 @@ class PolygonEditor(QMainWindow):
 
     def save_config(self, source = False):
         try:
+            self.update_simulation_settings()
+
             # Формируем конфиг с реальными данными
             output_config = {
                 "simulation": {
@@ -835,6 +841,10 @@ class PolygonEditor(QMainWindow):
             # Обновляем текущую конфигурацию
             self.config = loaded_config
 
+            # Обновляем UI настроек симуляции
+            self.time_step_edit.setValue(self.config["simulation"]["time_step"])
+            self.duration_edit.setValue(self.config["simulation"]["duration"])
+
             # Обновляем счетчики ID
             self.update_id_counters()
 
@@ -880,3 +890,33 @@ class PolygonEditor(QMainWindow):
         if self.config["radars"]:
             max_id = max(r["id"] for r in self.config["radars"])
             self.next_ids[ObjectType.RADAR] = max_id + 1
+
+    def init_simulation_settings_ui(self):
+        """Инициализирует UI для настроек симуляции"""
+        self.simulation_settings_group = QGroupBox("Настройки симуляции")
+        layout = QFormLayout()
+
+        # Поле для time_step
+        self.time_step_edit = QSpinBox()
+        self.time_step_edit.setRange(0, 1000)  # Минимальный и максимальный шаг (мс)
+        self.time_step_edit.setValue(self.config["simulation"]["time_step"])
+        self.time_step_edit.setSuffix(" мс")
+        self.time_step_edit.valueChanged.connect(self.update_simulation_settings)
+
+        # Поле для duration
+        self.duration_edit = QSpinBox()
+        self.duration_edit.setRange(0, 100000)  # Минимальная и максимальная длительность (мс)
+        self.duration_edit.setValue(self.config["simulation"]["duration"])
+        self.duration_edit.setSuffix(" мс")
+        self.duration_edit.valueChanged.connect(self.update_simulation_settings)
+
+        layout.addRow("Шаг симуляции:", self.time_step_edit)
+        layout.addRow("Длительность:", self.duration_edit)
+
+        self.simulation_settings_group.setLayout(layout)
+        return self.simulation_settings_group
+
+    def update_simulation_settings(self):
+        """Обновляет параметры симуляции при изменении значений"""
+        self.config["simulation"]["time_step"] = self.time_step_edit.value()
+        self.config["simulation"]["duration"] = self.duration_edit.value()
