@@ -29,21 +29,21 @@ class PolygonEditor(QMainWindow):
         self.y_coeff = -1 if self.y_inverted else 1
 
         self.setWindowTitle("Редактор полигона")
-        self.setGeometry(100, 100, 1600, 1000)
+        self.setGeometry(100, 100, 1600, 1800)
 
 
-        self.scene_size = 300000  # Размер сцены в метрах (радиус от центра)
+        self.scene_size = 3_000_000  # Размер сцены в метрах (радиус от центра)
         self.grid_step = 2000
 
         # Иконки объектов
         self.icons = {
-            ObjectType.AIR_PLANE: self.load_icon("./images/aircraft_icon.png", "🛩️", 200),
-            ObjectType.HELICOPTER: self.load_icon("./images/helicopter.png", "🚁", 200),
-            ObjectType.MISSILE_LAUNCHER: self.load_icon("./images/missile_launcher_icon.png", "🚀", 200),
-            ObjectType.MISSILE: self.load_icon("./images/GM.png", "*", 100),
-            ObjectType.RADAR: self.load_icon("./images/radar_icon.png", "📡", 200),
-            ObjectType.AIR_PLANE_RED: self.load_icon("./images/aircraft_icon_red.png", "*", 200),
-            ObjectType.HELICOPTER_RED: self.load_icon("./images/helicopter_red.png", "*", 200),
+            ObjectType.AIR_PLANE: self.load_icon("UI/images/aircraft_icon.png", "🛩️", 300),
+            ObjectType.HELICOPTER: self.load_icon("UI/images/helicopter.png", "🚁", 300),
+            ObjectType.MISSILE_LAUNCHER: self.load_icon("UI/images/missile_launcher_icon.png", "🚀", 300),
+            ObjectType.MISSILE: self.load_icon("UI/images/GM.png", "*", 200),
+            ObjectType.RADAR: self.load_icon("UI/images/radar_icon.png", "📡", 300),
+            ObjectType.AIR_PLANE_RED: self.load_icon("UI/images/aircraft_icon_red.png", "*", 300),
+            ObjectType.HELICOPTER_RED: self.load_icon("UI/images/helicopter_red.png", "*", 300),
         }
 
             # Конфигурация по умолчанию
@@ -188,7 +188,7 @@ class PolygonEditor(QMainWindow):
         self.zoom_out_btn.setFixedWidth(30)  # Фиксированный размер кнопок +/-
 
         self.zoom_slider = QSlider(Qt.Horizontal)
-        self.zoom_slider.setRange(5, 500)
+        self.zoom_slider.setRange(1, 1000)
         self.zoom_slider.setValue(50)
         self.zoom_slider.valueChanged.connect(self.zoom_slider_changed)
 
@@ -466,19 +466,52 @@ class PolygonEditor(QMainWindow):
                 return
 
     def zoom_in(self):
-        self.view.zoom(1.25)
+        current_scale = self.view.scale_factor
+        new_scale = current_scale * 1.1
+        if new_scale <= self.view.max_scale:
+            self.view.scale(1.1, 1.1)
+            self.view.scale_factor = new_scale
+            self.update_zoom_slider(new_scale)
 
     def zoom_out(self):
-        self.view.zoom(0.8)
+        current_scale = self.view.scale_factor
+        new_scale = current_scale * 0.9
+        if new_scale >= self.view.min_scale:
+            self.view.scale(0.9, 0.9)
+            self.view.scale_factor = new_scale
+            self.update_zoom_slider(new_scale)
+
+    def zoom_out(self):
+        current_scale = self.view.scale_factor
+        new_scale = current_scale * 0.9
+        min_scale = 0.001  # Минимальный масштаб уменьшения
+
+        # Рассчитываем минимальный допустимый масштаб на основе размера сцены
+        view_size = min(self.view.width(), self.view.height())
+        scene_size = 2 * self.scene_size
+        absolute_min_scale = view_size / scene_size * 0.9
+
+        if new_scale >= max(min_scale, absolute_min_scale):
+            self.view.scale(0.9, 0.9)
+            self.view.scale_factor = new_scale
+            self.update_zoom_slider(new_scale)
 
     def zoom_slider_changed(self, value):
-        scale = value / 100.0
+        # Преобразуем значение слайдера (1-1000) в масштаб (0.001-10)
+        min_scale = 0.001
+        max_scale = 1.0
+        scale = min_scale + (max_scale - min_scale) * (value / 1000.0)
+
         self.view.resetTransform()
         self.view.scale(scale, scale)
         self.view.scale_factor = scale
 
     def update_zoom_slider(self, scale):
-        self.zoom_slider.setValue(int(scale * 100))
+        # Преобразуем масштаб (0.001-10) в значение слайдера (1-1000)
+        min_scale = 0.001
+        max_scale = 1.0
+        value = int(((scale - min_scale) / (max_scale - min_scale)) * 1000)
+        self.zoom_slider.setValue(value)
 
     def update_status(self):
         count = (len(self.config["air_environment"]["targets"]) +
@@ -677,9 +710,9 @@ class PolygonEditor(QMainWindow):
                         # Если есть предыдущая точка - рисуем линию
                         if hasattr(obj, 'last_position'):
                             if obj.obj_type == ObjectType.MISSILE:
-                                color = QPen(QColor(0, 0, 255, 180), 2)
+                                color = QPen(QColor(0, 0, 255, 180), 10)
                             else:
-                                color = QPen(QColor(255, 150, 0, 180), 2)
+                                color = QPen(QColor(255, 150, 0, 180), 10)
 
                             if obj.last_position != None:
                                 prev_x, prev_y = obj.last_position
@@ -762,14 +795,18 @@ class PolygonEditor(QMainWindow):
         self.scene.setSceneRect(-15000, -15000, 30000, 30000)
 
     def reset_experiment(self):
-        reply = QMessageBox.question(
-            self,
-            "Сброс эксперимента",
-            "Вы уверены, что хотите сбросить эксперимент? Все объекты и траектории будут удалены.",
-            QMessageBox.Yes | QMessageBox.No
-        )
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Сброс эксперимента")
+        msg_box.setText("Вы уверены, что хотите сбросить эксперимент? Все объекты и траектории будут удалены.")
 
-        if reply == QMessageBox.Yes:
+        # Создаем кнопки с русским текстом
+        button_yes = msg_box.addButton("Да", QMessageBox.YesRole)
+        button_no = msg_box.addButton("Нет", QMessageBox.NoRole)
+
+        # Показываем диалог и ждем ответа
+        msg_box.exec()
+
+        if msg_box.clickedButton() == button_yes:
             # Останавливаем таймер симуляции, если он активен
             if hasattr(self, 'simulation_timer') and self.simulation_timer.isActive():
                 self.simulation_timer.stop()
